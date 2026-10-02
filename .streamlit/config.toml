@@ -1,0 +1,27 @@
+[server]
+headless = true
+runOnSave = true
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = "full"
+
+[theme]
+base = "dark"
+primaryColor = "#2DD4BF"
+backgroundColor = "#0B1120"
+secondaryBackgroundColor = "#131C2E"
+textColor = "#E2E8F0"
+borderColor = "#1F2A40"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "0.6rem"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap, sans-serif"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap, monospace"
+chartCategoricalColors = ["#2DD4BF", "#60A5FA", "#F59E0B", "#F472B6", "#A78BFA", "#34D399"]
+
+[theme.sidebar]
+backgroundColor = "#0E1626"

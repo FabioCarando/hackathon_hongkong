@@ -1,0 +1,43 @@
+[project]
+name = "hackathon"
+version = "0.1.0"
+description = "iFX Hack Hong Kong 2026"
+requires-python = "==3.12.*"
+# Everything we might plausibly need on the day is pre-added here so nobody
+# has to touch this file during the hackathon. Ask the env owner before adding more.
+dependencies = [
+    "anthropic[bedrock]>=1.11",
+    "boto3>=1.40",
+    "streamlit>=1.50",
+    "pydantic>=2.11",
+    "pydantic-settings>=2.10",
+    "pandas>=2.3",
+    "numpy>=2.3",
+    "plotly>=6.3",
+    "scikit-learn>=1.7",
+    "networkx>=3.5",
+    "faker>=37",
+    "pyyaml>=6",
+    "python-dotenv>=1.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4",
+    "ruff>=0.13",
+    "pre-commit>=4.3",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["F", "I"]  # real bugs (pyflakes) + import order; style is the formatter's job
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
