@@ -21,14 +21,14 @@ class Settings(BaseSettings):
     aws_profile: str | None = None
 
     llm_provider: Literal["bedrock", "fake"] = "bedrock"
-    bedrock_client: Literal["mantle", "runtime"] = "mantle"
-    llm_model: str = "anthropic.claude-opus-5"
-    llm_model_fast: str = "anthropic.claude-haiku-4-5"
-    llm_max_tokens: int = 16000
+    # Any Bedrock model or inference-profile ID; run scripts/check_env.py to see what's available
+    llm_model: str = "us.amazon.nova-pro-v1:0"
+    llm_model_fast: str = "us.amazon.nova-lite-v1:0"
+    llm_max_tokens: int = 4096  # Bedrock reserves this against your token quota per call
     llm_cache: Literal["off", "on"] = "off"
     llm_log_path: str = "logs/llm_calls.jsonl"
     llm_cache_dir: str = ".llm_cache"
-    fake_latency: float = 1.0  # fake provider: 0 = instant, 1 = roughly real Claude speed
+    fake_latency: float = 1.0  # fake provider: 0 = instant, 1 = roughly real model speed
 
 
 @lru_cache

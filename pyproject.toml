@@ -6,7 +6,6 @@ requires-python = "==3.12.*"
 # Everything we might plausibly need on the day is pre-added here so nobody
 # has to touch this file during the hackathon. Ask the env owner before adding more.
 dependencies = [
-    "anthropic[bedrock]>=1.11",
     "boto3>=1.40",
     "streamlit>=1.50",
     "pydantic>=2.11",

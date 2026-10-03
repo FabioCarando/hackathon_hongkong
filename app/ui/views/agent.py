@@ -5,7 +5,7 @@ import streamlit as st
 from app.llm import AgentStep, get_llm, tool
 from app.ui.components import header, llm_errors, render_step, stats_row
 
-header("Agent demo", "Claude calls Python tools; each call and result is shown as it happens.")
+header("Agent demo", "The model calls Python tools; each call and result is shown as it happens.")
 
 ACCOUNTS = {
     "C-1001": {"name": "Chan Tai Man", "balance_hkd": 12_500, "opened": "2024-03-02"},

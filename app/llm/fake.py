@@ -1,4 +1,4 @@
-"""Simulated Claude for LLM_PROVIDER=fake: no network, no credentials, no cost.
+"""Simulated model for LLM_PROVIDER=fake: no network, no credentials, no cost.
 
 Behaves enough like the real thing to build and demo the UI against it:
 - realistic latency and token counts (so cost/latency panels show plausible numbers)
@@ -16,8 +16,9 @@ import types
 import typing
 from typing import TYPE_CHECKING, Any
 
-from anthropic.types import Message
 from pydantic import BaseModel
+
+from app.llm.reply import Reply
 
 if TYPE_CHECKING:
     from app.llm.client import Tool
@@ -54,9 +55,11 @@ def placeholder(annotation: Any, rng: random.Random, name: str = "value") -> Any
 
 def _tool_results(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
     content = messages[-1]["content"]
-    if not isinstance(content, list):
-        return []
-    return [b for b in content if isinstance(b, dict) and b.get("type") == "tool_result"]
+    return [b["toolResult"] for b in content if isinstance(b, dict) and "toolResult" in b]
+
+
+def _result_text(result: dict[str, Any]) -> str:
+    return "".join(c.get("text", "") for c in result["content"])
 
 
 def _prose(prompt: str, rng: random.Random) -> str:
@@ -76,55 +79,50 @@ def _prose(prompt: str, rng: random.Random) -> str:
     return f"**Simulated answer** to: _{topic}_\n\n{bullets}\n\nNo model was called (LLM_PROVIDER=fake)."
 
 
-def fake_message(
+def fake_reply(
     params: dict[str, Any],
     schema: type[BaseModel] | None,
     tools: "list[Tool] | None",
     latency: float,
-) -> Message:
+) -> Reply:
     rng = _rng(params)
     messages = params["messages"]
     content: list[dict[str, Any]]
     stop_reason = "end_turn"
 
     if schema is not None:
-        content = [{"type": "text", "text": json.dumps(placeholder(schema, rng))}]
+        # extract: answer through the forced `respond` tool, like a real model in "tool" mode
+        stop_reason = "tool_use"
+        call = {"toolUseId": "tooluse_fake_respond", "name": "respond"}
+        content = [{"toolUse": call | {"input": placeholder(schema, rng)}}]
     elif tools and not _tool_results(messages):
         stop_reason = "tool_use"
-        content = [{"type": "text", "text": "Let me look that up."}]
+        content = [{"text": "Let me look that up."}]
         for i, t in enumerate(tools):
             args = t.example or {
                 n: placeholder(f.annotation, rng, n) for n, f in t.args_model.model_fields.items()
             }
             content.append(
-                {"type": "tool_use", "id": f"toolu_fake_{i}", "name": t.name, "input": args}
+                {"toolUse": {"toolUseId": f"tooluse_fake_{i}", "name": t.name, "input": args}}
             )
     elif tools:
         lines = "\n".join(
-            f"- `{r['tool_use_id']}` returned: {str(r['content'])[:200]}"
+            f"- `{r['toolUseId']}` returned: {_result_text(r)[:200]}"
             for r in _tool_results(messages)
         )
-        text = f"**Simulated conclusion** from the tool results:\n\n{lines}"
-        content = [{"type": "text", "text": text}]
+        content = [{"text": f"**Simulated conclusion** from the tool results:\n\n{lines}"}]
     else:
-        first = messages[-1]["content"]
-        content = [{"type": "text", "text": _prose(str(first), rng)}]
+        first = "".join(b.get("text", "") for b in messages[-1]["content"])
+        content = [{"text": _prose(first, rng)}]
 
-    out_text = json.dumps(content)
-    usage = {
-        "input_tokens": len(json.dumps(params, default=str)) // 4,
-        "output_tokens": len(out_text) // 4,
-    }
+    input_tokens = len(json.dumps(params, default=str)) // 4
+    output_tokens = len(json.dumps(content)) // 4
     if latency:
-        time.sleep(latency * (0.3 + usage["output_tokens"] * 0.004 + rng.random() * 0.4))
-    return Message.model_validate(
-        {
-            "id": f"msg_fake_{rng.randint(0, 10**8)}",
-            "type": "message",
-            "role": "assistant",
-            "model": params["model"],
-            "content": content,
-            "stop_reason": stop_reason,
-            "usage": usage,
-        }
+        time.sleep(latency * (0.3 + output_tokens * 0.004 + rng.random() * 0.4))
+    return Reply(
+        model=params["modelId"],
+        content=content,
+        stop_reason=stop_reason,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
     )

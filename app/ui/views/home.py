@@ -10,7 +10,7 @@ header("Project name", "One-line value proposition: who it is for and what numbe
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Provider", "Fake" if settings.llm_provider == "fake" else "Amazon Bedrock", border=True)
-c2.metric("Model", settings.llm_model.split(".")[-1], border=True)
+c2.metric("Model", settings.llm_model.split(".", 1)[-1], border=True)
 c3.metric("Region", settings.aws_region, border=True)
 c4.metric("Disk cache", settings.llm_cache.upper(), border=True)
 
@@ -19,8 +19,8 @@ with st.container(border=True):
     st.caption(
         "One tiny call to the fast model to prove credentials, region and model access work."
     )
-    if st.button("Ping Bedrock", type="primary", icon=":material/bolt:"):
-        with llm_errors(), st.spinner("Calling Claude..."):
+    if st.button("Ping model", type="primary", icon=":material/bolt:"):
+        with llm_errors(), st.spinner("Calling the model..."):
             r = get_llm().complete(
                 "Reply with exactly: pong", fast=True, max_tokens=50, label="ping"
             )

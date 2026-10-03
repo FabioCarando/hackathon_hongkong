@@ -1,6 +1,6 @@
 # Boilerplate guide
 
-This guide covers the scaffolding we prepared before 4 Oct, so that on the day we spend our time on product code instead of setup. **Read it once before Sunday.** It covers how to run the project, how to call Claude, how to keep the shared environment from breaking, and what to do at kickoff.
+This guide covers the scaffolding we prepared before 4 Oct, so that on the day we spend our time on product code instead of setup. **Read it once before Sunday.** It covers how to run the project, how to call the LLM, how to keep the shared environment from breaking, and what to do at kickoff.
 
 Everything here is idea-agnostic: it works whatever we end up building.
 
@@ -11,11 +11,11 @@ Everything here is idea-agnostic: it works whatever we end up building.
 | Piece | Where | What it gives you |
 |---|---|---|
 | Reproducible environment | `pyproject.toml`, `uv.lock`, `.python-version` | The same Python 3.12 and package versions on every laptop, set up with one command |
-| LLM wrapper | `app/llm/` | One small API to call Claude on Amazon Bedrock: plain text, streaming, structured (pydantic) output and tool-using agents |
+| LLM wrapper | `app/llm/` | One small API to call any text model on Amazon Bedrock (Nova, Llama, Mistral, DeepSeek, Qwen, gpt-oss...): plain text, streaming, structured (pydantic) output and tool-using agents |
 | Cost and latency tracking | `app/llm/telemetry.py`, `app/llm/pricing.py` | Every call records latency, tokens and estimated USD cost, both in memory and in `logs/llm_calls.jsonl` |
-| Simulated Claude | `app/llm/fake.py` | Develop and test with no AWS account, no network and no cost |
+| Simulated model | `app/llm/fake.py` | Develop and test with no AWS account, no network and no cost |
 | Disk cache | built into the wrapper | A repeated request is answered from disk: free, instant, and it works if the venue wifi dies |
-| Environment check | `scripts/check_env.py` | At kickoff, tells us in one minute which AWS account, region and Claude models we can actually use |
+| Environment check | `scripts/check_env.py` | At kickoff, tells us in one minute which AWS account, region and models we can actually use, and which of them handle tool use and structured output |
 | Quality gates | `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `tests/` | Auto-formatting, a lockfile check and smoke tests, so `main` doesn't break |
 | Demo UI | `streamlit_app.py`, `app/ui/` | A reference Streamlit app that shows the boilerplate working. It isn't meant to be our product |
 
@@ -58,7 +58,7 @@ LLM_PROVIDER=fake uv run streamlit run streamlit_app.py
 ```
 app/
   config.py          settings, read from .env / environment variables
-  llm/               Claude wrapper (client, fake simulator, pricing, telemetry)
+  llm/               Bedrock LLM wrapper (client, reply, fake simulator, pricing, telemetry)
   core/              ← product / domain logic goes here
   data/              ← data loading, simulators, datasets go here
   ui/                Streamlit components and pages
@@ -87,7 +87,7 @@ Most environments break because `pyproject.toml`, `uv.lock` and someone's local 
 1. **Always run things with `uv run ...`.** Before running, it syncs `.venv` to `uv.lock`. After a `git pull` that changed dependencies, your environment updates itself, and there is nothing to remember.
 2. **Never `pip install`.** Anything installed that way is invisible to everyone else and gets wiped on the next sync.
 3. **Only the environment owner adds or removes dependencies**, with `uv add <pkg>` / `uv remove <pkg>`, in a small PR on its own. Ask them; don't edit `pyproject.toml` yourself.
-4. **Most of what we might need is already installed:** `anthropic[bedrock]`, `boto3`, `streamlit`, `pydantic`, `pandas`, `numpy`, `plotly`, `scikit-learn`, `networkx`, `faker`, `pyyaml`, `python-dotenv`. Check before asking for something new.
+4. **Most of what we might need is already installed:** `boto3`, `streamlit`, `pydantic`, `pandas`, `numpy`, `plotly`, `scikit-learn`, `networkx`, `faker`, `pyyaml`, `python-dotenv`. Check before asking for something new.
 5. **Never edit `uv.lock` by hand.** If it has a merge conflict, run:
    ```bash
    git checkout --theirs uv.lock && uv lock
@@ -110,22 +110,21 @@ Everything is configured through environment variables. Copy `.env.example` to `
 | `AWS_PROFILE` | – | Use a named profile from `~/.aws/config` (SSO or keys) |
 | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN` | – | Or paste the temporary credentials the organisers give us |
 | `AWS_REGION` | `us-west-2` | Bedrock region. Use whatever the organisers' account is set up for |
-| `LLM_PROVIDER` | `bedrock` | `bedrock` = real Claude; `fake` = simulated Claude (section 8) |
-| `BEDROCK_CLIENT` | `mantle` | `mantle` = Bedrock's newer Messages API endpoint; `runtime` = the classic `bedrock-runtime` endpoint. Switch if `check_env` says Mantle isn't available |
-| `LLM_MODEL` | `anthropic.claude-opus-5` | Main model |
-| `LLM_MODEL_FAST` | `anthropic.claude-haiku-4-5` | Cheaper and faster model, used when you pass `fast=True` |
-| `LLM_MAX_TOKENS` | `16000` | Default output cap per call |
+| `LLM_PROVIDER` | `bedrock` | `bedrock` = real calls; `fake` = simulated model (section 8) |
+| `LLM_MODEL` | `us.amazon.nova-pro-v1:0` | Main model. Any Bedrock model or inference-profile ID; switching model is just this line |
+| `LLM_MODEL_FAST` | `us.amazon.nova-lite-v1:0` | Cheaper and faster model, used when you pass `fast=True` |
+| `LLM_MAX_TOKENS` | `4096` | Default output cap per call. Bedrock reserves this much quota per request, so keep it modest. Automatically clamped to the model's limit |
 | `LLM_CACHE` | `off` | `on` = read-through disk cache (section 7) |
 | `LLM_CACHE_DIR` | `.llm_cache` | Where cached answers live. Point it at a committed folder to share a demo cache with the team |
-| `FAKE_LATENCY` | `1` | Fake provider only: `0` = instant, `1` = roughly real Claude speed |
+| `FAKE_LATENCY` | `1` | Fake provider only: `0` = instant, `1` = roughly real model speed |
 
 In code, read settings from `app.config.settings` (for example `settings.llm_model`). Never call `os.getenv` directly.
 
 ---
 
-## 6. Calling Claude: the LLM wrapper
+## 6. Calling the LLM: the wrapper
 
-All product code talks to Claude through one object:
+All product code talks to the model through one object. Under the hood it uses Bedrock's **Converse API**, which is the same for every model on Bedrock, so changing `LLM_MODEL` is all it takes to switch provider:
 
 ```python
 from app.llm import get_llm
@@ -133,7 +132,7 @@ from app.llm import get_llm
 llm = get_llm()
 ```
 
-There are four methods. Each one takes a prompt, which is either a string or a list of messages (`[{"role": "user", "content": ...}, ...]`) for multi-turn conversations, plus these options:
+There are four methods. Each one takes a prompt, which is either a string or a list of messages (`[{"role": "user", "content": "..."}, ...]`; content can be a string or a list of Converse content blocks) for multi-turn conversations, plus these options:
 
 | Option | Meaning |
 |---|---|
@@ -141,7 +140,7 @@ There are four methods. Each one takes a prompt, which is either a string or a l
 | `fast=True` | Use `LLM_MODEL_FAST` instead of `LLM_MODEL` |
 | `model="..."` | Override the model ID for this call |
 | `max_tokens=...` | Override the output cap (not on `extract`) |
-| `effort="low" \| "medium" \| "high"` | How hard the model thinks. Lower is faster and cheaper (not on `extract`; **not supported by Haiku**, so don't combine with `fast=True`) |
+| `effort="low" \| "medium" \| "high"` | How hard the model thinks, for reasoning models that support it (currently mapped for gpt-oss and Nova 2). Ignored on other models. Not on `extract` |
 | `label="triage"` | Tag shown in the call log, so you can tell calls apart |
 
 ### 6.1 `complete`: plain text
@@ -150,12 +149,12 @@ There are four methods. Each one takes a prompt, which is either a string or a l
 r = llm.complete("Summarise this client's activity: ...", system="You are an AML analyst.")
 r.text          # the answer
 r.stats         # latency_ms, input_tokens, output_tokens, cost_usd, model, cached, ...
-r.message       # the raw Anthropic Message, if you ever need it
+r.reply         # the raw Reply (Converse content blocks, stop_reason, usage)
 ```
 
 ### 6.2 `extract`: structured output (use this most)
 
-Define a pydantic model, and Claude's answer comes back already validated into it. This is how to get reliable data out of the LLM, rather than parsing free text.
+Define a pydantic model, and the model's answer comes back already validated into it. This is how to get reliable data out of the LLM, rather than parsing free text.
 
 ```python
 from typing import Literal
@@ -173,6 +172,8 @@ r.stats.cost_usd     # 0.0021
 
 `Field(description=...)` text is sent to the model, so use it to explain what each field should contain.
 
+How it works: the schema is sent as a tool the model is forced to call. Models that can't force a specific tool fall back to "call any tool", then to "reply with JSON". The mode that works is remembered per model, and if the answer fails validation the error is sent back for one retry. Smaller models are much less reliable here, so check `extract` passes in `check_env` before relying on a model.
+
 ### 6.3 `stream`: text that appears as it's generated
 
 ```python
@@ -182,9 +183,9 @@ for chunk in s:            # or: st.write_stream(s) in Streamlit
 s.result.stats             # available once the loop has finished
 ```
 
-### 6.4 `run_agent`: Claude using our Python functions as tools
+### 6.4 `run_agent`: the model using our Python functions as tools
 
-Turn any typed function with a docstring into a tool. **The docstring is what Claude reads**, so say what the tool does and what its arguments look like.
+Turn any typed function with a docstring into a tool. **The docstring is what the model reads**, so say what the tool does and what its arguments look like.
 
 ```python
 from app.llm import tool
@@ -215,16 +216,16 @@ result.latency_ms   # total model time
 
 How it behaves:
 - Tool arguments are validated against the function's type hints before your function runs.
-- If a tool raises an exception, the error goes back to Claude, which can recover. The app doesn't crash, and the step is marked `is_error=True`.
+- If a tool raises an exception, the error goes back to the model, which can recover. The app doesn't crash, and the step is marked `is_error=True`.
 - Tools can return a `str`, a `dict` / `list` (sent as JSON) or a pydantic model.
 - `on_step` fires as each step happens. Use it to show tool calls live on screen, which makes a strong demo moment.
 - If you need structured output at the end, run `run_agent` first and then pass `result.text` to `extract`.
 
 ### 6.5 Choosing a model
 
-- The default `LLM_MODEL` (Opus 5) is the most capable. It thinks before answering, so expect several seconds per call.
-- Use `fast=True` (Haiku) for simple, high-volume or latency-sensitive steps: classification, short extraction, pings.
-- `effort="low"` on the main model is a middle option: it keeps the strong model but makes it quicker and cheaper.
+- Pick models from what `check_env` shows passing **ping, tool use and extract**. Non-Claude models vary a lot at tool calling and structured output.
+- Use `fast=True` (`LLM_MODEL_FAST`) for simple, high-volume or latency-sensitive steps: classification, short extraction, pings.
+- You can mix models: pass `model="..."` per call, for example a strong model for `run_agent` and a cheap one for bulk `extract`.
 
 ---
 
@@ -240,7 +241,7 @@ Each record holds the model, label, input/output tokens, cache tokens, latency i
 
 **Why it matters for the pitch:** judges score industry impact. A line like "triaging one alert costs $0.002 and takes 3 seconds, versus 40 minutes of analyst time" is far more convincing with real numbers, and the call log gives us those numbers for free.
 
-Costs are **estimates** based on Anthropic list prices in `app/llm/pricing.py`. Bedrock's price is about the same, but some regions charge a little more. Add a model to `PRICES` there if it shows `n/a`.
+Costs are **estimates** based on Bedrock on-demand prices (US regions) in `app/llm/pricing.py`. Other regions and newer models can differ. Add a model to `PRICES` there if it shows `n/a`.
 
 ### Disk cache (`LLM_CACHE=on`)
 
@@ -280,17 +281,19 @@ Fake answers are obviously fake (they say "Simulated answer"), so you can't mist
    ```
    It checks, in order:
    - **AWS identity:** whether the credentials work.
-   - **Anthropic foundation models and inference profiles:** which Claude model IDs this account can use in this region.
-   - **One live call each to `LLM_MODEL` and `LLM_MODEL_FAST`:** whether real calls work end to end, with latency and cost.
+   - **Text models and inference profiles:** which model IDs this account can use in this region.
+   - **For `LLM_MODEL` and `LLM_MODEL_FAST`: a ping, a tool call and an `extract`:** whether real calls work end to end, and whether the model handles tools and structured output.
 3. If something fails:
 
 | Symptom | Fix |
 |---|---|
 | `NoCredentialsError` / "Could not resolve AWS credentials" | `.env` isn't filled in, or the profile name is wrong |
-| `NotFoundError` / model not found | Choose an ID from the lists the script prints, and set `LLM_MODEL` / `LLM_MODEL_FAST` |
-| Mantle endpoint errors | Set `BEDROCK_CLIENT=runtime` and use an inference profile ID from the list (for example `global.anthropic...` or `us.anthropic...`) |
-| `AccessDenied` / `PermissionDenied` | The account lacks Bedrock permissions or model access, so ask the organisers |
-| `RateLimitError` / throttling | Use `fast=True` for bulk calls, turn on the cache, and ask organisers about quotas |
+| `ValidationException` / invalid model ID | Choose an ID from the lists the script prints, and set `LLM_MODEL` / `LLM_MODEL_FAST` |
+| "on-demand throughput isn't supported" | Use the inference profile ID (for example `us.amazon.nova-pro-v1:0`) in place of the bare model ID |
+| Tool use or extract fails for a model | Use a different model for that job (`model=...` on the call) |
+| "Access to Anthropic/OpenAI models is not allowed from unsupported countries" | Bedrock geo-blocks these providers for us; use Nova, Llama, gpt-oss, DeepSeek, Mistral or Qwen |
+| `AccessDeniedException` | The account lacks Bedrock permissions or model access, so ask the organisers |
+| `ThrottlingException` ("Too many tokens per day" = daily quota exhausted or 0) | Use `fast=True` for bulk calls, turn on the cache, and ask organisers about quotas |
 
 The script exits with code 0 only when everything passes.
 
@@ -344,8 +347,10 @@ Patterns worth reusing if we do build a Streamlit UI:
 
 ## 12. Limitations and things to verify
 
-- **The Bedrock model IDs have not been tested live yet.** The defaults come from the Anthropic SDK docs. `check_env.py` confirms them on the day.
-- **Costs are estimates** at Anthropic list prices (section 7).
+- **No successful live call yet.** The Converse code path is tested offline (request shapes validated against the boto3 schema, Bedrock stubbed in `tests/test_smoke.py`), and a live run on a personal account got as far as Bedrock's quota check. `check_env.py` confirms it on the day.
+- **Claude and OpenAI gpt-5.x are geo-blocked for us on Bedrock**; a new personal AWS account also has ~0 daily token quota for every model (section 9).
+- **Costs are estimates** at Bedrock US list prices (section 7).
+- **`effort` is mapped only for gpt-oss and Nova 2**, and those field names are unverified. Other models ignore it.
 - **Telemetry is per process.** Restarting the app resets the in-memory totals, but the JSONL log keeps everything.
 - **`extract` doesn't take `effort` or `max_tokens` overrides.** Use `complete` plus your own parsing if you really need them.
 - **The cache matches exact requests only.** Changing one character in a prompt is a miss, which is by design.
@@ -359,14 +364,14 @@ from app.config import settings
 from app.llm import get_llm, tool
 
 llm = get_llm()
-llm.complete(prompt, system=..., fast=..., effort=..., label=...)          -> Result(text, stats, message)
+llm.complete(prompt, system=..., fast=..., effort=..., label=...)          -> Result(text, stats, reply)
 llm.extract(prompt, MyModel, system=..., fast=..., label=...)             -> (MyModel, Result)
 llm.stream(prompt, ...)                                                   -> iterable of str; .result after
 llm.run_agent(prompt, tools=[...], system=..., on_step=..., max_turns=10) -> AgentResult(text, steps, calls)
 
 @tool                       # or @tool(example={...})
 def my_tool(arg: str) -> dict:
-    """What it does. Claude reads this."""
+    """What it does. The model reads this."""
 ```
 
 ```bash

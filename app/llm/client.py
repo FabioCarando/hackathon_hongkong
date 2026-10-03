@@ -1,7 +1,9 @@
-"""Thin wrapper over Claude on Amazon Bedrock.
+"""Thin wrapper over any text model on Amazon Bedrock, via the model-agnostic Converse API.
 
-Every call goes through `LLM._create`, which handles the disk cache, the fake provider,
-latency/cost measurement and logging. Product code should only use the public methods:
+Switch model with `LLM_MODEL` / `LLM_MODEL_FAST` (Nova, Llama, Mistral, DeepSeek, Qwen, gpt-oss,
+Claude...): the code below doesn't change. Every call goes through `LLM._create`, which handles the
+disk cache, the fake provider, latency/cost measurement and logging. Product code should only use
+the public methods:
 
     llm = get_llm()
     llm.complete("Summarise this ...")                  -> Result
@@ -13,6 +15,7 @@ latency/cost measurement and logging. Product code should only use the public me
 import hashlib
 import inspect
 import json
+import re
 import time
 import typing
 from collections.abc import Callable, Iterator
@@ -21,17 +24,44 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-import anthropic
-from anthropic.types import Message
-from pydantic import BaseModel, create_model
+import boto3
+from botocore.config import Config
+from botocore.exceptions import ClientError
+from pydantic import BaseModel, ValidationError, create_model
 
 from app.config import Settings, settings
 from app.llm import telemetry
-from app.llm.fake import fake_message
-from app.llm.pricing import cost_usd
+from app.llm.fake import fake_reply
+from app.llm.pricing import base_model, cost_usd
+from app.llm.reply import Reply
 from app.llm.telemetry import CallStats
 
+# A string, or Converse messages: [{"role": "user", "content": "..." | [{"text": "..."}]}, ...]
 Prompt = str | list[dict[str, Any]]
+
+RESPOND_TOOL = "respond"  # the tool `extract` forces the model to call with its structured answer
+
+
+def _inline_refs(schema: dict[str, Any]) -> dict[str, Any]:
+    """Pydantic emits `$defs` + `$ref`; not every Bedrock model resolves them, so inline them."""
+    defs = schema.pop("$defs", {})
+
+    def walk(node: Any) -> Any:
+        if isinstance(node, dict):
+            if "$ref" in node:
+                return walk(dict(defs[node["$ref"].split("/")[-1]]))
+            return {k: walk(v) for k, v in node.items()}
+        if isinstance(node, list):
+            return [walk(v) for v in node]
+        return node
+
+    return walk(schema)
+
+
+def _json_schema(model: type[BaseModel]) -> dict[str, Any]:
+    schema = _inline_refs(model.model_json_schema())
+    schema.pop("title", None)
+    return schema
 
 
 # --------------------------------------------------------------------------- tools
@@ -48,19 +78,17 @@ class Tool:
 
     @classmethod
     def from_function(cls, fn: Callable[..., Any], example: dict[str, Any] | None = None) -> "Tool":
-        """Build a tool from a typed function. Its docstring is what Claude reads."""
+        """Build a tool from a typed function. Its docstring is what the model reads."""
         fields: dict[str, Any] = {}
         hints = typing.get_type_hints(fn)
         for name, param in inspect.signature(fn).parameters.items():
             default = ... if param.default is inspect.Parameter.empty else param.default
             fields[name] = (hints.get(name, str), default)
         args_model = create_model(f"{fn.__name__}_args", **fields)
-        schema = args_model.model_json_schema()
-        schema.pop("title", None)
         return cls(
             name=fn.__name__,
             description=inspect.getdoc(fn) or fn.__name__,
-            input_schema=schema,
+            input_schema=_json_schema(args_model),
             fn=fn,
             args_model=args_model,
             example=example,
@@ -68,9 +96,11 @@ class Tool:
 
     def spec(self) -> dict[str, Any]:
         return {
-            "name": self.name,
-            "description": self.description,
-            "input_schema": self.input_schema,
+            "toolSpec": {
+                "name": self.name,
+                "description": self.description,
+                "inputSchema": {"json": self.input_schema},
+            }
         }
 
     def run(self, args: dict[str, Any]) -> str:
@@ -97,7 +127,7 @@ def tool(fn: Callable[..., Any] | None = None, *, example: dict[str, Any] | None
 class Result:
     text: str
     stats: CallStats
-    message: Message
+    reply: Reply
 
 
 @dataclass
@@ -137,10 +167,6 @@ class StreamResult:
 # --------------------------------------------------------------------------- client
 
 
-def _text(message: Message) -> str:
-    return "".join(b.text for b in message.content if b.type == "text")
-
-
 def _jsonable(obj: Any) -> Any:
     if isinstance(obj, BaseModel):
         return obj.model_dump(mode="json")
@@ -149,22 +175,50 @@ def _jsonable(obj: Any) -> Any:
     return str(obj)
 
 
+def _messages(prompt: Prompt) -> list[dict[str, Any]]:
+    if isinstance(prompt, str):
+        prompt = [{"role": "user", "content": prompt}]
+    return [
+        {**m, "content": [{"text": m["content"]}]} if isinstance(m["content"], str) else m
+        for m in prompt
+    ]
+
+
+def _effort_fields(model_id: str, effort: str) -> dict[str, Any]:
+    """Reasoning effort has no portable Converse field; map it for models known to accept one."""
+    name = base_model(model_id)
+    if name.startswith("openai.gpt-oss"):
+        return {"reasoning_effort": effort}
+    if name.startswith("amazon.nova-2"):
+        return {"reasoningConfig": {"type": "enabled", "maxReasoningEffort": effort}}
+    return {}  # other models: ignored
+
+
+def _parse_json(text: str) -> Any:
+    """JSON from a model's text answer, tolerating ```json fences and chatter around it."""
+    match = re.search(r"\{.*\}", text, re.DOTALL)
+    return json.loads(match.group(0) if match else text)
+
+
 class LLM:
     def __init__(self, cfg: Settings = settings):
         self.cfg = cfg
-        self._client: anthropic.AnthropicBedrockMantle | anthropic.AnthropicBedrock | None = None
+        self._client = None
+        # extract strategy that worked per model: "tool" | "any" | "json" (see `extract`)
+        self._extract_mode: dict[str, str] = {}
+        # output-token limit per model, learned from Bedrock's error when we ask for more
+        self._max_tokens: dict[str, int] = {}
 
     @property
     def client(self):
         if self._client is None:
-            kwargs = {
-                "aws_region": self.cfg.aws_region,
-                "aws_profile": self.cfg.aws_profile or None,
-            }
-            if self.cfg.bedrock_client == "mantle":
-                self._client = anthropic.AnthropicBedrockMantle(**kwargs)
-            else:
-                self._client = anthropic.AnthropicBedrock(**kwargs)
+            session = boto3.Session(
+                profile_name=self.cfg.aws_profile or None, region_name=self.cfg.aws_region
+            )
+            self._client = session.client(
+                "bedrock-runtime",
+                config=Config(read_timeout=300, retries={"max_attempts": 4, "mode": "adaptive"}),
+            )
         return self._client
 
     # -- public API -----------------------------------------------------------
@@ -193,10 +247,29 @@ class LLM:
         model: str | None = None,
         label: str = "extract",
     ) -> tuple[T, Result]:
-        """Structured output: Claude's answer is validated into `schema`."""
+        """Structured output: the model's answer is validated into `schema`.
+
+        The schema is sent as a tool the model is forced to call. Models that can't force a
+        specific tool fall back to "call any tool", then to JSON in the text; the working mode is
+        remembered per model. One retry if the answer doesn't validate."""
         params = self._params(prompt, system, fast, model, None, None)
-        result = self._create(params, label, schema=schema)
-        return schema.model_validate_json(result.text), result
+        model_id = params["modelId"]
+        modes = ["tool", "any", "json"]
+        if model_id in self._extract_mode:
+            modes = modes[modes.index(self._extract_mode[model_id]) :]
+
+        for i, mode in enumerate(modes):
+            try:
+                sent, result = self._extract_call(params, schema, mode, label)
+            except ClientError as e:
+                err = e.response["Error"]
+                tool_problem = err["Code"] == "ValidationException" and "tool" in err["Message"]
+                if not tool_problem or i == len(modes) - 1:
+                    raise
+                continue  # this model doesn't support `mode`; try the next one
+            self._extract_mode[model_id] = mode
+            return self._validate(sent, schema, label, result)
+        raise AssertionError("unreachable")
 
     def stream(
         self,
@@ -228,7 +301,7 @@ class LLM:
         """Tool-use loop. `on_step` fires for every text / tool call / tool result (for live UI)."""
         by_name = {t.name: t for t in tools}
         params = self._params(prompt, system, fast, model, None, effort)
-        params["tools"] = [t.spec() for t in tools]
+        params["toolConfig"] = {"tools": [t.spec() for t in tools]}
         out = AgentResult(text="")
 
         def emit(step: AgentStep) -> None:
@@ -239,36 +312,28 @@ class LLM:
         for turn in range(max_turns):
             result = self._create(params, f"{label}#{turn}", tools=tools)
             out.calls.append(result.stats)
-            msg = result.message
+            reply = result.reply
             params["messages"] = [
                 *params["messages"],
-                {"role": "assistant", "content": msg.content},
+                {"role": "assistant", "content": reply.content},
             ]
             if result.text:
                 emit(AgentStep("text", data=result.text))
-            if msg.stop_reason == "pause_turn":
-                continue
-            if msg.stop_reason != "tool_use":
+            if reply.stop_reason != "tool_use":
                 out.text = result.text
                 return out
 
             tool_results = []
-            for block in msg.content:
-                if block.type != "tool_use":
-                    continue
-                emit(AgentStep("tool_call", block.name, block.input))
+            for call in reply.tool_calls:
+                emit(AgentStep("tool_call", call["name"], call["input"]))
                 try:
-                    content, is_error = by_name[block.name].run(block.input), False
-                except Exception as e:  # report tool errors back to Claude instead of crashing
-                    content, is_error = f"{type(e).__name__}: {e}", True
-                emit(AgentStep("tool_result", block.name, content, is_error))
+                    content, is_error = by_name[call["name"]].run(call["input"]), False
+                except Exception as e:  # report tool errors back to the model instead of crashing
+                    content, is_error = f"ERROR {type(e).__name__}: {e}", True
+                emit(AgentStep("tool_result", call["name"], content, is_error))
+                # no "status": "error" field, since only some models accept it
                 tool_results.append(
-                    {
-                        "type": "tool_result",
-                        "tool_use_id": block.id,
-                        "content": content,
-                        "is_error": is_error,
-                    }
+                    {"toolResult": {"toolUseId": call["toolUseId"], "content": [{"text": content}]}}
                 )
             params["messages"] = [*params["messages"], {"role": "user", "content": tool_results}]
 
@@ -278,17 +343,93 @@ class LLM:
     # -- internals ------------------------------------------------------------
 
     def _params(self, prompt, system, fast, model, max_tokens, effort) -> dict[str, Any]:
-        messages = [{"role": "user", "content": prompt}] if isinstance(prompt, str) else prompt
+        model_id = model or (self.cfg.llm_model_fast if fast else self.cfg.llm_model)
         params: dict[str, Any] = {
-            "model": model or (self.cfg.llm_model_fast if fast else self.cfg.llm_model),
-            "max_tokens": max_tokens or self.cfg.llm_max_tokens,
-            "messages": messages,
+            "modelId": model_id,
+            "messages": _messages(prompt),
+            "inferenceConfig": {"maxTokens": self._cap(model_id, max_tokens)},
         }
         if system:
-            params["system"] = system
-        if effort:
-            params["output_config"] = {"effort": effort}
+            params["system"] = [{"text": system}]
+        if effort and (extra := _effort_fields(model_id, effort)):
+            params["additionalModelRequestFields"] = extra
         return params
+
+    def _cap(self, model_id: str, max_tokens: int | None) -> int:
+        wanted = max_tokens or self.cfg.llm_max_tokens
+        return min(wanted, self._max_tokens.get(model_id, wanted))
+
+    def _converse(self, method: Callable[..., Any], params: dict[str, Any]) -> Any:
+        """Call Bedrock; if maxTokens is above this model's limit, retry at the limit."""
+        try:
+            return method(**params)
+        except ClientError as e:
+            limit = re.search(r"model limit of (\d+)", e.response["Error"]["Message"])
+            if not limit:
+                raise
+            self._max_tokens[params["modelId"]] = int(limit.group(1))
+            config = {**params["inferenceConfig"], "maxTokens": int(limit.group(1))}
+            return method(**{**params, "inferenceConfig": config})
+
+    def _extract_call(
+        self, params: dict[str, Any], schema: type[BaseModel], mode: str, label: str
+    ) -> tuple[dict[str, Any], Result]:
+        """Returns the params actually sent (needed for the retry) and the result."""
+        params = dict(params)
+        if mode == "json":
+            instructions = (
+                "Answer with only a JSON object matching this JSON schema, no other text:\n"
+                + json.dumps(_json_schema(schema))
+            )
+            prior = params.get("system", [])
+            params["system"] = [*prior, {"text": instructions}]
+        else:
+            respond = {
+                "toolSpec": {
+                    "name": RESPOND_TOOL,
+                    "description": "Return the final answer in this exact structure.",
+                    "inputSchema": {"json": _json_schema(schema)},
+                }
+            }
+            choice = {"tool": {"name": RESPOND_TOOL}} if mode == "tool" else {"any": {}}
+            params["toolConfig"] = {"tools": [respond], "toolChoice": choice}
+        return params, self._create(params, label, schema=schema)
+
+    def _validate[T: BaseModel](
+        self, sent: dict[str, Any], schema: type[T], label: str, result: Result
+    ) -> tuple[T, Result]:
+        for attempt in range(2):
+            reply = result.reply
+            try:
+                call = next((c for c in reply.tool_calls if c["name"] == RESPOND_TOOL), None)
+                data = call["input"] if call else _parse_json(reply.text)
+                return schema.model_validate(data), result
+            except (ValidationError, ValueError) as e:
+                if attempt == 1:
+                    raise
+                # show the model its mistake and ask again
+                feedback = f"That answer was invalid: {e}. Try again, fixing these errors."
+                if call:
+                    user = [
+                        {
+                            "toolResult": {
+                                "toolUseId": call["toolUseId"],
+                                "content": [{"text": feedback}],
+                            }
+                        }
+                    ]
+                else:
+                    user = [{"text": feedback}]
+                sent = {
+                    **sent,
+                    "messages": [
+                        *sent["messages"],
+                        {"role": "assistant", "content": reply.content},
+                        {"role": "user", "content": user},
+                    ],
+                }
+                result = self._create(sent, f"{label}:retry", schema=schema)
+        raise AssertionError("unreachable")
 
     def _cache_path(self, params: dict[str, Any], schema: type[BaseModel] | None) -> Path | None:
         if self.cfg.llm_cache != "on":
@@ -297,24 +438,23 @@ class LLM:
         digest = hashlib.sha256(key.encode()).hexdigest()[:24]
         return Path(self.cfg.llm_cache_dir) / f"{digest}.json"
 
-    def _finish(self, message: Message, label: str, started: float, cached: bool) -> Result:
-        u = message.usage
+    def _finish(self, reply: Reply, label: str, started: float, cached: bool) -> Result:
         stats = CallStats(
-            model=message.model,
+            model=reply.model,
             label=label,
-            input_tokens=u.input_tokens,
-            output_tokens=u.output_tokens,
-            cache_read_tokens=u.cache_read_input_tokens or 0,
-            cache_write_tokens=u.cache_creation_input_tokens or 0,
+            input_tokens=reply.input_tokens,
+            output_tokens=reply.output_tokens,
+            cache_read_tokens=reply.cache_read_tokens,
+            cache_write_tokens=reply.cache_write_tokens,
             latency_ms=round((time.perf_counter() - started) * 1000, 1),
             cached=cached,
-            stop_reason=message.stop_reason,
+            stop_reason=reply.stop_reason,
         )
         stats.cost_usd = (
             None
             if cached
             else cost_usd(
-                message.model,
+                reply.model,
                 stats.input_tokens,
                 stats.output_tokens,
                 stats.cache_read_tokens,
@@ -322,7 +462,12 @@ class LLM:
             )
         )
         telemetry.record(stats)
-        return Result(text=_text(message), stats=stats, message=message)
+        return Result(text=reply.text, stats=stats, reply=reply)
+
+    def _save(self, path: Path | None, reply: Reply) -> None:
+        if path:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(reply.model_dump_json())
 
     def _create(
         self,
@@ -334,19 +479,17 @@ class LLM:
         started = time.perf_counter()
         path = self._cache_path(params, schema)
         if path and path.exists():
-            return self._finish(Message.model_validate_json(path.read_text()), label, started, True)
+            return self._finish(Reply.model_validate_json(path.read_text()), label, started, True)
 
         if self.cfg.llm_provider == "fake":
-            message = fake_message(params, schema, tools, self.cfg.fake_latency)
-        elif schema is not None:
-            message = self.client.messages.parse(**params, output_format=schema)
+            reply = fake_reply(params, schema, tools, self.cfg.fake_latency)
         else:
-            message = self.client.messages.create(**params)
+            reply = Reply.from_converse(
+                params["modelId"], self._converse(self.client.converse, params)
+            )
 
-        if path:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(Message.model_validate(message.model_dump()).model_dump_json())
-        return self._finish(message, label, started, False)
+        self._save(path, reply)
+        return self._finish(reply, label, started, False)
 
     def _stream(self, params: dict[str, Any], label: str):
         path = self._cache_path(params, None)
@@ -358,13 +501,28 @@ class LLM:
             return result
 
         started = time.perf_counter()
-        with self.client.messages.stream(**params) as s:
-            yield from s.text_stream
-            message = s.get_final_message()
-        if path:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(message.model_dump_json())
-        return self._finish(message, label, started, False)
+        chunks: list[str] = []
+        stop_reason, usage = None, {}
+        for event in self._converse(self.client.converse_stream, params)["stream"]:
+            if text := event.get("contentBlockDelta", {}).get("delta", {}).get("text"):
+                chunks.append(text)
+                yield text
+            elif "messageStop" in event:
+                stop_reason = event["messageStop"]["stopReason"]
+            elif "metadata" in event:
+                usage = event["metadata"].get("usage", {})
+        reply = Reply.from_converse(
+            params["modelId"],
+            {
+                "output": {
+                    "message": {"role": "assistant", "content": [{"text": "".join(chunks)}]}
+                },
+                "stopReason": stop_reason,
+                "usage": usage,
+            },
+        )
+        self._save(path, reply)
+        return self._finish(reply, label, started, False)
 
 
 @lru_cache

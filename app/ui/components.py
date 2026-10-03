@@ -4,7 +4,6 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import asdict
 
-import anthropic
 import botocore.exceptions
 import pandas as pd
 import streamlit as st
@@ -67,7 +66,7 @@ def sidebar() -> None:
         if st.button("Reset counters", width="stretch"):
             telemetry.reset()
             st.rerun()
-        mode = "FAKE" if settings.llm_provider == "fake" else settings.bedrock_client
+        mode = "FAKE" if settings.llm_provider == "fake" else "bedrock"
         st.caption(f"`{settings.llm_model}` · {settings.aws_region} · {mode}")
         if settings.llm_cache == "on":
             st.caption(":material/save: disk cache on")
@@ -84,15 +83,28 @@ def llm_errors() -> Iterator[None]:
         yield
     except botocore.exceptions.NoCredentialsError:
         st.error("No AWS credentials. Fill `.env` (see `.env.example`) or set `AWS_PROFILE`.")
-    except (botocore.exceptions.ClientError, botocore.exceptions.TokenRetrievalError) as e:
+    except botocore.exceptions.ClientError as e:
+        code = e.response["Error"]["Code"]
+        if code == "AccessDeniedException":
+            st.error(f"Access denied for `{settings.llm_model}`. Run `scripts/check_env.py`. {e}")
+        elif "unsupported countries" in str(e):
+            st.error(
+                f"`{settings.llm_model}`'s provider is geo-blocked for us. Pick another model."
+            )
+        elif code in ("ResourceNotFoundException", "ValidationException"):
+            st.error(f"Model rejected the request: `{settings.llm_model}`. Run `check_env`. {e}")
+        elif code in ("ThrottlingException", "ServiceQuotaExceededException"):
+            if "per day" in str(e):
+                st.error(
+                    "Daily Bedrock token quota used up. Switch model or turn on `LLM_CACHE=on`."
+                )
+            else:
+                st.error("Throttled by Bedrock. Wait a few seconds, use `fast`, or `LLM_CACHE=on`.")
+        else:
+            st.error(f"AWS error: {e}")
+    except botocore.exceptions.TokenRetrievalError as e:
         st.error(f"AWS error: {e}")
-    except anthropic.PermissionDeniedError as e:
-        st.error(f"Access denied for `{settings.llm_model}`. Run `scripts/check_env.py`. {e}")
-    except anthropic.NotFoundError as e:
-        st.error(f"Model not found: `{settings.llm_model}`. Run `scripts/check_env.py`. {e}")
-    except anthropic.RateLimitError:
-        st.error("Throttled by Bedrock. Wait a few seconds, use `fast` model, or `LLM_CACHE=on`.")
-    except anthropic.APIConnectionError:
+    except (botocore.exceptions.EndpointConnectionError, botocore.exceptions.ReadTimeoutError):
         st.error("Network error. Check wifi or switch on `LLM_CACHE=on` to replay cached answers.")
     except RuntimeError as e:
         if "credential" not in str(e).lower():
