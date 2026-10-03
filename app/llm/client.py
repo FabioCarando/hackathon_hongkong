@@ -1,9 +1,10 @@
-"""Thin wrapper over any text model on Amazon Bedrock, via the model-agnostic Converse API.
+"""Thin wrapper over any text model on OpenRouter (default) or Amazon Bedrock.
 
-Switch model with `LLM_MODEL` / `LLM_MODEL_FAST` (Nova, Llama, Mistral, DeepSeek, Qwen, gpt-oss,
-Claude...): the code below doesn't change. Every call goes through `LLM._create`, which handles the
-disk cache, the fake provider, latency/cost measurement and logging. Product code should only use
-the public methods:
+Internally everything is Bedrock Converse-shaped (params, content blocks, `Reply`); the OpenRouter
+adapter (`openrouter.py`) translates at the boundary. Switch model with `LLM_MODEL` /
+`LLM_MODEL_FAST` and provider with `LLM_PROVIDER`: the code below doesn't change. Every call goes
+through `LLM._create`, which handles the disk cache, the fake provider, latency/cost measurement
+and logging. Product code should only use the public methods:
 
     llm = get_llm()
     llm.complete("Summarise this ...")                  -> Result
@@ -24,13 +25,10 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-import boto3
-from botocore.config import Config
-from botocore.exceptions import ClientError
 from pydantic import BaseModel, ValidationError, create_model
 
 from app.config import Settings, settings
-from app.llm import telemetry
+from app.llm import openrouter, telemetry
 from app.llm.fake import fake_reply
 from app.llm.pricing import base_model, cost_usd
 from app.llm.reply import Reply
@@ -43,7 +41,7 @@ RESPOND_TOOL = "respond"  # the tool `extract` forces the model to call with its
 
 
 def _inline_refs(schema: dict[str, Any]) -> dict[str, Any]:
-    """Pydantic emits `$defs` + `$ref`; not every Bedrock model resolves them, so inline them."""
+    """Pydantic emits `$defs` + `$ref`; not every model resolves them, so inline them."""
     defs = schema.pop("$defs", {})
 
     def walk(node: Any) -> Any:
@@ -184,14 +182,37 @@ def _messages(prompt: Prompt) -> list[dict[str, Any]]:
     ]
 
 
-def _effort_fields(model_id: str, effort: str) -> dict[str, Any]:
-    """Reasoning effort has no portable Converse field; map it for models known to accept one."""
+def _effort_fields(provider: str, model_id: str, effort: str) -> dict[str, Any]:
+    """Reasoning effort has no portable Converse field; map it per provider / model."""
+    if provider == "openrouter":
+        return {"reasoning": {"effort": effort}}  # OpenRouter maps it to each model's own knob
     name = base_model(model_id)
     if name.startswith("openai.gpt-oss"):
         return {"reasoning_effort": effort}
     if name.startswith("amazon.nova-2"):
         return {"reasoningConfig": {"type": "enabled", "maxReasoningEffort": effort}}
     return {}  # other models: ignored
+
+
+def _rejection(e: Exception) -> str | None:
+    """The message of a provider's "this request is invalid" error, else None."""
+    resp = getattr(e, "response", None)
+    if isinstance(resp, dict) and resp.get("Error", {}).get("Code") == "ValidationException":
+        return resp["Error"]["Message"]  # botocore ClientError, matched without importing botocore
+    return openrouter.rejection(e)
+
+
+def _tool_unsupported(e: Exception) -> bool:
+    """Model/provider can't do tools or this tool_choice (OpenRouter: "No endpoints found ...")."""
+    msg = (_rejection(e) or "").lower()
+    return "tool" in msg or "requested parameters" in msg
+
+
+def _token_limit(e: Exception) -> int | None:
+    """The model's output-token limit, if `e` says we asked for more than it."""
+    msg = _rejection(e) or ""
+    match = re.search(r"(?:model limit of|at most|less than or equal to) `?(\d+)", msg)
+    return int(match.group(1)) if match and "token" in msg.lower() else None
 
 
 def _parse_json(text: str) -> Any:
@@ -206,12 +227,17 @@ class LLM:
         self._client = None
         # extract strategy that worked per model: "tool" | "any" | "json" (see `extract`)
         self._extract_mode: dict[str, str] = {}
-        # output-token limit per model, learned from Bedrock's error when we ask for more
+        # output-token limit per model, learned from the provider's error when we ask for more
         self._max_tokens: dict[str, int] = {}
 
     @property
     def client(self):
-        if self._client is None:
+        if self._client is None and self.cfg.llm_provider == "openrouter":
+            self._client = openrouter.client(self.cfg)
+        elif self._client is None:
+            import boto3  # lazy: only needed (and configured) for the Bedrock provider
+            from botocore.config import Config
+
             session = boto3.Session(
                 profile_name=self.cfg.aws_profile or None, region_name=self.cfg.aws_region
             )
@@ -261,10 +287,8 @@ class LLM:
         for i, mode in enumerate(modes):
             try:
                 sent, result = self._extract_call(params, schema, mode, label)
-            except ClientError as e:
-                err = e.response["Error"]
-                tool_problem = err["Code"] == "ValidationException" and "tool" in err["Message"]
-                if not tool_problem or i == len(modes) - 1:
+            except Exception as e:
+                if not _tool_unsupported(e) or i == len(modes) - 1:
                     raise
                 continue  # this model doesn't support `mode`; try the next one
             self._extract_mode[model_id] = mode
@@ -351,7 +375,7 @@ class LLM:
         }
         if system:
             params["system"] = [{"text": system}]
-        if effort and (extra := _effort_fields(model_id, effort)):
+        if effort and (extra := _effort_fields(self.cfg.llm_provider, model_id, effort)):
             params["additionalModelRequestFields"] = extra
         return params
 
@@ -359,17 +383,23 @@ class LLM:
         wanted = max_tokens or self.cfg.llm_max_tokens
         return min(wanted, self._max_tokens.get(model_id, wanted))
 
-    def _converse(self, method: Callable[..., Any], params: dict[str, Any]) -> Any:
-        """Call Bedrock; if maxTokens is above this model's limit, retry at the limit."""
+    def _send(self, params: dict[str, Any], stream: bool) -> Any:
+        if self.cfg.llm_provider == "openrouter":
+            return openrouter.create(self.client, params, stream)
+        method = self.client.converse_stream if stream else self.client.converse
+        return method(**params)
+
+    def _converse(self, params: dict[str, Any], stream: bool = False) -> Any:
+        """Call the provider; if maxTokens is above this model's limit, retry at the limit."""
         try:
-            return method(**params)
-        except ClientError as e:
-            limit = re.search(r"model limit of (\d+)", e.response["Error"]["Message"])
-            if not limit:
+            return self._send(params, stream)
+        except Exception as e:
+            limit = _token_limit(e)
+            if limit is None:
                 raise
-            self._max_tokens[params["modelId"]] = int(limit.group(1))
-            config = {**params["inferenceConfig"], "maxTokens": int(limit.group(1))}
-            return method(**{**params, "inferenceConfig": config})
+            self._max_tokens[params["modelId"]] = limit
+            config = {**params["inferenceConfig"], "maxTokens": limit}
+            return self._send({**params, "inferenceConfig": config}, stream)
 
     def _extract_call(
         self, params: dict[str, Any], schema: type[BaseModel], mode: str, label: str
@@ -453,6 +483,8 @@ class LLM:
         stats.cost_usd = (
             None
             if cached
+            else reply.cost_usd
+            if reply.cost_usd is not None
             else cost_usd(
                 reply.model,
                 stats.input_tokens,
@@ -483,10 +515,10 @@ class LLM:
 
         if self.cfg.llm_provider == "fake":
             reply = fake_reply(params, schema, tools, self.cfg.fake_latency)
+        elif self.cfg.llm_provider == "openrouter":
+            reply = openrouter.to_reply(params["modelId"], self._converse(params))
         else:
-            reply = Reply.from_converse(
-                params["modelId"], self._converse(self.client.converse, params)
-            )
+            reply = Reply.from_converse(params["modelId"], self._converse(params))
 
         self._save(path, reply)
         return self._finish(reply, label, started, False)
@@ -501,9 +533,18 @@ class LLM:
             return result
 
         started = time.perf_counter()
+        if self.cfg.llm_provider == "openrouter":
+            chunks = self._converse(params, stream=True)
+            reply = yield from openrouter.stream_reply(params["modelId"], chunks)
+        else:
+            reply = yield from self._bedrock_stream(params)
+        self._save(path, reply)
+        return self._finish(reply, label, started, False)
+
+    def _bedrock_stream(self, params: dict[str, Any]):
         chunks: list[str] = []
         stop_reason, usage = None, {}
-        for event in self._converse(self.client.converse_stream, params)["stream"]:
+        for event in self._converse(params, stream=True)["stream"]:
             if text := event.get("contentBlockDelta", {}).get("delta", {}).get("text"):
                 chunks.append(text)
                 yield text
@@ -511,7 +552,7 @@ class LLM:
                 stop_reason = event["messageStop"]["stopReason"]
             elif "metadata" in event:
                 usage = event["metadata"].get("usage", {})
-        reply = Reply.from_converse(
+        return Reply.from_converse(
             params["modelId"],
             {
                 "output": {
@@ -521,8 +562,6 @@ class LLM:
                 "usage": usage,
             },
         )
-        self._save(path, reply)
-        return self._finish(reply, label, started, False)
 
 
 @lru_cache

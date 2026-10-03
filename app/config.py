@@ -17,14 +17,20 @@ for _k, _v in dotenv_values(".env").items():
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    openrouter_api_key: str | None = None
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    openrouter_app_name: str | None = None  # sent as X-Title: shows in OpenRouter's usage pages
+
+    # bedrock only
     aws_region: str = "us-west-2"
     aws_profile: str | None = None
 
-    llm_provider: Literal["bedrock", "fake"] = "bedrock"
-    # Any Bedrock model or inference-profile ID; run scripts/check_env.py to see what's available
-    llm_model: str = "us.amazon.nova-pro-v1:0"
-    llm_model_fast: str = "us.amazon.nova-lite-v1:0"
-    llm_max_tokens: int = 4096  # Bedrock reserves this against your token quota per call
+    llm_provider: Literal["openrouter", "bedrock", "fake"] = "openrouter"
+    # A model ID for the provider: an OpenRouter slug (https://openrouter.ai/models), or a Bedrock
+    # model / inference-profile ID. Run scripts/check_env.py to see what works.
+    llm_model: str = "openai/gpt-oss-120b"
+    llm_model_fast: str = "openai/gpt-oss-20b"
+    llm_max_tokens: int = 4096  # reserved against your credits (OpenRouter) / quota (Bedrock)
     llm_cache: Literal["off", "on"] = "off"
     llm_log_path: str = "logs/llm_calls.jsonl"
     llm_cache_dir: str = ".llm_cache"

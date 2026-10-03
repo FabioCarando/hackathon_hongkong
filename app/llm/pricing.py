@@ -1,5 +1,6 @@
 """USD per million tokens, Bedrock on-demand prices (US regions). Prices vary by region and change
-over time, so treat these as estimates and check https://aws.amazon.com/bedrock/pricing/."""
+over time, so treat these as estimates and check https://aws.amazon.com/bedrock/pricing/.
+OpenRouter reports the real cost of each call, so this is only its fallback (and the fake's)."""
 
 import re
 
@@ -27,8 +28,12 @@ _GEO_PREFIX = re.compile(r"^(us|eu|apac|au|ca|jp|us-gov|global)\.")
 
 def base_model(model_id: str) -> str:
     """'us.amazon.nova-pro-v1:0' -> 'amazon.nova-pro';
-    'anthropic.claude-haiku-4-5-20251001-v1:0' -> 'anthropic.claude-haiku-4-5'."""
-    name = model_id.rsplit("/", 1)[-1]  # inference-profile ARNs
+    'anthropic.claude-haiku-4-5-20251001-v1:0' -> 'anthropic.claude-haiku-4-5';
+    OpenRouter 'openai/gpt-oss-120b:free' -> 'openai.gpt-oss-120b'."""
+    if model_id.startswith("arn:"):
+        name = model_id.rsplit("/", 1)[-1]  # inference-profile ARNs
+    else:
+        name = re.sub(r":[a-z]+$", "", model_id.replace("/", ".", 1))  # slug + variant
     name = _GEO_PREFIX.sub("", name)
     name = re.sub(r"-v\d+(:\d+)?$", "", name)
     name = re.sub(r"-\d{8}$", "", name)

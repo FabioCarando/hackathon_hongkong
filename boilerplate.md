@@ -11,11 +11,11 @@ Everything here is idea-agnostic: it works whatever we end up building.
 | Piece | Where | What it gives you |
 |---|---|---|
 | Reproducible environment | `pyproject.toml`, `uv.lock`, `.python-version` | The same Python 3.12 and package versions on every laptop, set up with one command |
-| LLM wrapper | `app/llm/` | One small API to call any text model on Amazon Bedrock (Nova, Llama, Mistral, DeepSeek, Qwen, gpt-oss...): plain text, streaming, structured (pydantic) output and tool-using agents |
-| Cost and latency tracking | `app/llm/telemetry.py`, `app/llm/pricing.py` | Every call records latency, tokens and estimated USD cost, both in memory and in `logs/llm_calls.jsonl` |
-| Simulated model | `app/llm/fake.py` | Develop and test with no AWS account, no network and no cost |
+| LLM wrapper | `app/llm/` | One small API to call any text model on OpenRouter (gpt-oss, Qwen, Llama, DeepSeek, Mistral...) or, alternatively, Amazon Bedrock: plain text, streaming, structured (pydantic) output and tool-using agents |
+| Cost and latency tracking | `app/llm/telemetry.py`, `app/llm/pricing.py` | Every call records latency, tokens and USD cost (real, from OpenRouter), both in memory and in `logs/llm_calls.jsonl` |
+| Simulated model | `app/llm/fake.py` | Develop and test with no API key, no network and no cost |
 | Disk cache | built into the wrapper | A repeated request is answered from disk: free, instant, and it works if the venue wifi dies |
-| Environment check | `scripts/check_env.py` | At kickoff, tells us in one minute which AWS account, region and models we can actually use, and which of them handle tool use and structured output |
+| Environment check | `scripts/check_env.py` | At kickoff, tells us in one minute whether the API key works, how much credit is left, and which models handle tool use and structured output |
 | Quality gates | `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `tests/` | Auto-formatting, a lockfile check and smoke tests, so `main` doesn't break |
 | Demo UI | `streamlit_app.py`, `app/ui/` | A reference Streamlit app that shows the boilerplate working. It isn't meant to be our product |
 
@@ -41,11 +41,11 @@ You don't need to install Python yourself, because uv downloads 3.12 if it's mis
 ```bash
 uv run streamlit run streamlit_app.py      # demo UI on http://localhost:8501
 uv run pytest -q                           # tests (offline, ~1s)
-uv run python scripts/check_env.py         # check AWS + Bedrock access
+uv run python scripts/check_env.py         # check OpenRouter key + models
 uv run python some_script.py               # run any script inside the env
 ```
 
-**No AWS credentials yet?** Put `LLM_PROVIDER=fake` in `.env`, or prefix any command with it:
+**No API key yet?** Put `LLM_PROVIDER=fake` in `.env`, or prefix any command with it:
 
 ```bash
 LLM_PROVIDER=fake uv run streamlit run streamlit_app.py
@@ -58,7 +58,7 @@ LLM_PROVIDER=fake uv run streamlit run streamlit_app.py
 ```
 app/
   config.py          settings, read from .env / environment variables
-  llm/               Bedrock LLM wrapper (client, reply, fake simulator, pricing, telemetry)
+  llm/               LLM wrapper (client, OpenRouter adapter, reply, fake simulator, pricing, telemetry)
   core/              ← product / domain logic goes here
   data/              ← data loading, simulators, datasets go here
   ui/                Streamlit components and pages
@@ -72,7 +72,7 @@ streamlit_app.py     Streamlit entry point
 
 | Owner | Area |
 |---|---|
-| A | `app/llm/`, prompts and agents, AWS, **the environment** (`pyproject.toml` / `uv.lock`) |
+| A | `app/llm/`, prompts and agents, API keys, **the environment** (`pyproject.toml` / `uv.lock`) |
 | B | `app/core/`, `app/data/`: domain logic, data, simulators |
 | C | UI and demo flow, pitch, backup video |
 
@@ -87,7 +87,7 @@ Most environments break because `pyproject.toml`, `uv.lock` and someone's local 
 1. **Always run things with `uv run ...`.** Before running, it syncs `.venv` to `uv.lock`. After a `git pull` that changed dependencies, your environment updates itself, and there is nothing to remember.
 2. **Never `pip install`.** Anything installed that way is invisible to everyone else and gets wiped on the next sync.
 3. **Only the environment owner adds or removes dependencies**, with `uv add <pkg>` / `uv remove <pkg>`, in a small PR on its own. Ask them; don't edit `pyproject.toml` yourself.
-4. **Most of what we might need is already installed:** `boto3`, `streamlit`, `pydantic`, `pandas`, `numpy`, `plotly`, `scikit-learn`, `networkx`, `faker`, `pyyaml`, `python-dotenv`. Check before asking for something new.
+4. **Most of what we might need is already installed:** `openai` (OpenRouter client), `boto3`, `streamlit`, `pydantic`, `pandas`, `numpy`, `plotly`, `scikit-learn`, `networkx`, `faker`, `pyyaml`, `python-dotenv`. Check before asking for something new.
 5. **Never edit `uv.lock` by hand.** If it has a merge conflict, run:
    ```bash
    git checkout --theirs uv.lock && uv lock
@@ -107,16 +107,17 @@ Everything is configured through environment variables. Copy `.env.example` to `
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `AWS_PROFILE` | – | Use a named profile from `~/.aws/config` (SSO or keys) |
-| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN` | – | Or paste the temporary credentials the organisers give us |
-| `AWS_REGION` | `us-west-2` | Bedrock region. Use whatever the organisers' account is set up for |
-| `LLM_PROVIDER` | `bedrock` | `bedrock` = real calls; `fake` = simulated model (section 8) |
-| `LLM_MODEL` | `us.amazon.nova-pro-v1:0` | Main model. Any Bedrock model or inference-profile ID; switching model is just this line |
-| `LLM_MODEL_FAST` | `us.amazon.nova-lite-v1:0` | Cheaper and faster model, used when you pass `fast=True` |
-| `LLM_MAX_TOKENS` | `4096` | Default output cap per call. Bedrock reserves this much quota per request, so keep it modest. Automatically clamped to the model's limit |
+| `LLM_PROVIDER` | `openrouter` | `openrouter` = real calls; `bedrock` = Amazon Bedrock (section 9.1); `fake` = simulated model (section 8) |
+| `OPENROUTER_API_KEY` | – | Create one at <https://openrouter.ai/settings/keys>. Needs credits, unless you only use `:free` model slugs |
+| `OPENROUTER_APP_NAME` | – | Optional. Shown as the app name in OpenRouter's activity pages |
+| `OPENROUTER_BASE_URL` | `https://openrouter.ai/api/v1` | Rarely changed |
+| `LLM_MODEL` | `openai/gpt-oss-120b` | Main model. Any slug from <https://openrouter.ai/models> (or a Bedrock ID when `LLM_PROVIDER=bedrock`); switching model is just this line |
+| `LLM_MODEL_FAST` | `openai/gpt-oss-20b` | Cheaper and faster model, used when you pass `fast=True` |
+| `LLM_MAX_TOKENS` | `4096` | Default output cap per call. OpenRouter checks your remaining credit against it (402 if it's more than you can afford), so keep it modest. Automatically clamped to the model's limit when the provider reports one |
 | `LLM_CACHE` | `off` | `on` = read-through disk cache (section 7) |
 | `LLM_CACHE_DIR` | `.llm_cache` | Where cached answers live. Point it at a committed folder to share a demo cache with the team |
 | `FAKE_LATENCY` | `1` | Fake provider only: `0` = instant, `1` = roughly real model speed |
+| `AWS_PROFILE` / `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN` / `AWS_REGION` | – / – / `us-west-2` | Bedrock only (section 9.1) |
 
 In code, read settings from `app.config.settings` (for example `settings.llm_model`). Never call `os.getenv` directly.
 
@@ -124,7 +125,7 @@ In code, read settings from `app.config.settings` (for example `settings.llm_mod
 
 ## 6. Calling the LLM: the wrapper
 
-All product code talks to the model through one object. Under the hood it uses Bedrock's **Converse API**, which is the same for every model on Bedrock, so changing `LLM_MODEL` is all it takes to switch provider:
+All product code talks to the model through one object. Under the hood it calls OpenRouter's OpenAI-compatible API (or Bedrock's Converse API), translated to one internal format, so changing `LLM_MODEL` is all it takes to switch model, and `LLM_PROVIDER` to switch provider:
 
 ```python
 from app.llm import get_llm
@@ -140,7 +141,7 @@ There are four methods. Each one takes a prompt, which is either a string or a l
 | `fast=True` | Use `LLM_MODEL_FAST` instead of `LLM_MODEL` |
 | `model="..."` | Override the model ID for this call |
 | `max_tokens=...` | Override the output cap (not on `extract`) |
-| `effort="low" \| "medium" \| "high"` | How hard the model thinks, for reasoning models that support it (currently mapped for gpt-oss and Nova 2). Ignored on other models. Not on `extract` |
+| `effort="low" \| "medium" \| "high"` | How hard the model thinks, for reasoning models. On OpenRouter it's sent as `reasoning.effort`, which OpenRouter maps per model; on Bedrock only gpt-oss and Nova 2 are mapped. Not on `extract` |
 | `label="triage"` | Tag shown in the call log, so you can tell calls apart |
 
 ### 6.1 `complete`: plain text
@@ -149,7 +150,7 @@ There are four methods. Each one takes a prompt, which is either a string or a l
 r = llm.complete("Summarise this client's activity: ...", system="You are an AML analyst.")
 r.text          # the answer
 r.stats         # latency_ms, input_tokens, output_tokens, cost_usd, model, cached, ...
-r.reply         # the raw Reply (Converse content blocks, stop_reason, usage)
+r.reply         # the raw Reply (Converse-style content blocks, stop_reason, usage)
 ```
 
 ### 6.2 `extract`: structured output (use this most)
@@ -172,7 +173,7 @@ r.stats.cost_usd     # 0.0021
 
 `Field(description=...)` text is sent to the model, so use it to explain what each field should contain.
 
-How it works: the schema is sent as a tool the model is forced to call. Models that can't force a specific tool fall back to "call any tool", then to "reply with JSON". The mode that works is remembered per model, and if the answer fails validation the error is sent back for one retry. Smaller models are much less reliable here, so check `extract` passes in `check_env` before relying on a model.
+How it works: the schema is sent as a tool the model is forced to call. Models that can't force a specific tool fall back to "call any tool", then to "reply with JSON" (on OpenRouter, a model with no provider that supports tools gives a "No endpoints found" error, which triggers the same fallback). The mode that works is remembered per model, and if the answer fails validation the error is sent back for one retry. Smaller models are much less reliable here, so check `extract` passes in `check_env` before relying on a model.
 
 ### 6.3 `stream`: text that appears as it's generated
 
@@ -223,7 +224,8 @@ How it behaves:
 
 ### 6.5 Choosing a model
 
-- Pick models from what `check_env` shows passing **ping, tool use and extract**. Non-Claude models vary a lot at tool calling and structured output.
+- Pick models from what `check_env` shows passing **ping, tool use and extract**. Open-weight models vary a lot at tool calling and structured output.
+- When tools are sent, we ask OpenRouter to route only to upstream providers that support them (`provider.require_parameters`), so a model can work for `complete` but fail for `run_agent` with "No endpoints found".
 - Use `fast=True` (`LLM_MODEL_FAST`) for simple, high-volume or latency-sensitive steps: classification, short extraction, pings.
 - You can mix models: pass `model="..."` per call, for example a strong model for `run_agent` and a cheap one for bulk `extract`.
 
@@ -241,7 +243,7 @@ Each record holds the model, label, input/output tokens, cache tokens, latency i
 
 **Why it matters for the pitch:** judges score industry impact. A line like "triaging one alert costs $0.002 and takes 3 seconds, versus 40 minutes of analyst time" is far more convincing with real numbers, and the call log gives us those numbers for free.
 
-Costs are **estimates** based on Bedrock on-demand prices (US regions) in `app/llm/pricing.py`. Other regions and newer models can differ. Add a model to `PRICES` there if it shows `n/a`.
+On OpenRouter, the cost is the **real** amount charged, reported in each response. On Bedrock (and for the fake provider) costs are **estimates** from on-demand US prices in `app/llm/pricing.py`; add a model to `PRICES` there if it shows `n/a`.
 
 ### Disk cache (`LLM_CACHE=on`)
 
@@ -253,9 +255,9 @@ Costs are **estimates** based on Bedrock on-demand prices (US regions) in `app/l
 
 ---
 
-## 8. Working without AWS: the fake provider
+## 8. Working offline: the fake provider
 
-`LLM_PROVIDER=fake` swaps Bedrock for a local simulator (`app/llm/fake.py`). It's meant for UI work, offline development, tests, or when Bedrock is slow or throttled.
+`LLM_PROVIDER=fake` swaps the real provider for a local simulator (`app/llm/fake.py`). It's meant for UI work, offline development, tests, or when the provider is slow, rate-limited or out of credits.
 
 | Method | What the simulator does |
 |---|---|
@@ -274,30 +276,44 @@ Fake answers are obviously fake (they say "Simulated answer"), so you can't mist
 
 ## 9. Kickoff checklist (Sunday morning)
 
-1. Put the organisers' AWS credentials in `.env`, either a profile or the three key variables, plus the region.
+1. Put `OPENROUTER_API_KEY` in `.env` (check the key has credits).
 2. Run:
    ```bash
    uv run python scripts/check_env.py
    ```
    It checks, in order:
-   - **AWS identity:** whether the credentials work.
-   - **Text models and inference profiles:** which model IDs this account can use in this region.
+   - **API key:** whether it works, how much it has spent and how much credit is left.
+   - **Models:** whether `LLM_MODEL` and `LLM_MODEL_FAST` are real OpenRouter slugs, and whether any of their providers support tools.
    - **For `LLM_MODEL` and `LLM_MODEL_FAST`: a ping, a tool call and an `extract`:** whether real calls work end to end, and whether the model handles tools and structured output.
 3. If something fails:
 
 | Symptom | Fix |
 |---|---|
-| `NoCredentialsError` / "Could not resolve AWS credentials" | `.env` isn't filled in, or the profile name is wrong |
-| `ValidationException` / invalid model ID | Choose an ID from the lists the script prints, and set `LLM_MODEL` / `LLM_MODEL_FAST` |
-| "on-demand throughput isn't supported" | Use the inference profile ID (for example `us.amazon.nova-pro-v1:0`) in place of the bare model ID |
+| `OPENROUTER_API_KEY is not set` | Fill in `.env` |
+| 401 / "rejected the API key" | Key mistyped or revoked; create a new one |
+| 402 / "insufficient credits" | Top up at <https://openrouter.ai/settings/credits>, or lower `LLM_MAX_TOKENS` (OpenRouter refuses requests whose max output it can't afford) |
+| "is not an OpenRouter model slug" / "not a valid model ID" | Copy the exact slug from <https://openrouter.ai/models> into `LLM_MODEL` / `LLM_MODEL_FAST` |
+| 404 "No endpoints found that support tool use" (or "...requested parameters") | No provider of that model supports tools / `tool_choice`. `extract` falls back to JSON by itself; for `run_agent`, pick another model |
 | Tool use or extract fails for a model | Use a different model for that job (`model=...` on the call) |
-| "Access to Anthropic/OpenAI models is not allowed from unsupported countries" | Bedrock geo-blocks these providers for us; use Nova, Llama, gpt-oss, DeepSeek, Mistral or Qwen |
-| `AccessDeniedException` | The account lacks Bedrock permissions or model access, so ask the organisers |
-| `ThrottlingException` ("Too many tokens per day" = daily quota exhausted or 0) | Use `fast=True` for bulk calls, turn on the cache, and ask organisers about quotas |
+| 429 rate limited | Wait, use `fast=True` for bulk calls, turn on the cache. `:free` models are heavily rate-limited |
+| 502 / 503 | That model's upstream providers are down; retry or switch model |
 
 The script exits with code 0 only when everything passes.
 
----
+### 9.1 Alternative: Amazon Bedrock
+
+Set `LLM_PROVIDER=bedrock`, AWS credentials (`AWS_PROFILE`, or the three `AWS_*` key variables) and `AWS_REGION`, and use Bedrock model or inference-profile IDs (for example `LLM_MODEL=us.amazon.nova-pro-v1:0`, `LLM_MODEL_FAST=us.amazon.nova-lite-v1:0`). `check_env.py` then checks the AWS identity and lists the text models and inference profiles the account can use.
+
+What we learned testing from Hong Kong (3 Oct), and why it's no longer the default:
+
+| Symptom | Fix |
+|---|---|
+| "Access to Anthropic/OpenAI models is not allowed from unsupported countries" | Bedrock geo-blocks these providers for us; use Nova, Llama, gpt-oss, DeepSeek, Mistral or Qwen |
+| `ThrottlingException` "Too many tokens per day" | New accounts have a daily quota of ~0. Request an increase in Service Quotas, or use the organisers' account |
+| `NoCredentialsError` / "Could not resolve AWS credentials" | `.env` isn't filled in, or the profile name is wrong |
+| `ValidationException` / invalid model ID | Choose an ID from the lists the script prints |
+| "on-demand throughput isn't supported" | Use the inference profile ID (for example `us.amazon.nova-pro-v1:0`) in place of the bare model ID |
+| `AccessDeniedException` | The account lacks Bedrock permissions or model access, so ask the organisers |
 
 ## 10. Quality gates
 
@@ -329,7 +345,7 @@ LLM_PROVIDER=fake uv run streamlit run streamlit_app.py
 
 | Page | Demonstrates |
 |---|---|
-| Overview | Settings in use, plus a one-click "Ping Bedrock" connection check |
+| Overview | Settings in use, plus a one-click "Ping model" connection check |
 | LLM playground | `stream` (text appearing live) and `extract` (pydantic output shown as a risk badge plus JSON) |
 | Agent demo | `run_agent` with two toy tools, with each tool call and result shown live |
 | Call log | Every call this session: a latency chart, total cost, and the full table |
@@ -339,7 +355,7 @@ Patterns worth reusing if we do build a Streamlit UI:
 - **`app/ui/components.py`:**
   - `stats_row(result)` shows latency, tokens, cost and model under any output.
   - `render_step(step)` draws agent steps.
-  - `with llm_errors():` turns AWS/Bedrock exceptions into readable messages instead of tracebacks. **Wrap every LLM call in a page with this.**
+  - `with llm_errors():` turns OpenRouter (and Bedrock) errors into readable messages instead of tracebacks. **Wrap every LLM call in a page with this.**
 - **Adding a page:** create `app/ui/views/my_page.py`, then add `st.Page("app/ui/views/my_page.py", title=..., icon=...)` to the navigation in `streamlit_app.py`.
 - **Theme:** `.streamlit/config.toml` sets a dark theme. Saving a file hot-reloads the page.
 
@@ -347,15 +363,12 @@ Patterns worth reusing if we do build a Streamlit UI:
 
 ## 12. Limitations and things to verify
 
-- **No successful live call yet.** The Converse code path is tested offline (request shapes validated against the boto3 schema, Bedrock stubbed in `tests/test_smoke.py`), and a live run on a personal account got as far as Bedrock's quota check. `check_env.py` confirms it on the day.
-- **Claude and OpenAI gpt-5.x are geo-blocked for us on Bedrock**; a new personal AWS account also has ~0 daily token quota for every model (section 9).
-- **Costs are estimates** at Bedrock US list prices (section 7).
-- **`effort` is mapped only for gpt-oss and Nova 2**, and those field names are unverified. Other models ignore it.
+- **The OpenRouter path is tested offline only so far.** `tests/test_smoke.py` runs the real `openai` SDK against a mocked HTTP layer (request/response translation, tools, `extract` fallback, streaming); the model slugs and error handling were checked against the live API, but no paid call has been made yet. `check_env.py` confirms it on the day.
+- **Bedrock** (section 9.1) is tested with stubbed responses; a live run on a personal account got as far as the daily-quota check.
+- **`effort`** is passed as OpenRouter's `reasoning.effort`; how (or whether) a given model honours it is up to OpenRouter's per-model mapping (Bedrock: only gpt-oss and Nova 2 are mapped).
 - **Telemetry is per process.** Restarting the app resets the in-memory totals, but the JSONL log keeps everything.
 - **`extract` doesn't take `effort` or `max_tokens` overrides.** Use `complete` plus your own parsing if you really need them.
 - **The cache matches exact requests only.** Changing one character in a prompt is a miss, which is by design.
-
----
 
 ## 13. Quick reference
 
@@ -378,7 +391,7 @@ def my_tool(arg: str) -> dict:
 uv sync                                          # set up / repair the environment
 uv run streamlit run streamlit_app.py            # demo UI
 uv run pytest -q                                 # tests
-uv run python scripts/check_env.py               # AWS + Bedrock check
+uv run python scripts/check_env.py               # OpenRouter key + models check
 uv add <pkg>                                     # environment owner only
 git checkout --theirs uv.lock && uv lock         # resolve a lockfile conflict
 ```

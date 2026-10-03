@@ -1,4 +1,4 @@
-"""One model response, in Bedrock Converse shape, independent of which model produced it."""
+"""One model response, in Bedrock Converse shape, independent of which provider/model produced it."""
 
 from typing import Any
 
@@ -15,6 +15,7 @@ class Reply(BaseModel):
     output_tokens: int = 0
     cache_read_tokens: int = 0
     cache_write_tokens: int = 0
+    cost_usd: float | None = None  # real cost when the provider reports it (OpenRouter)
 
     @property
     def text(self) -> str:
