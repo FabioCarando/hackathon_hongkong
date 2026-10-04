@@ -64,7 +64,8 @@ app/
   ui/                Streamlit components and pages
 scripts/check_env.py kickoff connectivity check
 tests/               offline smoke tests
-ideas/               Trace notes (ideas/trace) and competition criteria (not code)
+spec/                Trace build spec: product, architecture, features, demo (not code)
+ideas/               competition criteria (not code)
 streamlit_app.py     Streamlit entry point
 ```
 
