@@ -124,8 +124,20 @@ LEASE = dict(
 )
 
 
+EMAIL = dict(
+    claimed_supplier="Pearl River Capital Management",
+    request="bank_change",
+    new_bank_account="6230 5821 4407 7731",
+    bank_name="Nanhai Union Bank",
+    invoice_refs=["PRG2-DN-018"],
+    summary="Asks to pay drawdown PRG2-DN-018 to a new account.",
+)
+
+
 class StubLLM:
     def extract(self, prompt, schema, **kw):
+        if schema is extractor._EmailLLM:
+            return schema(**EMAIL), None
         if schema is extractor._LeaseLLM:
             return schema(**LEASE), None
         name = next(k for k, v in RAW.items() if v["invoice_no"] in prompt)
@@ -240,3 +252,41 @@ def test_full_demo_flow(ws, monkeypatch):
     # every Trace commit's changed cells have sources with the commit filled in
     assert all(cs.commit for cs in changes.all_changesets() if cs.status != "proposed")
     assert len(workspace.log()) == 10 + 7
+
+
+def test_fraud_email_teaches_the_brain(ws, monkeypatch):
+    from app.core import checks
+    from app.core import expectations as ex
+    from app.data import mailbox
+
+    orig = reader.read
+
+    def tracking_read(rel, ocr=True):
+        _current["doc"] = rel
+        return orig(rel, ocr)
+
+    monkeypatch.setattr(reader, "read", tracking_read)
+    css = intake.process_inbox("Jason Yip")
+    s01 = next(cs for cs in css if cs.trigger.endswith("scan_1002.pdf"))
+    assert "FRAUD-001" not in {f.control for f in s01.findings}
+
+    # the fraud email arrives (offline fallback path) and is held
+    rel = mailbox.simulate()
+    assert rel and rel in intake.pending_docs()
+    (em,) = intake.process_inbox("Jason Yip")
+    assert em.kind == "email" and em.status == "held"
+    assert {f.control for f in em.findings} == {"DOMAIN-001", "BANK-001"}
+    with pytest.raises(decisions.PolicyError):
+        decisions.decide(em.id, "approve_and_remember", "looks fine", "Jason Yip")
+
+    # reject: memory learns the fraud account, open invoice is re-checked and now flagged
+    d, h = decisions.decide(
+        em.id, "reject", "Fake: called the GP on the number on file", "Jason Yip"
+    )
+    assert any(e.kind == "blocked_bank" and e.learned_from == d.id for e in ex.load())
+    s01 = changes.get(s01.id)
+    assert "FRAUD-001" in {f.control for f in s01.findings}
+    assert any(f.control == "FRAUD-001" for f in checks.run(s01.invoice))
+    assert changes.get(em.id).status == "rejected" and changes.get(em.id).commit == h
+    # supplier master untouched
+    assert sheets.suppliers()[0]["bank_account"] == "6214 8320 0019 2049"

@@ -4,7 +4,7 @@ import re
 from datetime import date
 
 from app.core import expectations as ex
-from app.core.models import Finding, InvoiceData, SourceRef
+from app.core.models import EmailData, Finding, InvoiceData, SourceRef
 from app.data import sheets
 
 
@@ -233,6 +233,37 @@ def sheets_payments() -> list[dict]:
         return list(csv.DictReader(f))
 
 
+def _blocked(kind: str) -> list:
+    return [e for e in ex.load() if e.kind == kind]
+
+
+def check_blocked(inv: InvoiceData) -> list[Finding]:
+    """Bank account or sender that a past decision rejected as fraud."""
+    out = []
+    bank = _digits(inv.bank_account)
+    for e in _blocked("blocked_bank"):
+        if bank and bank == _digits(str(e.value)):
+            out.append(_fraud_finding(f"Bank account …{bank[-4:]}", e))
+    senders = {m.lower() for m in inv.sender_emails}
+    for e in _blocked("blocked_sender"):
+        if str(e.value).lower() in senders:
+            out.append(_fraud_finding(f"Sender {e.value}", e))
+    return out
+
+
+def _fraud_finding(what: str, e) -> Finding:
+    return Finding(
+        control="FRAUD-001",
+        severity="hold",
+        title="Linked to a rejected fraud attempt",
+        detail=f"{what} was rejected as fraud in {e.learned_from}. {e.note or ''}".strip(),
+        expected=None,
+        actual=str(e.value),
+        evidence=[e.source, SourceRef(decision=e.learned_from)] if e.learned_from else [e.source],
+        expectation_id=e.id,
+    )
+
+
 CONTROLS = [
     check_unknown,
     check_price,
@@ -240,9 +271,81 @@ CONTROLS = [
     check_bank,
     check_domain,
     check_duplicate,
+    check_blocked,
     check_approval,
 ]
 
 
 def run(inv: InvoiceData) -> list[Finding]:
     return [f for c in CONTROLS for f in c(inv)]
+
+
+# -- emails -----------------------------------------------------------------------------------
+
+
+def run_email(em: EmailData) -> list[Finding]:
+    out = []
+    if not em.supplier_id:
+        if em.request != "other":
+            out.append(
+                Finding(
+                    control="UNKNOWN-001",
+                    severity="hold",
+                    title="Sender is not a known supplier",
+                    detail=f"'{em.claimed_supplier or em.sender}' asks for {em.request.replace('_', ' ')} "
+                    "but matches no supplier on the master.",
+                    actual=em.sender,
+                )
+            )
+        return out
+    dom = ex.get(em.supplier_id, "email_domain")
+    known = str(dom.value).lower() if dom else ""
+    sender_dom = em.sender.split("@")[-1]
+    if known and not sender_dom.endswith(known):
+        out.append(
+            Finding(
+                control="DOMAIN-001",
+                severity="hold",
+                title="Sent from an unknown address",
+                detail=f"Claims to be {em.claimed_supplier or em.supplier_id}, but was sent from "
+                f"{em.sender}. Known domain: {known}.",
+                expected=known,
+                actual=sender_dom,
+                evidence=[r for r in (em.evidence.get("sender"), dom.source) if r],
+                expectation_id=dom.id,
+            )
+        )
+    bank = ex.get(em.supplier_id, "bank_account")
+    if em.new_bank_account and bank and _digits(em.new_bank_account) != _digits(str(bank.value)):
+        paid = [
+            p
+            for p in sheets_payments()
+            if p["supplier_id"] == em.supplier_id
+            and _digits(p["bank_account_paid"]) == _digits(str(bank.value))
+        ]
+        history = (
+            f" The last {len(paid)} payments went to …{_digits(str(bank.value))[-4:]}."
+            if paid
+            else ""
+        )
+        out.append(
+            Finding(
+                control="BANK-001",
+                severity="hold",
+                title="Asks to change the bank account",
+                detail=f"Asks to pay to …{_digits(em.new_bank_account)[-4:]} ({em.new_bank_account}) "
+                f"instead of …{_digits(str(bank.value))[-4:]} on the supplier master.{history} "
+                "Policy: bank changes need a call-back to a known number; email alone is never enough.",
+                expected=str(bank.value),
+                actual=em.new_bank_account,
+                evidence=[r for r in (em.evidence.get("bank_account"), bank.source) if r],
+                expectation_id=bank.id,
+            )
+        )
+    for e in _blocked("blocked_sender"):
+        if str(e.value).lower() == em.sender:
+            out.append(_fraud_finding(f"Sender {em.sender}", e))
+    for e in _blocked("blocked_bank"):
+        if em.new_bank_account and _digits(em.new_bank_account) == _digits(str(e.value)):
+            out.append(_fraud_finding(f"Bank account …{_digits(str(e.value))[-4:]}", e))
+    return out

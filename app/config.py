@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     trace_workspace: str = "runtime/workspace"  # where the app reads and writes
     trace_seed_workspace: str = "workspace"  # pristine copy, never written by the app
     trace_user: str = "Jason Yip"  # default "Working as" user (must be in COMPANY.md)
+    # live demo mailbox (IMAP, e.g. Gmail + app password); only subjects containing the tag are read
+    trace_imap_host: str = "imap.gmail.com"
+    trace_imap_user: str | None = None
+    trace_imap_password: str | None = None
+    trace_mail_tag: str = "Family Office Inquiry"
 
 
 @lru_cache

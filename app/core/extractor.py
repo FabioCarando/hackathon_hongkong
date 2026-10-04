@@ -10,7 +10,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 from app.core import reader
-from app.core.models import InvoiceData, InvoiceLine, LeaseTerms, ReadResult, SourceRef
+from app.core.models import EmailData, InvoiceData, InvoiceLine, LeaseTerms, ReadResult, SourceRef
 from app.data import company, sheets, workspace
 from app.llm import get_llm
 
@@ -92,6 +92,17 @@ def match_supplier(name: str, text: str) -> tuple[str | None, dict | None]:
             if r > score:
                 best, score = s, r
     return (best["id"], best) if best and score >= 0.6 else (None, None)
+
+
+def _match_by_leading_words(text: str) -> str | None:
+    """Supplier whose first two name words (e.g. "Pearl River") appear in the text, if unique."""
+    low = " ".join(text.lower().split())
+    hits = {
+        s["id"]
+        for s in sheets.suppliers()
+        if len(words := s["name_en"].lower().split()) >= 2 and f"{words[0]} {words[1]}" in low
+    }
+    return hits.pop() if len(hits) == 1 else None
 
 
 def linked_emails(invoice_no: str, filename: str) -> list[tuple[str, SourceRef]]:
@@ -212,4 +223,61 @@ def extract_lease(rel: str) -> LeaseTerms:
         rent_from=date.fromisoformat(raw.rent_from),
         escalation_pct=raw.escalation_pct,
         evidence=q,
+    )
+
+
+class _EmailLLM(BaseModel):
+    claimed_supplier: str | None = None  # company the email says it is from (signature, text)
+    request: Literal["bank_change", "payment_request", "other"]
+    new_bank_account: str | None = None  # account number the email asks to pay to, as written
+    bank_name: str | None = None
+    invoice_refs: list[str] = []
+    summary: str  # one sentence: what the email asks the finance team to do
+
+
+EMAIL_SYSTEM = (
+    "You read emails received by the accounts team of Harbour Lane Trading Ltd (Hong Kong). "
+    "Say which company the email claims to be from (from the signature or text, not the address), "
+    "what it asks for, and copy any bank account number and invoice numbers exactly as written."
+)
+
+
+def extract_email(rel: str) -> EmailData:
+    import email as email_lib
+    from email import policy
+    from email.utils import parseaddr, parsedate_to_datetime
+
+    rr = reader.read(rel)
+    msg = email_lib.message_from_bytes(workspace.path(rel).read_bytes(), policy=policy.default)
+    name, addr = parseaddr(str(msg["From"] or ""))
+    try:
+        received = parsedate_to_datetime(str(msg["Date"]))
+    except (TypeError, ValueError):
+        received = None
+    raw, _ = get_llm().extract(rr.text, _EmailLLM, system=EMAIL_SYSTEM, label="extract_email")
+    sid, _ = match_supplier(raw.claimed_supplier or name or "", rr.text)
+    if not sid:  # e.g. signed by the fund's manager: "Pearl River Capital Management"
+        sid = _match_by_leading_words(f"{raw.claimed_supplier or ''} {rr.text}")
+    ev: dict[str, SourceRef] = {}
+    if q := find_quote(rr, addr):
+        ev["sender"] = q
+    if raw.new_bank_account:
+        digits = re.sub(r"\D", "", raw.new_bank_account)
+        if q := find_quote(rr, raw.new_bank_account, digits[-4:]):
+            ev["bank_account"] = q
+    if raw.claimed_supplier and (q := find_quote(rr, raw.claimed_supplier)):
+        ev["supplier"] = q
+    return EmailData(
+        sender=addr.lower(),
+        sender_name=name or None,
+        subject=str(msg["Subject"] or ""),
+        received=received,
+        claimed_supplier=raw.claimed_supplier,
+        supplier_id=sid,
+        request=raw.request,
+        new_bank_account=raw.new_bank_account,
+        bank_name=raw.bank_name,
+        invoice_refs=raw.invoice_refs,
+        summary=raw.summary,
+        evidence=ev,
     )

@@ -65,6 +65,15 @@ def decide(cs_id: str, answer: Answer, reason: str, user: str) -> tuple[Decision
         learned = [e.model_copy(update={"learned_from": d.id}) for e in cs.memory_updates]
         ex.upsert(learned)
         d.memory_updates = [e.id for e in learned]
+    elif answer == "reject" and cs.reject_memory:  # e.g. remember a fraud sender / bank account
+        learned = [
+            e.model_copy(
+                update={"learned_from": d.id, "note": f"{e.note or ''} Reason: {d.reason}".strip()}
+            )
+            for e in cs.reject_memory
+        ]
+        ex.upsert(learned)
+        d.memory_updates = [e.id for e in learned]
     store.append_jsonl(FILE, d)
 
     cs.decided_by, cs.decision = user, d.id
@@ -75,10 +84,18 @@ def decide(cs_id: str, answer: Answer, reason: str, user: str) -> tuple[Decision
         else:
             cs.new_rows, cs.changes = [], []
             h = changes.apply(cs, user, decision=d)
+    elif answer == "approve_once" and cs.kind == "email":
+        cs.status = "accepted"  # acknowledged, nothing written to the master
+        cs.changes = []
+        h = changes.apply(cs, user, decision=d)
     else:
         cs.status = "accepted"
         h = changes.apply(cs, user, row_status="Entered", decision=d)
 
     d.commit = h
     _rewrite([d if x.id == d.id else x for x in all_decisions()])
+    if d.memory_updates:  # the brain learned something: re-check what is still open
+        from app.core import intake
+
+        intake.recheck_open()
     return d, h

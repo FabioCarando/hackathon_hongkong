@@ -11,6 +11,7 @@ from app.core import expectations as ex
 from app.core.models import ChangeSet
 from app.data import sheets
 from app.ui.components import llm_errors
+from app.ui.mail import email_fields, email_preview, mail_watch
 from app.ui.trace import STATUS, chips, money, setup, sidebar, user
 
 TODAY = date(2026, 10, 5)  # "today" in the demo data
@@ -154,8 +155,10 @@ with c1:
 
         st.rerun()
 
+mail_watch()
+
 all_cs = changes.all_changesets()
-clean = [cs for cs in all_cs if cs.status == "proposed"]
+clean = [cs for cs in all_cs if cs.status == "proposed" and cs.kind != "email"]
 
 with c2:
     if st.button(
@@ -292,15 +295,22 @@ def card(cs: ChangeSet) -> None:
 
         left, right = st.columns([2, 3])
         with left:
-            pages = reader.page_count(cs.trigger) or 1
+            if cs.email:
+                email_preview(cs)
+                pages = 0
+            else:
+                pages = reader.page_count(cs.trigger) or 1
             page = 1
             if pages > 1:
                 default = cs.lease.evidence.page if cs.lease and cs.lease.evidence.page else 1
                 page = st.number_input("Page", 1, pages, default, key=f"pg-{cs.id}")
-            st.image(reader.page_png(cs.trigger, page), width="stretch")
+            if pages:
+                st.image(reader.page_png(cs.trigger, page), width="stretch")
         with right:
             if cs.invoice:
                 extracted(cs)
+            if cs.email:
+                email_fields(cs)
             if approval:
                 st.info(f"**{approval.title}** — {approval.detail}")
             if cs.status == "held":

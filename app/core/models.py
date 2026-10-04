@@ -99,6 +99,21 @@ class LeaseTerms(BaseModel):
     evidence: SourceRef
 
 
+class EmailData(BaseModel):
+    sender: str  # address from the From header
+    sender_name: str | None = None
+    subject: str
+    received: datetime | None = None
+    claimed_supplier: str | None = None  # who the email says it is from
+    supplier_id: str | None = None  # matched in code
+    request: Literal["bank_change", "payment_request", "other"]
+    new_bank_account: str | None = None
+    bank_name: str | None = None
+    invoice_refs: list[str] = []
+    summary: str = ""
+    evidence: dict[str, SourceRef] = {}
+
+
 class Expectation(BaseModel):
     id: str
     subject: str  # supplier_id or "company"
@@ -113,6 +128,8 @@ class Expectation(BaseModel):
         "forecast_assumption",
         "contract_term",
         "account_code",
+        "blocked_sender",  # learned from a rejected fraud attempt
+        "blocked_bank",
     ]
     key: str | None = None
     value: str | float
@@ -169,7 +186,7 @@ class ChangeSet(BaseModel):
     title: str
     reason: str
     trigger: str  # doc path
-    kind: Literal["invoice", "lease"]
+    kind: Literal["invoice", "lease", "email"]
     changes: list[CellChange] = []
     new_rows: list[NewRow] = []
     findings: list[Finding] = []
@@ -182,7 +199,9 @@ class ChangeSet(BaseModel):
     commit: str | None = None
     invoice: InvoiceData | None = None
     lease: LeaseTerms | None = None
+    email: EmailData | None = None
     memory_updates: list[Expectation] = []  # applied on approve_and_remember
+    reject_memory: list[Expectation] = []  # applied on reject (e.g. block a fraud bank account)
 
 
 class Decision(BaseModel):

@@ -32,9 +32,11 @@ def pending_docs() -> list[str]:
     docs = [
         p
         for p in sorted(new)
-        if p.endswith(".pdf")
-        and (p.startswith("docs/invoices/inbox/") or p.startswith("docs/contracts/"))
-        and p not in done
+        if p not in done
+        and (
+            (p.endswith(".pdf") and p.startswith(("docs/invoices/inbox/", "docs/contracts/")))
+            or (p.endswith(".eml") and p.startswith("docs/emails/inbox/"))
+        )
     ]
     return docs
 
@@ -46,7 +48,9 @@ def process_inbox(user: str, on_step: Callable[[str], None] = lambda s: None) ->
         on_step(f"Reading {rel.rsplit('/', 1)[-1]}" + (" (scanned → OCR)" if scanned else ""))
         try:
             reader.read(rel)
-            if rel.startswith("docs/contracts/"):
+            if rel.endswith(".eml"):
+                cs = _email_changeset(rel, user, on_step)
+            elif rel.startswith("docs/contracts/"):
                 cs = _lease_changeset(rel, user, on_step)
             else:
                 cs = _invoice_changeset(rel, user, on_step)
@@ -57,6 +61,121 @@ def process_inbox(user: str, on_step: Callable[[str], None] = lambda s: None) ->
             changes.save(cs)
             out.append(cs)
     return out
+
+
+def recheck_open(on_step: Callable[[str], None] = lambda s: None) -> list[ChangeSet]:
+    """Re-run the checks on open invoices after the memory changed (e.g. a fraud was rejected).
+    Returns the change sets whose findings changed."""
+    changed = []
+    for cs in changes.all_changesets():
+        if cs.kind != "invoice" or cs.status not in ("proposed", "held") or not cs.invoice:
+            continue
+        findings = checks.run(cs.invoice)
+        if {f.control for f in findings} == {f.control for f in cs.findings}:
+            continue
+        cs.findings = findings
+        held = any(f.severity == "hold" for f in findings)
+        cs.status = "held" if held else "proposed"
+        cs.memory_updates = _invoice_memory(cs.invoice, findings)
+        cs.question = _question(cs) if held else None
+        changes.save(cs)
+        on_step(f"Re-checked {cs.title}: {', '.join(sorted(f.control for f in findings))}")
+        changed.append(cs)
+    return changed
+
+
+# -- emails -----------------------------------------------------------------------------------
+
+
+def _email_changeset(rel: str, user: str, on_step) -> ChangeSet:
+    em = extractor.extract_email(rel)
+    on_step(f"Checking email from {em.sender} ({em.claimed_supplier or 'unknown sender'})")
+    findings = checks.run_email(em)
+    held = any(f.severity == "hold" for f in findings)
+    src = SourceRef(doc=rel, page=1, quote=em.evidence.get("bank_account", SourceRef()).quote)
+    who = (em.claimed_supplier or em.sender).rstrip(".")
+    cs_changes: list[CellChange] = []
+    memory: list[Expectation] = []
+    master = next((s for s in sheets.suppliers() if s["id"] == em.supplier_id), None)
+    if em.request == "bank_change" and em.new_bank_account and master:
+        r = master["_row"]
+        reason = (
+            f"Bank details changed for {master['name_en']} as requested by email from {em.sender}."
+        )
+        cs_changes = [
+            CellChange(
+                file=MASTER,
+                sheet="Suppliers",
+                cell=f"E{r}",
+                old=master["bank_name"],
+                new=em.bank_name or master["bank_name"],
+                sources=[src],
+                reason=reason,
+            ),
+            CellChange(
+                file=MASTER,
+                sheet="Suppliers",
+                cell=f"F{r}",
+                old=master["bank_account"],
+                new=em.new_bank_account,
+                sources=[src],
+                reason=reason,
+            ),
+        ]
+        memory.append(
+            Expectation(
+                id=f"E-{em.supplier_id}-bank-from-email",
+                subject=em.supplier_id,
+                kind="bank_account",
+                value=em.new_bank_account,
+                valid_from=(em.received or datetime.now()).date(),
+                note=f"Changed by email from {em.sender}, verified by call-back",
+                source=src,
+            )
+        )
+    reject_memory = []
+    if held:
+        reject_memory.append(
+            Expectation(
+                id=f"E-blocked-sender-{em.sender}",
+                subject=em.supplier_id or "company",
+                kind="blocked_sender",
+                value=em.sender,
+                note=f"Email '{em.subject}' claimed to be {who}.",
+                source=SourceRef(
+                    doc=rel, page=1, quote=em.evidence.get("sender", SourceRef()).quote
+                ),
+            )
+        )
+        if em.new_bank_account:
+            reject_memory.append(
+                Expectation(
+                    id=f"E-blocked-bank-{''.join(c for c in em.new_bank_account if c.isdigit())}",
+                    subject=em.supplier_id or "company",
+                    kind="blocked_bank",
+                    value=em.new_bank_account,
+                    note=f"Requested by {em.sender}, claiming to be {who}.",
+                    source=src,
+                )
+            )
+    cs = ChangeSet(
+        id=changes.new_id(),
+        title=f"Email from {who}: {em.request.replace('_', ' ')}",
+        reason=em.summary or em.subject,
+        trigger=rel,
+        kind="email",
+        changes=cs_changes,
+        findings=findings,
+        status="held" if held else "proposed",
+        created_by=user,
+        created_at=datetime.now(),
+        email=em,
+        memory_updates=memory,
+        reject_memory=reject_memory,
+    )
+    if held:
+        cs.question = _question(cs)
+    return cs
 
 
 # -- invoices ---------------------------------------------------------------------------------
@@ -354,6 +473,11 @@ def _question(cs: ChangeSet) -> Question:
         text = f"{cs.reason} Your forecast still assumes HK${float(f.expected):,.0f} flat. Update the forecast?"
     else:
         text = _llm_question(cs) or _template_question(cs)
+    if cs.kind == "email":
+        text += (
+            " Reject blocks this sender and account in the brain's memory; approve & remember "
+            "updates the supplier master (needs a call-back)."
+        )
     return Question(
         text=text,
         options=["reject", "approve_once", "approve_and_remember"],

@@ -47,10 +47,12 @@ def reset() -> None:
     # caches Trace rebuilds itself: never "new files", never committed
     (ws / ".trace" / "git" / "info").mkdir(exist_ok=True)
     (ws / ".trace" / "git" / "info" / "exclude").write_text(
-        ".trace/extracted/\n.trace/index.json\n"
+        ".trace/extracted/\n.trace/index.json\n.trace/mail_since.txt\n"
     )
     from app.core import expectations, indexer  # late import: they depend on this module
+    from app.data import mailbox
 
+    mailbox.mark_reset()
     expectations.seed()
     indexer.build()
 
