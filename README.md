@@ -23,6 +23,17 @@ uv run streamlit run streamlit_app.py     # http://localhost:8501
 
 No credentials yet? `LLM_PROVIDER=fake uv run streamlit run streamlit_app.py`.
 
+## Run the Trace demo
+
+1. `cp .env.example .env`, then set `OPENROUTER_API_KEY` and `LLM_MODEL_VISION=google/gemini-2.5-flash` (needed to read the scanned PDFs).
+2. `uv run streamlit run streamlit_app.py`, then click **Reset demo** in the sidebar.
+3. Working as Ken Lau: **Inbox › Process 6 new documents** → **Accept all clean** → open the red Shenzhen Parts card (try *Approve & remember*: it's locked, bank changes need a call-back) → **Reject** with a reason → reject the duplicate → switch to Anna Chan → **Approve & remember** the lease → **Ask the brain** "Why is 2027 rent 82,400?". Full script: [`spec/06-demo-and-eval.md`](spec/06-demo-and-eval.md).
+
+- The app works on a copy in `runtime/workspace`. `workspace/` is never written; **Reset demo** restores everything in seconds.
+- Set `LLM_CACHE=on` for rehearsals: after one run, every LLM call replays from disk (free, instant, no wifi).
+- Don't run `scripts/generate_workspace.py`: it rebuilds `workspace/` with new commit hashes.
+- Checks: `uv run pytest -q` (offline) and `uv run python scripts/eval.py` (real models, scores the pipeline vs `workspace/ground_truth/expected.json`).
+
 ## LLM: any model on OpenRouter
 
 `app/llm/` calls [OpenRouter](https://openrouter.ai) by default: one API key, hundreds of models, so switching model is one line in `.env` (any slug from <https://openrouter.ai/models>):

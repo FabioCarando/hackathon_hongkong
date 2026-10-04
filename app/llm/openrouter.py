@@ -9,6 +9,7 @@ toolConfig.tools / toolChoice              tools / tool_choice
 additionalModelRequestFields               extra body fields (e.g. OpenRouter's "reasoning")
 """
 
+import base64
 import json
 from collections.abc import Iterator
 from typing import Any
@@ -75,9 +76,21 @@ def _messages(params: dict[str, Any]) -> list[dict[str, Any]]:
                 out.append(
                     {"role": "tool", "tool_call_id": r["toolUseId"], "content": _result_text(r)}
                 )
-        if text := _text(blocks):
+        if images := [b["image"] for b in blocks if "image" in b]:
+            parts: list[dict[str, Any]] = [{"type": "text", "text": _text(blocks)}]
+            parts += [{"type": "image_url", "image_url": {"url": _data_url(i)}} for i in images]
+            out.append({"role": "user", "content": parts})
+        elif text := _text(blocks):
             out.append({"role": "user", "content": text})
     return out
+
+
+def _data_url(image: dict[str, Any]) -> str:
+    """Converse image block {"format": "png", "source": {"bytes": b"..."}} -> data URL."""
+    data = image["source"]["bytes"]
+    if isinstance(data, bytes):
+        data = base64.b64encode(data).decode()
+    return f"data:image/{image['format']};base64,{data}"
 
 
 def _tool_choice(choice: dict[str, Any]) -> Any:

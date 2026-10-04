@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     llm_log_path: str = "logs/llm_calls.jsonl"
     llm_cache_dir: str = ".llm_cache"
     fake_latency: float = 1.0  # fake provider: 0 = instant, 1 = roughly real model speed
+    llm_model_vision: str | None = None  # multimodal model for OCR of scanned PDFs
+
+    # Trace
+    trace_workspace: str = "runtime/workspace"  # where the app reads and writes
+    trace_seed_workspace: str = "workspace"  # pristine copy, never written by the app
+    trace_user: str = "Anna Chan"
 
 
 @lru_cache
