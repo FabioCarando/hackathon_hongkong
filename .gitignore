@@ -24,3 +24,6 @@ __pycache__/
 logs/
 .llm_cache/
 
+
+# Generated demo workspace (has its own git repo)
+workspace/
