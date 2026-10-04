@@ -1444,6 +1444,54 @@ def main():
         dict(driver="Summer electricity above budget (Jun-Sep), partly offset by lower Jan-May", account="445", amount=fac["445"]["variance"]),
         dict(driver="Routine small repairs vs HK$2,000/month budget", account="473", amount=r2(rm_small - 18000)),
     ]
+    # September cash flow, rebuilt from the written GL: every journal that touches the bank account (090) is one
+    # cash movement, grouped by what it settles. Bank charges inside a payment journal (404) are split out.
+    cf_by_supplier = {SUP[s]["name_en"]: cat for s, cat in (("S01", "Suppliers (stock)"), ("S02", "Suppliers (stock)"),
+                                                             ("S03", "Freight"), ("S04", "Rent & facilities"), ("S05", "Software"))}
+    cf_by_account = {"610": "Customer receipts", "270": "Interest income", "425": "Freight", "485": "Software",
+                     "445": "Rent & facilities", "469": "Rent & facilities", "471": "Rent & facilities", "473": "Rent & facilities",
+                     "477": "Payroll & MPF", "478": "Payroll & MPF", "825": "Payroll & MPF"}
+    with open(WS / "ledger/gl_export_2026.csv") as fh:
+        gl_rows = list(csv.DictReader(fh))
+    cf_journals = {}
+    for r in gl_rows:
+        if r["Date"].startswith("2026-09"):
+            cf_journals.setdefault(r["Journal No."], []).append(r)
+    cf_open = r2(sum(float(r["Net"]) for r in gl_rows if r["Account Code"] == "090" and r["Date"] < "2026-09-01"))
+    cf_lines = {}
+
+    def cf_add(cat, amount, jno):
+        line = cf_lines.setdefault(cat, dict(amount=0.0, journals=[]))
+        line["amount"] = r2(line["amount"] + amount)
+        line["journals"].append(int(jno))
+
+    for jno, ls in cf_journals.items():
+        cash = r2(sum(float(r["Net"]) for r in ls if r["Account Code"] == "090"))
+        if not cash:
+            continue
+        fees = r2(sum(float(r["Debit"] or 0) for r in ls if r["Account Code"] == "404"))
+        if fees:
+            cf_add("Bank charges", -fees, jno)
+        if r2(cash + fees):
+            codes = [r["Account Code"] for r in ls if r["Account Code"] not in ("090", "404", "497")]
+            cat = cf_by_supplier.get(ls[0]["Contact"]) if "800" in codes else next((cf_by_account[c] for c in codes if c in cf_by_account), "Other")
+            cf_add(cat, r2(cash + fees), jno)
+    cf_close = r2(cf_open + sum(v["amount"] for v in cf_lines.values()))
+    assert abs(cf_open - opening) < 0.005 and abs(cf_close - stmt_close) < 0.005, "cash flow does not reconcile to bank statement"
+    cash_flow = dict(
+        period="Sep 2026", currency="HKD", bank_account="090", opening_cash=cf_open,
+        receipts={k: v for k, v in cf_lines.items() if v["amount"] > 0},
+        payments={k: v for k, v in sorted(cf_lines.items(), key=lambda kv: kv[1]["amount"]) if v["amount"] < 0},
+    )
+    cash_flow.update(total_receipts=r2(sum(v["amount"] for v in cash_flow["receipts"].values())),
+                     total_payments=r2(sum(v["amount"] for v in cash_flow["payments"].values())))
+    cash_flow.update(net_cash_flow=r2(cash_flow["total_receipts"] + cash_flow["total_payments"]), closing_cash=cf_close,
+                     reconciles_to=dict(doc="docs/bank/statement_2026-09.pdf", opening=opening, closing=stmt_close),
+                     output_file="sheets/cash_flow_2026-09.xlsx",
+                     notes=["Built from GL account 090 lines; journal numbers are the 'Journal No.' column of ledger/gl_export_2026.csv",
+                            "TT charges (404) inside supplier payment journals are shown under Bank charges, not the supplier line",
+                            "Payroll & MPF = net salaries paid plus MPF remitted (both employer and employee parts)"])
+
     expected = dict(
         as_of=TODAY.isoformat(),
         planted_problems=[
@@ -1497,6 +1545,7 @@ def main():
                                facilities_budget=sum(v["budget"] for v in fac.values()),
                                facilities_actual=r2(sum(v["actual"] for v in fac.values())),
                                facilities_variance=r2(sum(v["variance"] for v in fac.values())), drivers=drivers)),
+            dict(id=6, prompt="Prepare September's cash flow report.", expected=cash_flow),
         ],
     )
     write("ground_truth/expected.json", json.dumps(expected, indent=2, ensure_ascii=False) + "\n")
