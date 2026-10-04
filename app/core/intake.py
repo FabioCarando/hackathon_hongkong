@@ -186,9 +186,15 @@ def _forecast_cells() -> tuple[str, str, dict[int, str]]:
     head_row = next(
         r
         for r in range(first_row - 1, 0, -1)
-        if re.fullmatch(r"[A-Z][a-z]{2}-\d{2}", str(sheets.read_range(file, sheet, f"{col}{r}")[f"{col}{r}"]))
+        if re.fullmatch(
+            r"[A-Z][a-z]{2}-\d{2}", str(sheets.read_range(file, sheet, f"{col}{r}")[f"{col}{r}"])
+        )
     )
-    heads = sheets.read_range(file, sheet, f"{cells[0][: len(col)]}{head_row}:{cells[-1][: -len(str(first_row))]}{head_row}")
+    heads = sheets.read_range(
+        file,
+        sheet,
+        f"{cells[0][: len(col)]}{head_row}:{cells[-1][: -len(str(first_row))]}{head_row}",
+    )
     years: dict[int, list[str]] = {}
     for c, h in zip(cells, heads.values()):
         years.setdefault(2000 + int(str(h)[-2:]), []).append(c)
@@ -239,7 +245,10 @@ def _lease_changeset(rel: str, user: str, on_step) -> ChangeSet | None:
     row = sheets.find_row(forecast, "Assumptions", "rent")
     if row:
         for col, new in (
-            ("B", f"HK${y1:,.0f}/month {years[0]}, +{terms.escalation_pct:g}%/yr (HK${y2:,.0f} {years[-1]})"),
+            (
+                "B",
+                f"HK${y1:,.0f}/month {years[0]}, +{terms.escalation_pct:g}%/yr (HK${y2:,.0f} {years[-1]})",
+            ),
             ("C", f"Lease {terms.reference or rel} p.{terms.evidence.page} cl.4, signed {signed}"),
         ):
             changes_.append(
@@ -267,7 +276,9 @@ def _lease_changeset(rel: str, user: str, on_step) -> ChangeSet | None:
             )
         )
     n_cells = sum(len(sheets.cells_in(by_year[y])) for y in years)
-    was = f"Forecast assumes HK${current:,.0f} flat" if current is not None else "No rent assumption"
+    was = (
+        f"Forecast assumes HK${current:,.0f} flat" if current is not None else "No rent assumption"
+    )
     cs = ChangeSet(
         id=changes.new_id(),
         title=f"Update rent forecast from new lease ({rel.rsplit('/', 1)[-1]})",
@@ -282,7 +293,8 @@ def _lease_changeset(rel: str, user: str, on_step) -> ChangeSet | None:
                 title="New lease changes the rent forecast",
                 detail=(
                     f"Lease: HK${y1:,.0f}/month from {terms.rent_from:%d %b %Y}, +{terms.escalation_pct:g}%/yr. "
-                    f"{was}" + (f" ({assumption.note})" if assumption and assumption.note else "")
+                    f"{was}"
+                    + (f" ({assumption.note})" if assumption and assumption.note else "")
                     + f". {n_cells} forecast cells would change."
                 ),
                 expected=current,

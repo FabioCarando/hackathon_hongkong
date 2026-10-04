@@ -1,6 +1,7 @@
 """The file index: every workspace file with kind, supplier, status and where it is used."""
 
 import hashlib
+import re
 from pathlib import Path
 
 from app.core import reader
@@ -15,13 +16,7 @@ KINDS = {
     "sheets": "sheet",
     "ledger": "ledger",
 }
-SUPPLIER_HINTS = {
-    "S01": ["S01", "shenzhen", "SP-"],
-    "S02": ["S02", "DPE", "dongguan"],
-    "S03": ["S03", "pacific", "pacfreight", "INV-2"],
-    "S04": ["S04", "KBP", "kowloon", "landlord", "lease"],
-    "S05": ["S05", "clouddesk", "CD-"],
-}
+GENERIC_PREFIXES = {"INV", "DN", "CN", "MF", "PO"}
 
 
 def _kind(rel: str) -> str:
@@ -30,10 +25,25 @@ def _kind(rel: str) -> str:
     return next((k for prefix, k in KINDS.items() if rel.startswith(prefix)), "other")
 
 
-def _supplier(rel: str) -> str | None:
+def supplier_hints() -> dict[str, list[str]]:
+    """Filename hints per counterparty, from the master list and the register: the id, the first
+    word of the name, the email domain's first label and the letters that start its document numbers."""
+    prefixes: dict[str, set[str]] = {}
+    for r in sheets.register():
+        if m := re.match(r"[A-Za-z]{3,}", str(r["invoice_no"])):
+            if m.group(0).upper() not in GENERIC_PREFIXES:
+                prefixes.setdefault(r["supplier_id"], set()).add(m.group(0))
+    out = {}
+    for s in sheets.suppliers():
+        hints = [s["id"], s["name_en"].split()[0], str(s["email_domain"]).split(".")[0]]
+        out[s["id"]] = [h for h in hints if len(h) >= 3] + sorted(prefixes.get(s["id"], ()))
+    return out
+
+
+def _supplier(rel: str, hints: dict[str, list[str]]) -> str | None:
     name = Path(rel).name.lower()
-    for sid, hints in SUPPLIER_HINTS.items():
-        if any(h.lower() in name for h in hints):
+    for sid, words in hints.items():
+        if any(h.lower() in name for h in words):
             return sid
     return None
 
@@ -50,6 +60,7 @@ def build() -> list[FileEntry]:
     new = workspace.untracked()
     commits = workspace.last_commits()
     cs_status = _changeset_status()
+    hints = supplier_hints()
     used: dict[str, list[str]] = {}
     for entry in store.read_json("sources.json", []):
         ref = f"{entry['file']}!{entry['sheet']}!{entry['cell']}"
@@ -93,7 +104,7 @@ def build() -> list[FileEntry]:
                 sha256=hashlib.sha256(p.read_bytes()).hexdigest(),
                 size=p.stat().st_size,
                 pages=reader.page_count(rel),
-                supplier_id=_supplier(rel),
+                supplier_id=_supplier(rel, hints),
                 title=title,
                 status=status,
                 text_method=method,

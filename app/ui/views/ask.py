@@ -11,9 +11,9 @@ sidebar()
 header("Ask the brain", "Every answer cites the documents, commits and decisions behind it.")
 
 SUGGESTED = [
-    "Why is 2027 rent 82,400?",
-    "Why was the Shenzhen Parts invoice held?",
-    "Where is the signed lease?",
+    "Why is 2027 rental income for Flat 12A 98,800?",
+    "Why was the Pearl River capital call held?",
+    "How much do we still owe Harbourview Capital Partners III?",
     "Which contracts need action in the next 30 days?",
 ]
 

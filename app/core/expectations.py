@@ -164,7 +164,10 @@ def _company() -> list[Expectation]:
                 source=SourceRef(doc=doc, quote=line),
             )
         )
-    for kind, label in (("capital_call", "capital calls"), ("fee_notice", "fund management fee notices")):
+    for kind, label in (
+        ("capital_call", "capital calls"),
+        ("fee_notice", "fund management fee notices"),
+    ):
         if m := re.search(rf"{label} -> (\d{{3}})", flat, re.I):
             items.append(
                 Expectation(

@@ -6,24 +6,36 @@ from datetime import date
 
 from app.core import changes, decisions, indexer, reader, search, versioning
 from app.core import expectations as ex
-from app.data import sheets, workspace
+from app.data import company, sheets, workspace
 from app.llm import AgentResult, get_llm, tool
 
 TODAY = date(2026, 10, 5)
 
-SYSTEM = f"""You are Trace, the finance team's brain at Harbour Lane Trading Ltd (Hong Kong). Today is \
+
+def system_prompt() -> str:
+    """Built from the workspace: company name and where the rent forecast lives."""
+    name, file = company.forecast_range()
+    where = sheets.named_range(file, name)
+    rent = (
+        f"{file}, sheet {where[0]}, cells {where[1]} (one cell per month, 2027-2028)"
+        if where
+        else file
+    )
+    first = where[1].split(":")[0] if where else "C9"
+    return f"""You are Trace, the finance team's brain at {company.name()} (Hong Kong). Today is \
 {TODAY:%d %b %Y}. Answer questions about the team's files, numbers and decisions using the tools. Look \
 things up; never guess. Answer in plain, short sentences for a finance manager (max ~6 sentences).
 
 Cite every fact right after the sentence, using exactly these forms:
 [doc: <workspace path> p.<page>]   e.g. [doc: docs/contracts/S04_lease_2027_signed.pdf p.3]
-[commit: <7+ char hash>]            e.g. [commit: cbcb6ff]
+[commit: <7+ char hash>]            e.g. [commit: 1a2b3c4]
 [decision: D-0001]
-For "why was this invoice held / what happened to document X" use processed_documents.
+For "why was this document held / what happened to document X" use processed_documents.
 For "why is this cell X" questions use cell_history first: it lists every change, its reason, \
-sources and commit. Rent forecast = sheets/forecast_2027_2028.xlsx, sheet Forecast, row 9 \
-(C9 = Jan-27 ... Z9 = Dec-28). When explaining a number, also say what it was before, who \
-decided the change and why (from cell_history / decisions).
+sources and commit. Rent forecast = {rent}; start with cell {first}. When explaining a number, \
+also say what it was before, who decided the change and why (from cell_history / decisions).
+Fund commitments (commitment, called to date, unfunded) = sheets/commitments.xlsx, sheet \
+Commitments; also check processed_documents for capital calls not yet in that sheet.
 Most questions need 1-3 tool calls. As soon as you have the facts, write the answer."""
 
 
@@ -60,7 +72,7 @@ def cell_history(file: str, sheet: str, cell: str) -> str:
 
 @tool
 def read_sheet(file: str, sheet: str, cells: str) -> str:
-    """Read a cell range, e.g. file='sheets/forecast_2027_2028.xlsx', sheet='Forecast', cells='C9:Z9'."""
+    """Read a cell range, e.g. file='sheets/commitments.xlsx', sheet='Commitments', cells='A1:H6'."""
     return json.dumps(sheets.read_range(file, sheet, cells), default=str)
 
 
@@ -74,7 +86,7 @@ def list_decisions() -> str:
 
 @tool
 def get_expectations(subject: str | None = None) -> str:
-    """What the brain expects (contract prices, bank accounts, assumptions...). subject = S01..S05 or 'company'."""
+    """What the brain expects (contract prices, bank accounts, assumptions...). subject = a counterparty id (S01...) or 'company'."""
     items = [e for e in ex.load() if subject is None or e.subject == subject]
     return json.dumps(
         [e.model_dump(mode="json", exclude_none=True) for e in items], ensure_ascii=False
@@ -119,7 +131,7 @@ def git_log() -> str:
 @tool
 def processed_documents(search: str | None = None) -> str:
     """Documents Trace processed: status (held/accepted/rejected), what didn't fit (findings with
-    numbers and evidence), the question asked and the decision. Optional text filter, e.g. 'Shenzhen'."""
+    numbers and evidence), the question asked and the decision. Optional text filter, e.g. 'Pearl River'."""
     out = []
     for cs in changes.all_changesets():
         blob = f"{cs.title} {cs.trigger}"
@@ -166,7 +178,7 @@ REF_RE = re.compile(r"[\[【](doc|commit|decision):\s*([^\]】]+)[\]】]")
 
 def ask(question: str, on_step=None) -> AgentResult:
     return get_llm().run_agent(
-        question, tools=TOOLS, system=SYSTEM, max_turns=8, on_step=on_step, label="ask"
+        question, tools=TOOLS, system=system_prompt(), max_turns=8, on_step=on_step, label="ask"
     )
 
 

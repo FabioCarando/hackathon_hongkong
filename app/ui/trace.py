@@ -54,7 +54,9 @@ def sidebar() -> None:
         col2.metric("Decisions", len(all_decisions), None)
 
         # Last commit
-        last = workspace.git("log", "-1", "--format=%h|%an|%ad", "--date=short", check=False).strip()
+        last = workspace.git(
+            "log", "-1", "--format=%h|%an|%ad", "--date=short", check=False
+        ).strip()
         if last:
             parts = last.split("|")
             st.caption(f"Commit {parts[0]} by {parts[1]}")

@@ -1,7 +1,7 @@
 """Inbox: what's new. Process documents, review proposed changes, answer Trace's questions."""
 
-from datetime import date
 import time
+from datetime import date
 
 import pandas as pd
 import streamlit as st
@@ -9,13 +9,18 @@ import streamlit as st
 from app.core import changes, decisions, indexer, intake, reader
 from app.core import expectations as ex
 from app.core.models import ChangeSet
-from app.ui.components import header, llm_errors
+from app.data import sheets
+from app.ui.components import llm_errors
 from app.ui.trace import STATUS, chips, money, setup, sidebar, user
 
-TODAY = date(2026, 10, 5)
+TODAY = date(2026, 10, 5)  # "today" in the demo data
+
+setup()
+sidebar()
 
 # ============ PROFESSIONAL STYLING ============
-st.markdown("""
+st.markdown(
+    """
 <style>
     /* Professional Hero */
     .hero-title {
@@ -103,10 +108,22 @@ st.markdown("""
         border-top: 1px solid #e5e7eb;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ============ MAIN ============
 st.markdown('<div class="hero-title">Ready to Trace</div>', unsafe_allow_html=True)
+
+names = {r["id"]: r["name_en"] for r in sheets.suppliers()}
+for d in ex.contract_deadlines(TODAY):
+    yearly = f" or commit to USD {d['monthly'] * 12:,.0f} for another year" if d["monthly"] else ""
+    st.warning(
+        f"**{names.get(d['supplier_id'], d['supplier_id'])} auto-renews "
+        f"{date.fromisoformat(d['renewal_date']):%d %b}.** Cancel by "
+        f"**{date.fromisoformat(d['notice_deadline']):%d %b %Y}**{yearly}.  {chips([d['source']])}",
+        icon=":material/event:",
+    )
 
 pending = intake.pending_docs()
 c1, c2 = st.columns([3, 1])
@@ -130,7 +147,6 @@ with c1:
             indexer.build()
             progress_bar.progress(90)
 
-            held = sum(cs.status == "held" for cs in css)
             status_text.write(f"Done. {len(css)} documents processed.")
             progress_bar.progress(100)
 
@@ -150,7 +166,7 @@ with c2:
     ):
         hashes = [decisions.accept(cs.id, user()) for cs in clean]
         indexer.build()
-        st.toast(f"{len(hashes)} invoices entered", icon="check")
+        st.toast(f"{len(hashes)} documents entered", icon="✅")
         st.rerun()
 
 
@@ -163,8 +179,8 @@ def diff_table(cs: ChangeSet) -> None:
                 {
                     "file": r.file.rsplit("/", 1)[-1],
                     "date": str(v["date"])[:10],
-                    "supplier": v["supplier"],
-                    "invoice_no": v["invoice_no"],
+                    "counterparty": v["supplier"],
+                    "document no.": v["invoice_no"],
                     "amount": f"{v['currency']} {float(v['amount']):,.2f}",
                     "fx": v["fx_rate"],
                     "HKD": f"{float(v['amount']) * float(v['fx_rate']):,.2f}",
@@ -173,8 +189,8 @@ def diff_table(cs: ChangeSet) -> None:
                     "status": v["status"] if cs.status != "rejected" else "HELD",
                 }
             )
-        st.caption("Invoice Register")
-        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+        st.caption("New row in the invoice register")
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
         st.markdown("Source: " + chips(cs.new_rows[0].sources))
     if cs.changes:
         df = pd.DataFrame(
@@ -195,7 +211,7 @@ def diff_table(cs: ChangeSet) -> None:
                 lambda _: "color: #64748B; text-decoration: line-through", subset=["old"]
             ).map(lambda _: "font-weight: 700; color: #2DD4BF", subset=["new"]),
             hide_index=True,
-            use_container_width=True,
+            width="stretch",
         )
         st.markdown("Source: " + chips(cs.changes[0].sources))
 
@@ -204,12 +220,14 @@ def extracted(cs: ChangeSet) -> None:
     inv = cs.invoice
     ev = inv.evidence
     fields = [
-        ("Supplier", f"{inv.supplier_name} ({inv.supplier_id or '?'})", ev.get("supplier")),
-        ("Invoice no.", inv.invoice_no, ev.get("invoice_no")),
+        ("Counterparty", f"{inv.supplier_name} ({inv.supplier_id or '?'})", ev.get("supplier")),
+        ("Document no.", inv.invoice_no, ev.get("invoice_no")),
         ("Date", f"{inv.invoice_date:%d %b %Y}", ev.get("invoice_date")),
         ("Total", money(inv.currency, inv.total), ev.get("total")),
         ("Bank account", inv.bank_account or "—", ev.get("bank_account")),
     ]
+    if inv.fee_rate_pct is not None:
+        fields.append(("Fee rate", f"{inv.fee_rate_pct:.2f}% a year", ev.get("fee_rate")))
     for name, value, ref in fields:
         a, b = st.columns([1, 3])
         a.caption(name)
@@ -235,9 +253,7 @@ def question(cs: ChangeSet) -> None:
             answer = "reject"
         if b2.button("Approve once", key=f"once-{cs.id}", width="stretch"):
             answer = "approve_once"
-        if b3.button(
-            f"Approve & remember", key=f"rem-{cs.id}", type="primary", width="stretch"
-        ):
+        if b3.button("Approve & remember", key=f"rem-{cs.id}", type="primary", width="stretch"):
             answer = "approve_and_remember"
         if q.blocked_options_reason:
             st.caption(q.blocked_options_reason)
@@ -248,7 +264,7 @@ def question(cs: ChangeSet) -> None:
                 st.error(str(e))
                 return
             indexer.build()
-            st.toast(f"Decision recorded", icon="check")
+            st.toast(f"Recorded as {d.id} · committed {h[:7]}", icon="🧠")
             st.rerun()
 
 
@@ -256,15 +272,15 @@ def card(cs: ChangeSet) -> None:
     color, label = STATUS[cs.status]
     approval = next((f for f in cs.findings if f.control == "APPROVAL-001"), None)
     amount = f" — {money(cs.invoice.currency, cs.invoice.total)}" if cs.invoice else ""
-    badge = " | Director approval needed" if approval else ""
+    badge = f" | {approval.title}" if approval else ""
     doc = cs.trigger.rsplit("/", 1)[-1]
     decided = cs.status in ("accepted", "rejected")
 
     # Status indicator
     if color == "red":
-        status_badge = f'<span class="status-held">HELD</span>'
+        status_badge = '<span class="status-held">HELD</span>'
     elif color == "green":
-        status_badge = f'<span class="status-ready">READY</span>'
+        status_badge = '<span class="status-ready">READY</span>'
     else:
         status_badge = f'<span class="status-entered">{label}</span>'
 
@@ -281,7 +297,7 @@ def card(cs: ChangeSet) -> None:
             if pages > 1:
                 default = cs.lease.evidence.page if cs.lease and cs.lease.evidence.page else 1
                 page = st.number_input("Page", 1, pages, default, key=f"pg-{cs.id}")
-            st.image(reader.page_png(cs.trigger, page), use_column_width=True)
+            st.image(reader.page_png(cs.trigger, page), width="stretch")
         with right:
             if cs.invoice:
                 extracted(cs)
@@ -300,7 +316,7 @@ def card(cs: ChangeSet) -> None:
                 ):
                     h = decisions.accept(cs.id, user())
                     indexer.build()
-                    st.toast(f"Committed {h[:7]}", icon="check")
+                    st.toast(f"Committed {h[:7]}", icon="✅")
                     st.rerun()
                 if b.button("Reject", key=f"rj-{cs.id}", width="stretch"):
                     decisions.reject_clean(cs.id, user())
@@ -311,45 +327,59 @@ def card(cs: ChangeSet) -> None:
 
 
 # Contract Update
-lease_css = [cs for cs in all_cs if "lease" in cs.title.lower()]
+lease_css = [cs for cs in all_cs if cs.kind == "lease"]
 if lease_css:
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.subheader("Contract Update")
 
     for lease_cs in lease_css:
         with st.container(border=True):
-            st.markdown(f'<div class="contract-section">', unsafe_allow_html=True)
+            n_cells = sum(
+                len(sheets.cells_in(c.cell)) for c in lease_cs.changes if c.sheet == "Forecast"
+            )
+            ev = lease_cs.lease.evidence if lease_cs.lease else None
             col1, col2, col3 = st.columns([2, 1, 1])
             col1.markdown(f"**{lease_cs.title}**")
-            col2.metric("Cells", "24")
-            col3.metric("Source", "Contract p.3")
-
-            st.info("New lease signed 29 Sep. Rent: HKD 82,400/month from Jan 2027 (+3%/year)")
+            col2.metric("Forecast cells", n_cells)
+            col3.metric("Source", f"Lease p.{ev.page}" if ev and ev.page else "Lease")
+            st.info(lease_cs.reason)
+            if lease_cs.findings:
+                st.markdown(chips(lease_cs.findings[0].evidence))
 
             with st.expander("View changes"):
                 diff_table(lease_cs)
 
-            col_a, col_b = st.columns(2)
-            if col_a.button(
-                "Update forecast",
-                key=f"lease_approve_{lease_cs.id}",
-                type="primary",
-                width="stretch"
-            ):
-                h = decisions.accept(lease_cs.id, user())
-                indexer.build()
-                st.balloons()
-                st.success(f"Committed {h[:7]}")
-                st.rerun()
-
-            if col_b.button(
-                "Reject",
-                key=f"lease_reject_{lease_cs.id}",
-                width="stretch"
-            ):
-                decisions.reject_clean(lease_cs.id, user())
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+            if lease_cs.status == "held":
+                reason = st.text_input(
+                    "Your reason (required)",
+                    key=f"lease_reason_{lease_cs.id}",
+                    placeholder="e.g. Renewal signed by Victoria; tenant confirmed",
+                )
+                col_a, col_b = st.columns(2)
+                answer = None
+                if col_a.button(
+                    "Update forecast & remember",
+                    key=f"lease_approve_{lease_cs.id}",
+                    type="primary",
+                    width="stretch",
+                ):
+                    answer = "approve_and_remember"
+                if col_b.button("Reject", key=f"lease_reject_{lease_cs.id}", width="stretch"):
+                    answer = "reject"
+                if answer:
+                    try:
+                        d, h = decisions.decide(lease_cs.id, answer, reason, user())
+                    except decisions.PolicyError as e:
+                        st.error(str(e))
+                    else:
+                        indexer.build()
+                        st.toast(f"Recorded as {d.id} · committed {h[:7]}", icon="🧠")
+                        st.rerun()
+            else:
+                who = f"{lease_cs.decided_by}" + (
+                    f" — {lease_cs.decision}" if lease_cs.decision else ""
+                )
+                st.caption(f"{STATUS[lease_cs.status][1]} by {who} · {(lease_cs.commit or '')[:7]}")
 
 # Documents
 if all_cs:
@@ -359,5 +389,5 @@ if all_cs:
 
     order = {"held": 0, "proposed": 1, "accepted": 2, "rejected": 2}
     for cs in sorted(all_cs, key=lambda c: (order[c.status], c.id)):
-        if "lease" not in cs.title.lower():
+        if cs.kind != "lease":
             card(cs)

@@ -3,7 +3,7 @@
 import streamlit as st
 
 from app.core import versioning
-from app.data import sheets, workspace
+from app.data import company, sheets, workspace
 from app.ui.components import header
 from app.ui.trace import chips, setup, sidebar
 
@@ -14,15 +14,20 @@ header("Every change and why", "The workspace's version history, and the story o
 blame, timeline = st.tabs([":material/manage_search: Cell history", ":material/history: Timeline"])
 
 with blame:
+    rng_name, fc_file = company.forecast_range()
+    fc_sheet, fc_ref = sheets.named_range(fc_file, rng_name) or ("Forecast", "C5")
     files = {
-        "sheets/forecast_2027_2028.xlsx": ["Forecast", "Assumptions"],
+        fc_file: [fc_sheet, "Assumptions"],
         "sheets/invoice_register.xlsx": ["Register"],
         "sheets/supplier_master.xlsx": ["Suppliers"],
+        "sheets/commitments.xlsx": ["Commitments"],
     }
+    next_row = len(sheets.register()) + 2
     c1, c2, c3 = st.columns([3, 2, 1])
     file = c1.selectbox("File", list(files), format_func=lambda f: f.rsplit("/", 1)[-1])
     sheet = c2.selectbox("Sheet", files[file])
-    cell = c3.text_input("Cell", "C9" if sheet == "Forecast" else "F19").strip().upper()
+    default = fc_ref.split(":")[0] if sheet == fc_sheet else f"F{next_row}"
+    cell = c3.text_input("Cell", default).strip().upper()
     try:
         now = sheets.read_range(file, sheet, cell)[cell]
     except Exception:

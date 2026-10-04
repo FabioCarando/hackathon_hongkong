@@ -199,7 +199,8 @@ def extract_lease(rel: str) -> LeaseTerms:
     sid, _ = match_supplier(raw.counterparty, "")
     if not sid:  # fall back to the counterparty whose current contract is a lease
         sid = next(
-            (s["id"] for s in sheets.suppliers() if "lease" in str(s["contract_file"]).lower()), None
+            (s["id"] for s in sheets.suppliers() if "lease" in str(s["contract_file"]).lower()),
+            None,
         )
     q = find_quote(rr, *_money_variants(raw.rent_monthly)) or SourceRef(doc=rel)
     q.clause = "4"

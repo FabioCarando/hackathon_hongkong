@@ -19,6 +19,7 @@ exp_tab, dec_tab = st.tabs([":material/psychology: Expectations", ":material/gav
 
 KIND = {
     "unit_price": "Contract price",
+    "fee_rate": "Fee rate",
     "bank_account": "Bank account",
     "email_domain": "Email domain",
     "recurring_amount": "Recurring amount",
@@ -43,7 +44,7 @@ with exp_tab:
                 when = f" · from {e.valid_from}" if e.valid_from else ""
                 value = e.note or e.value
                 st.markdown(
-                    f"**{KIND[e.kind]}**{f' `{e.key}`' if e.key and e.kind == 'unit_price' else ''}: "
+                    f"**{KIND[e.kind]}**{f' `{e.key}`' if e.key and e.kind in ('unit_price', 'account_code') else ''}: "
                     f"{value}{when}{learned}  {chips([e.source])}"
                 )
 

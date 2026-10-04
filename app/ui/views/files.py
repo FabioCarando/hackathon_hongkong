@@ -13,11 +13,11 @@ files = indexer.build()
 new = sum(f.status == "new" for f in files)
 header(
     "Everything the brain knows",
-    f"{len(files)} files: contracts, invoices, statements, emails and sheets. {new} new.",
+    f"{len(files)} files: contracts, capital calls, invoices, statements, emails and sheets. {new} new.",
 )
 
 q = st.text_input(
-    "Search all documents", placeholder="lease · bank account changed · 銀行 · SP-4410"
+    "Search all documents", placeholder="lease · bank account changed · 银行 · management fee"
 )
 if q:
     hits = search.search(q)
@@ -45,7 +45,7 @@ df = pd.DataFrame(
         {
             "file": f.path,
             "kind": f.kind,
-            "supplier": f.supplier_id or "",
+            "counterparty": f.supplier_id or "",
             "status": icon[f.status],
             "pages": f.pages,
             "read by": f.text_method.replace("_", " "),
