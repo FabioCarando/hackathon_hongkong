@@ -4,6 +4,7 @@ import time
 
 import streamlit as st
 
+from app.config import settings
 from app.core import changes, decisions, indexer
 from app.core.models import SourceRef
 from app.data import workspace
@@ -17,7 +18,7 @@ STATUS = {
 
 
 def user() -> str:
-    return st.session_state.get("trace_user", "Ken Lau")
+    return st.session_state.get("trace_user", settings.trace_user)
 
 
 def setup() -> None:
@@ -27,7 +28,9 @@ def setup() -> None:
 
 def sidebar() -> None:
     with st.sidebar:
-        st.selectbox("Working as", list(workspace.USERS), key="trace_user", index=1)
+        people = list(workspace.users())
+        default = people.index(settings.trace_user) if settings.trace_user in people else 0
+        st.selectbox("Working as", people, key="trace_user", index=default)
 
         # BRAIN STATUS
         st.divider()

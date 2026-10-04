@@ -49,8 +49,9 @@ with blame:
                     st.caption(f"“{s['quote']}” — {s['doc'].rsplit('/', 1)[-1]}")
 
 with timeline:
+    users = workspace.users()
     for c in workspace.log():
-        trace = c["author"] in workspace.USERS and c["date"] >= "2026-10-04"
+        trace = c["author"] in users and c["date"] >= "2026-10-04"
         with st.expander(
             f"`{c['hash'][:7]}` · {c['date']} · **{c['author']}** · {c['subject']}"
             + (" :green-badge[Trace]" if trace else "")

@@ -1,5 +1,6 @@
 """Orchestration: new document -> read -> extract -> check -> proposed change set (+ question)."""
 
+import re
 from collections.abc import Callable
 from datetime import date, datetime
 
@@ -16,11 +17,11 @@ from app.core.models import (
     Question,
     SourceRef,
 )
-from app.data import sheets, workspace
+from app.data import company, sheets, workspace
 
 REGISTER = "sheets/invoice_register.xlsx"
-FORECAST = "sheets/forecast_2027_2028.xlsx"
 MASTER = "sheets/supplier_master.xlsx"
+DOC_NAMES = {"invoice": "invoice", "capital_call": "capital call", "fee_notice": "fee notice"}
 GUARDED = {"BANK-001", "DOMAIN-001"}  # COMPANY.md: bank changes need a call-back
 
 
@@ -70,7 +71,9 @@ def _invoice_changeset(rel: str, user: str, on_step) -> ChangeSet:
     findings = checks.run(inv)
     master = next((s for s in sheets.suppliers() if s["id"] == inv.supplier_id), None)
     fx = sheets.fx_rate(inv.currency, inv.invoice_date)
-    acct = ex.get(inv.supplier_id, "account_code") if inv.supplier_id else None
+    acct = (ex.get("company", "account_code", inv.kind) if inv.kind != "invoice" else None) or (
+        ex.get(inv.supplier_id, "account_code") if inv.supplier_id else None
+    )
     sources = [
         inv.evidence[k]
         for k in ("invoice_no", "invoice_date", "total", "supplier")
@@ -80,13 +83,14 @@ def _invoice_changeset(rel: str, user: str, on_step) -> ChangeSet:
         SourceRef(doc="sheets/fx_rates.xlsx", quote=f"{inv.invoice_date:%Y-%m} {inv.currency} {fx}")
     )
     held = any(f.severity == "hold" for f in findings)
-    approval = any(f.control == "APPROVAL-001" for f in findings)
+    approval = next((f for f in findings if f.control == "APPROVAL-001"), None)
     name = master["name_en"] if master else inv.supplier_name
+    doc_name = DOC_NAMES[inv.kind]
     reason = (
-        f"Entered {name} invoice {inv.invoice_no} ({inv.currency} {inv.total:,.2f}) from {rel}."
+        f"Entered {name} {doc_name} {inv.invoice_no} ({inv.currency} {inv.total:,.2f}) from {rel}."
     )
     if approval:
-        reason += " Above HK$50,000: needs D. Wong approval before payment."
+        reason += f" {approval.detail} {approval.title} before payment."
     row = NewRow(
         file=REGISTER,
         sheet="Register",
@@ -108,7 +112,7 @@ def _invoice_changeset(rel: str, user: str, on_step) -> ChangeSet:
     )
     cs = ChangeSet(
         id=changes.new_id(),
-        title=f"Enter {name} invoice {inv.invoice_no}",
+        title=f"Enter {name} {doc_name} {inv.invoice_no}",
         reason=reason,
         trigger=rel,
         kind="invoice",
@@ -171,6 +175,26 @@ def _invoice_memory(inv: InvoiceData, findings: list[Finding]) -> list[Expectati
 # -- new contract (lease) -----------------------------------------------------------------------
 
 
+def _forecast_cells() -> tuple[str, str, dict[int, str]]:
+    """(workbook, sheet, {year: 'C5:N5'}) for the rent forecast named range, split by year using
+    the month headers ('Jan-27') above it."""
+    name, file = company.forecast_range()
+    sheet, ref = sheets.named_range(file, name)
+    cells = sheets.cells_in(ref)
+    first_row = int("".join(ch for ch in cells[0] if ch.isdigit()))
+    col = "".join(ch for ch in cells[0] if ch.isalpha())
+    head_row = next(
+        r
+        for r in range(first_row - 1, 0, -1)
+        if re.fullmatch(r"[A-Z][a-z]{2}-\d{2}", str(sheets.read_range(file, sheet, f"{col}{r}")[f"{col}{r}"]))
+    )
+    heads = sheets.read_range(file, sheet, f"{cells[0][: len(col)]}{head_row}:{cells[-1][: -len(str(first_row))]}{head_row}")
+    years: dict[int, list[str]] = {}
+    for c, h in zip(cells, heads.values()):
+        years.setdefault(2000 + int(str(h)[-2:]), []).append(c)
+    return file, sheet, {y: f"{cs[0]}:{cs[-1]}" for y, cs in years.items()}
+
+
 def _lease_changeset(rel: str, user: str, on_step) -> ChangeSet | None:
     on_step("Reading the rent terms of the new lease")
     terms = extractor.extract_lease(rel)
@@ -179,66 +203,59 @@ def _lease_changeset(rel: str, user: str, on_step) -> ChangeSet | None:
     if current is not None and abs(current - terms.rent_monthly) < 0.01:
         return None
     on_step("New rent differs from the forecast assumption → proposing a forecast update")
-    y1 = round(terms.rent_monthly, 2)
-    y2 = round(terms.rent_monthly * (1 + terms.escalation_pct / 100), 2)
-    old = sheets.read_range(FORECAST, "Forecast", "C9:Z9")
+    forecast, sheet, by_year = _forecast_cells()
+    years = sorted(by_year)
+    start = terms.rent_from.year
+    rent = {
+        y: round(terms.rent_monthly * (1 + terms.escalation_pct / 100) ** max(0, y - start), 2)
+        for y in years
+    }
+    y1, y2 = rent[years[0]], rent[years[-1]]
     src = [terms.evidence]
-    if assumption:
-        src_old = [assumption.source]
-    else:
-        src_old = []
+    src_old = [assumption.source] if assumption else []
     signed = f"{terms.signed:%d %b %Y}" if terms.signed else "recently"
+    later = ", ".join(f"HK${rent[y]:,.0f} in {y}" for y in years[1:])
     reason = (
         f"New lease {terms.reference or ''} signed {signed}: rent HK${y1:,.0f}/month from "
-        f"{terms.rent_from:%d %b %Y}, +{terms.escalation_pct:g}% each January "
-        f"(HK${y2:,.0f} in 2028). Replaces the HK${current:,.0f} flat assumption."
+        f"{terms.rent_from:%d %b %Y}, +{terms.escalation_pct:g}% each January"
+        + (f" ({later})" if later else "")
+        + (f". Replaces the HK${current:,.0f} flat assumption." if current is not None else ".")
     ).replace("  ", " ")
-    master_row = next(
-        s["_row"] for s in sheets.suppliers() if s["id"] == (terms.supplier_id or "S04")
-    )
-    cs = ChangeSet(
-        id=changes.new_id(),
-        title=f"Update rent forecast from new lease ({rel.rsplit('/', 1)[-1]})",
-        reason=reason,
-        trigger=rel,
-        kind="lease",
-        changes=[
+    changes_: list[CellChange] = []
+    for y in years:
+        ref = by_year[y]
+        first = ref.split(":")[0]
+        changes_.append(
             CellChange(
-                file=FORECAST,
-                sheet="Forecast",
-                cell="C9:N9",
-                old=old["C9"],
-                new=y1,
+                file=forecast,
+                sheet=sheet,
+                cell=ref,
+                old=sheets.read_range(forecast, sheet, first)[first],
+                new=rent[y],
                 sources=src,
                 reason=reason,
-            ),
-            CellChange(
-                file=FORECAST,
-                sheet="Forecast",
-                cell="O9:Z9",
-                old=old["O9"],
-                new=y2,
-                sources=src,
-                reason=reason,
-            ),
-            CellChange(
-                file=FORECAST,
-                sheet="Assumptions",
-                cell="B4",
-                old=sheets.read_range(FORECAST, "Assumptions", "B4")["B4"],
-                new=f"HK${y1:,.0f}/month 2027, +{terms.escalation_pct:g}%/yr (HK${y2:,.0f} 2028)",
-                sources=src,
-                reason=reason,
-            ),
-            CellChange(
-                file=FORECAST,
-                sheet="Assumptions",
-                cell="C4",
-                old=sheets.read_range(FORECAST, "Assumptions", "C4")["C4"],
-                new=f"Lease {terms.reference or rel} p.{terms.evidence.page} cl.4, signed {signed}",
-                sources=src,
-                reason=reason,
-            ),
+            )
+        )
+    row = sheets.find_row(forecast, "Assumptions", "rent")
+    if row:
+        for col, new in (
+            ("B", f"HK${y1:,.0f}/month {years[0]}, +{terms.escalation_pct:g}%/yr (HK${y2:,.0f} {years[-1]})"),
+            ("C", f"Lease {terms.reference or rel} p.{terms.evidence.page} cl.4, signed {signed}"),
+        ):
+            changes_.append(
+                CellChange(
+                    file=forecast,
+                    sheet="Assumptions",
+                    cell=f"{col}{row}",
+                    old=sheets.read_range(forecast, "Assumptions", f"{col}{row}")[f"{col}{row}"],
+                    new=new,
+                    sources=src,
+                    reason=reason,
+                )
+            )
+    master_row = next((s["_row"] for s in sheets.suppliers() if s["id"] == terms.supplier_id), None)
+    if master_row:
+        changes_.append(
             CellChange(
                 file=MASTER,
                 sheet="Suppliers",
@@ -246,9 +263,18 @@ def _lease_changeset(rel: str, user: str, on_step) -> ChangeSet | None:
                 old=sheets.read_range(MASTER, "Suppliers", f"I{master_row}")[f"I{master_row}"],
                 new=rel,
                 sources=src,
-                reason="New lease replaces the 2024-26 lease as the S04 contract.",
-            ),
-        ],
+                reason=f"New lease replaces the previous lease as the {terms.supplier_id} contract.",
+            )
+        )
+    n_cells = sum(len(sheets.cells_in(by_year[y])) for y in years)
+    was = f"Forecast assumes HK${current:,.0f} flat" if current is not None else "No rent assumption"
+    cs = ChangeSet(
+        id=changes.new_id(),
+        title=f"Update rent forecast from new lease ({rel.rsplit('/', 1)[-1]})",
+        reason=reason,
+        trigger=rel,
+        kind="lease",
+        changes=changes_,
         findings=[
             Finding(
                 control="CONTRACT-001",
@@ -256,7 +282,8 @@ def _lease_changeset(rel: str, user: str, on_step) -> ChangeSet | None:
                 title="New lease changes the rent forecast",
                 detail=(
                     f"Lease: HK${y1:,.0f}/month from {terms.rent_from:%d %b %Y}, +{terms.escalation_pct:g}%/yr. "
-                    f"Forecast assumes HK${current:,.0f} flat (D. Wong, Aug 2026). 24 forecast cells would change."
+                    f"{was}" + (f" ({assumption.note})" if assumption and assumption.note else "")
+                    + f". {n_cells} forecast cells would change."
                 ),
                 expected=current,
                 actual=y1,
@@ -275,7 +302,7 @@ def _lease_changeset(rel: str, user: str, on_step) -> ChangeSet | None:
 
 
 def _lease_memory(t: LeaseTerms, y1: float, y2: float) -> list[Expectation]:
-    return [
+    out = [
         Expectation(
             id="E-company-rent-2027",
             subject="company",
@@ -283,21 +310,25 @@ def _lease_memory(t: LeaseTerms, y1: float, y2: float) -> list[Expectation]:
             key="rent_monthly",
             value=y1,
             valid_from=t.rent_from,
-            note=f"Rent HK${y1:,.0f} in 2027, HK${y2:,.0f} in 2028 (+{t.escalation_pct:g}%/yr) per new lease",
+            note=f"Rent HK${y1:,.0f}/month from {t.rent_from:%b %Y}, then HK${y2:,.0f} (+{t.escalation_pct:g}%/yr) per new lease",
             source=t.evidence,
-        ),
-        Expectation(
-            id="E-S04-recurring-2027",
-            subject=t.supplier_id or "S04",
-            kind="recurring_amount",
-            value=y1,
-            tolerance=0.01,
-            valid_from=t.rent_from,
-            valid_to=date(t.rent_from.year, 12, 31),
-            note=f"Monthly rent HK${y1:,.0f} from {t.rent_from:%b %Y}",
-            source=t.evidence,
-        ),
+        )
     ]
+    if t.supplier_id:
+        out.append(
+            Expectation(
+                id=f"E-{t.supplier_id}-recurring-{t.rent_from.year}",
+                subject=t.supplier_id,
+                kind="recurring_amount",
+                value=y1,
+                tolerance=0.01,
+                valid_from=t.rent_from,
+                valid_to=date(t.rent_from.year, 12, 31),
+                note=f"Monthly rent HK${y1:,.0f} from {t.rent_from:%b %Y}",
+                source=t.evidence,
+            )
+        )
+    return out
 
 
 # -- questions --------------------------------------------------------------------------------

@@ -1,675 +1,444 @@
 Date,Source,Journal No.,Reference,Contact,Description,Account Code,Account,Debit,Credit,Net,Tax Rate
-2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,090,Victoria Harbour Bank - HKD Current,2150000.00,,2150000.00,Tax Exempt
-2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,610,Accounts Receivable,2152540.00,,2152540.00,Tax Exempt
-2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,630,Inventory,1180000.00,,1180000.00,Tax Exempt
-2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,710,Office & Warehouse Equipment,265000.00,,265000.00,Tax Exempt
-2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,711,Less Accumulated Depreciation,,96000.00,-96000.00,Tax Exempt
-2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,800,Accounts Payable,,1036618.47,-1036618.47,Tax Exempt
-2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,970,Share Capital,,1000000.00,-1000000.00,Tax Exempt
-2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,960,Retained Earnings,,3614921.53,-3614921.53,Tax Exempt
-2026-01-01,Payable Invoice,2,CD-9945,CloudDesk Inc.,CloudDesk Inc. CD-9945,485,Software Subscriptions,11295.50,,11295.50,Tax Exempt
-2026-01-01,Payable Invoice,2,CD-9945,CloudDesk Inc.,CloudDesk Inc. CD-9945,800,Accounts Payable,,11295.50,-11295.50,Tax Exempt
-2026-01-01,Payable Invoice,3,KBP/R/2601,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2601,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-01-01,Payable Invoice,3,KBP/R/2601,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2601,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-01-02,Payable Payment,4,INV-1896,Pacific Freight Logistics Ltd,Payment INV-1896,800,Accounts Payable,22485.00,,22485.00,Tax Exempt
-2026-01-02,Payable Payment,4,INV-1896,Pacific Freight Logistics Ltd,Payment INV-1896,090,Victoria Harbour Bank - HKD Current,,22485.00,-22485.00,Tax Exempt
-2026-01-02,Spend Money,5,SM-01-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,471,Building Management Fees,6800.00,,6800.00,Tax Exempt
-2026-01-02,Spend Money,5,SM-01-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,090,Victoria Harbour Bank - HKD Current,,6800.00,-6800.00,Tax Exempt
-2026-01-05,Receivable Invoice,6,HL-INV-2511011,Kirby Components JSC,Sales - Kirby Components JSC,610,Accounts Receivable,352890.00,,352890.00,Tax Exempt
-2026-01-05,Receivable Invoice,6,HL-INV-2511011,Kirby Components JSC,Sales - Kirby Components JSC,200,Sales,,352890.00,-352890.00,Tax Exempt
-2026-01-05,Payable Invoice,7,INV-1940,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-1940,425,Freight & Courier,22350.00,,22350.00,Tax Exempt
-2026-01-05,Payable Invoice,7,INV-1940,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-1940,800,Accounts Payable,,22350.00,-22350.00,Tax Exempt
-2026-01-05,Spend Money,8,SM-01-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-01-05,Spend Money,8,SM-01-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-01-05,Spend Money,9,SM-01-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-01-05,Spend Money,9,SM-01-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-01-08,Receivable Invoice,10,HL-INV-2511012,Young Industrial Ltd,Sales - Young Industrial Ltd,610,Accounts Receivable,163970.00,,163970.00,Tax Exempt
-2026-01-08,Receivable Invoice,10,HL-INV-2511012,Young Industrial Ltd,Sales - Young Industrial Ltd,200,Sales,,163970.00,-163970.00,Tax Exempt
-2026-01-08,Payable Payment,11,KBP/R/2601,Kowloon Bay Properties Ltd,Payment KBP/R/2601,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-01-08,Payable Payment,11,KBP/R/2601,Kowloon Bay Properties Ltd,Payment KBP/R/2601,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-01-08,Payable Invoice,12,SP-2026-0666,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0666",310,Cost of Goods Sold,342718.40,,342718.40,Tax Exempt
-2026-01-08,Payable Invoice,12,SP-2026-0666,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0666",800,Accounts Payable,,342718.40,-342718.40,Tax Exempt
-2026-01-09,Payable Payment,13,SP-2025-1285,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1285,800,Accounts Payable,356761.32,,356761.32,Tax Exempt
-2026-01-09,Payable Payment,13,SP-2025-1285,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1285,497,Foreign Exchange Gain/Loss,,664.36,-664.36,Tax Exempt
-2026-01-09,Payable Payment,13,SP-2025-1285,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1285,090,Victoria Harbour Bank - HKD Current,,356096.96,-356096.96,Tax Exempt
-2026-01-09,Payable Payment,13,SP-2025-1285,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1285,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-01-09,Payable Payment,13,SP-2025-1285,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1285,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-01-12,Spend Money,14,SM-01-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,4388.00,,4388.00,Tax Exempt
-2026-01-12,Spend Money,14,SM-01-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,4388.00,-4388.00,Tax Exempt
-2026-01-12,Spend Money,15,SM-0112,Peak Assurance Ltd,Annual business package policy 2026,433,Insurance,28800.00,,28800.00,Tax Exempt
-2026-01-12,Spend Money,15,SM-0112,Peak Assurance Ltd,Annual business package policy 2026,090,Victoria Harbour Bank - HKD Current,,28800.00,-28800.00,Tax Exempt
-2026-01-13,Receivable Payment,16,HL-INV-2511004,Hussain Components Pte. Ltd.,Receipt HL-INV-2511004,090,Victoria Harbour Bank - HKD Current,361980.00,,361980.00,Tax Exempt
-2026-01-13,Receivable Payment,16,HL-INV-2511004,Hussain Components Pte. Ltd.,Receipt HL-INV-2511004,610,Accounts Receivable,,361980.00,-361980.00,Tax Exempt
-2026-01-13,Receivable Invoice,17,HL-INV-2511013,Young Industrial Ltd,Sales - Young Industrial Ltd,610,Accounts Receivable,322440.00,,322440.00,Tax Exempt
-2026-01-13,Receivable Invoice,17,HL-INV-2511013,Young Industrial Ltd,Sales - Young Industrial Ltd,200,Sales,,322440.00,-322440.00,Tax Exempt
-2026-01-14,Payable Payment,18,DPE/INV/0298,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0298,800,Accounts Payable,285681.60,,285681.60,Tax Exempt
-2026-01-14,Payable Payment,18,DPE/INV/0298,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0298,497,Foreign Exchange Gain/Loss,367.20,,367.20,Tax Exempt
-2026-01-14,Payable Payment,18,DPE/INV/0298,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0298,090,Victoria Harbour Bank - HKD Current,,286048.80,-286048.80,Tax Exempt
-2026-01-14,Payable Payment,18,DPE/INV/0298,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0298,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-01-14,Payable Payment,18,DPE/INV/0298,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0298,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-01-15,Payable Invoice,19,DPE/INV/0307,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0307",310,Cost of Goods Sold,275376.50,,275376.50,Tax Exempt
-2026-01-15,Payable Invoice,19,DPE/INV/0307,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0307",800,Accounts Payable,,275376.50,-275376.50,Tax Exempt
-2026-01-16,Payable Payment,20,CD-9945,CloudDesk Inc.,Payment CD-9945,800,Accounts Payable,11295.50,,11295.50,Tax Exempt
-2026-01-16,Payable Payment,20,CD-9945,CloudDesk Inc.,Payment CD-9945,090,Victoria Harbour Bank - HKD Current,,11295.50,-11295.50,Tax Exempt
-2026-01-16,Payable Payment,20,CD-9945,CloudDesk Inc.,Payment CD-9945,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-01-16,Payable Payment,20,CD-9945,CloudDesk Inc.,Payment CD-9945,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-01-16,Receivable Payment,21,HL-INV-2511005,Griffiths Technology Ltd,Receipt HL-INV-2511005,090,Victoria Harbour Bank - HKD Current,409810.00,,409810.00,Tax Exempt
-2026-01-16,Receivable Payment,21,HL-INV-2511005,Griffiths Technology Ltd,Receipt HL-INV-2511005,610,Accounts Receivable,,409810.00,-409810.00,Tax Exempt
-2026-01-19,Receivable Invoice,22,HL-INV-2511014,Kirby Components JSC,Sales - Kirby Components JSC,610,Accounts Receivable,208960.00,,208960.00,Tax Exempt
-2026-01-19,Receivable Invoice,22,HL-INV-2511014,Kirby Components JSC,Sales - Kirby Components JSC,200,Sales,,208960.00,-208960.00,Tax Exempt
-2026-01-19,Spend Money,23,SM-01-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1200.00,,1200.00,Tax Exempt
-2026-01-19,Spend Money,23,SM-01-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1200.00,-1200.00,Tax Exempt
-2026-01-20,Spend Money,24,SM-01-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,2400.00,,2400.00,Tax Exempt
-2026-01-20,Spend Money,24,SM-01-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,2400.00,-2400.00,Tax Exempt
-2026-01-22,Receivable Payment,25,HL-INV-2511009,Doyle Components Ltd,Receipt HL-INV-2511009,090,Victoria Harbour Bank - HKD Current,176460.00,,176460.00,Tax Exempt
-2026-01-22,Receivable Payment,25,HL-INV-2511009,Doyle Components Ltd,Receipt HL-INV-2511009,610,Accounts Receivable,,176460.00,-176460.00,Tax Exempt
-2026-01-22,Spend Money,26,SM-01-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,1400.00,,1400.00,Tax Exempt
-2026-01-22,Spend Money,26,SM-01-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,1400.00,-1400.00,Tax Exempt
-2026-01-23,Receivable Invoice,27,HL-INV-2511015,Griffiths Technology Ltd,Sales - Griffiths Technology Ltd,610,Accounts Receivable,288790.00,,288790.00,Tax Exempt
-2026-01-23,Receivable Invoice,27,HL-INV-2511015,Griffiths Technology Ltd,Sales - Griffiths Technology Ltd,200,Sales,,288790.00,-288790.00,Tax Exempt
-2026-01-26,Receivable Payment,28,HL-INV-2511008,Doyle Components Ltd,Receipt HL-INV-2511008,090,Victoria Harbour Bank - HKD Current,285770.00,,285770.00,Tax Exempt
-2026-01-26,Receivable Payment,28,HL-INV-2511008,Doyle Components Ltd,Receipt HL-INV-2511008,610,Accounts Receivable,,285770.00,-285770.00,Tax Exempt
-2026-01-29,Receivable Payment,29,HL-INV-2511006,Kirby Components JSC,Receipt HL-INV-2511006,090,Victoria Harbour Bank - HKD Current,320680.00,,320680.00,Tax Exempt
-2026-01-29,Receivable Payment,29,HL-INV-2511006,Kirby Components JSC,Receipt HL-INV-2511006,610,Accounts Receivable,,320680.00,-320680.00,Tax Exempt
-2026-01-29,Receivable Payment,30,HL-INV-2511007,White Systems Ltd,Receipt HL-INV-2511007,090,Victoria Harbour Bank - HKD Current,168190.00,,168190.00,Tax Exempt
-2026-01-29,Receivable Payment,30,HL-INV-2511007,White Systems Ltd,Receipt HL-INV-2511007,610,Accounts Receivable,,168190.00,-168190.00,Tax Exempt
-2026-01-30,Spend Money,31,FEE-01,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-01-30,Spend Money,31,FEE-01,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-01-30,Receive Money,32,INT-01,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1657.00,,1657.00,Tax Exempt
-2026-01-30,Receive Money,32,INT-01,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1657.00,-1657.00,Tax Exempt
-2026-01-30,Spend Money,33,MPF-01,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-01-30,Spend Money,33,MPF-01,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-01-30,Spend Money,34,PAY-01,Payroll,Payroll Jan 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-01-30,Spend Money,34,PAY-01,Payroll,Payroll Jan 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-01-30,Spend Money,34,PAY-01,Payroll,Payroll Jan 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-01-30,Spend Money,34,PAY-01,Payroll,Payroll Jan 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
-2026-02-02,Payable Invoice,35,CD-9956,CloudDesk Inc.,CloudDesk Inc. CD-9956,485,Software Subscriptions,11324.50,,11324.50,Tax Exempt
-2026-02-02,Payable Invoice,35,CD-9956,CloudDesk Inc.,CloudDesk Inc. CD-9956,800,Accounts Payable,,11324.50,-11324.50,Tax Exempt
-2026-02-02,Payable Invoice,36,KBP/R/2602,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2602,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-02-02,Payable Invoice,36,KBP/R/2602,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2602,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-02-02,Spend Money,37,SM-02-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,471,Building Management Fees,6800.00,,6800.00,Tax Exempt
-2026-02-02,Spend Money,37,SM-02-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,090,Victoria Harbour Bank - HKD Current,,6800.00,-6800.00,Tax Exempt
-2026-02-03,Receivable Invoice,38,HL-INV-2511016,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,610,Accounts Receivable,135340.00,,135340.00,Tax Exempt
-2026-02-03,Receivable Invoice,38,HL-INV-2511016,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,200,Sales,,135340.00,-135340.00,Tax Exempt
-2026-02-03,Payable Invoice,39,INV-1984,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-1984,425,Freight & Courier,16290.00,,16290.00,Tax Exempt
-2026-02-03,Payable Invoice,39,INV-1984,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-1984,800,Accounts Payable,,16290.00,-16290.00,Tax Exempt
-2026-02-03,Spend Money,40,SM-02-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-02-03,Spend Money,40,SM-02-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-02-04,Payable Payment,41,INV-1940,Pacific Freight Logistics Ltd,Payment INV-1940,800,Accounts Payable,22350.00,,22350.00,Tax Exempt
-2026-02-04,Payable Payment,41,INV-1940,Pacific Freight Logistics Ltd,Payment INV-1940,090,Victoria Harbour Bank - HKD Current,,22350.00,-22350.00,Tax Exempt
-2026-02-05,Spend Money,42,SM-02-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-02-05,Spend Money,42,SM-02-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-02-06,Payable Payment,43,SP-2025-1310,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1310,800,Accounts Payable,371690.55,,371690.55,Tax Exempt
-2026-02-06,Payable Payment,43,SP-2025-1310,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1310,497,Foreign Exchange Gain/Loss,2082.30,,2082.30,Tax Exempt
-2026-02-06,Payable Payment,43,SP-2025-1310,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1310,090,Victoria Harbour Bank - HKD Current,,373772.85,-373772.85,Tax Exempt
-2026-02-06,Payable Payment,43,SP-2025-1310,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1310,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-02-06,Payable Payment,43,SP-2025-1310,"Shenzhen Parts Co., Ltd.",Payment SP-2025-1310,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-02-09,Receivable Invoice,44,HL-INV-2511017,Kirby Components JSC,Sales - Kirby Components JSC,610,Accounts Receivable,357300.00,,357300.00,Tax Exempt
-2026-02-09,Receivable Invoice,44,HL-INV-2511017,Kirby Components JSC,Sales - Kirby Components JSC,200,Sales,,357300.00,-357300.00,Tax Exempt
-2026-02-09,Payable Payment,45,KBP/R/2602,Kowloon Bay Properties Ltd,Payment KBP/R/2602,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-02-09,Payable Payment,45,KBP/R/2602,Kowloon Bay Properties Ltd,Payment KBP/R/2602,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-02-09,Payable Invoice,46,SP-2026-0692,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0692",310,Cost of Goods Sold,304823.31,,304823.31,Tax Exempt
-2026-02-09,Payable Invoice,46,SP-2026-0692,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0692",800,Accounts Payable,,304823.31,-304823.31,Tax Exempt
-2026-02-12,Receivable Payment,47,HL-INV-2511010,Kirby Components JSC,Receipt HL-INV-2511010,090,Victoria Harbour Bank - HKD Current,429650.00,,429650.00,Tax Exempt
-2026-02-12,Receivable Payment,47,HL-INV-2511010,Kirby Components JSC,Receipt HL-INV-2511010,610,Accounts Receivable,,429650.00,-429650.00,Tax Exempt
-2026-02-12,Spend Money,48,SM-02-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,4342.00,,4342.00,Tax Exempt
-2026-02-12,Spend Money,48,SM-02-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,4342.00,-4342.00,Tax Exempt
-2026-02-13,Receivable Invoice,49,HL-INV-2511018,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",610,Accounts Receivable,332690.00,,332690.00,Tax Exempt
-2026-02-13,Receivable Invoice,49,HL-INV-2511018,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",200,Sales,,332690.00,-332690.00,Tax Exempt
-2026-02-16,Payable Payment,50,DPE/INV/0307,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0307,800,Accounts Payable,275376.50,,275376.50,Tax Exempt
-2026-02-16,Payable Payment,50,DPE/INV/0307,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0307,497,Foreign Exchange Gain/Loss,707.00,,707.00,Tax Exempt
-2026-02-16,Payable Payment,50,DPE/INV/0307,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0307,090,Victoria Harbour Bank - HKD Current,,276083.50,-276083.50,Tax Exempt
-2026-02-16,Payable Payment,50,DPE/INV/0307,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0307,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-02-16,Payable Payment,50,DPE/INV/0307,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0307,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-02-16,Payable Invoice,51,DPE/INV/0316,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0316",310,Cost of Goods Sold,294827.50,,294827.50,Tax Exempt
-2026-02-16,Payable Invoice,51,DPE/INV/0316,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0316",800,Accounts Payable,,294827.50,-294827.50,Tax Exempt
-2026-02-16,Receivable Payment,52,HL-INV-2511012,Young Industrial Ltd,Receipt HL-INV-2511012,090,Victoria Harbour Bank - HKD Current,163970.00,,163970.00,Tax Exempt
-2026-02-16,Receivable Payment,52,HL-INV-2511012,Young Industrial Ltd,Receipt HL-INV-2511012,610,Accounts Receivable,,163970.00,-163970.00,Tax Exempt
-2026-02-16,Receivable Payment,53,HL-INV-2511013,Young Industrial Ltd,Receipt HL-INV-2511013,090,Victoria Harbour Bank - HKD Current,322440.00,,322440.00,Tax Exempt
-2026-02-16,Receivable Payment,53,HL-INV-2511013,Young Industrial Ltd,Receipt HL-INV-2511013,610,Accounts Receivable,,322440.00,-322440.00,Tax Exempt
-2026-02-17,Payable Payment,54,CD-9956,CloudDesk Inc.,Payment CD-9956,800,Accounts Payable,11324.50,,11324.50,Tax Exempt
-2026-02-17,Payable Payment,54,CD-9956,CloudDesk Inc.,Payment CD-9956,090,Victoria Harbour Bank - HKD Current,,11324.50,-11324.50,Tax Exempt
-2026-02-17,Payable Payment,54,CD-9956,CloudDesk Inc.,Payment CD-9956,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-02-17,Payable Payment,54,CD-9956,CloudDesk Inc.,Payment CD-9956,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-02-18,Receivable Invoice,55,HL-INV-2511019,Griffiths Technology Ltd,Sales - Griffiths Technology Ltd,610,Accounts Receivable,197360.00,,197360.00,Tax Exempt
-2026-02-18,Receivable Invoice,55,HL-INV-2511019,Griffiths Technology Ltd,Sales - Griffiths Technology Ltd,200,Sales,,197360.00,-197360.00,Tax Exempt
-2026-02-18,Spend Money,56,SM-02-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1800.00,,1800.00,Tax Exempt
-2026-02-18,Spend Money,56,SM-02-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1800.00,-1800.00,Tax Exempt
-2026-02-20,Spend Money,57,SM-02-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,2300.00,,2300.00,Tax Exempt
-2026-02-20,Spend Money,57,SM-02-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,2300.00,-2300.00,Tax Exempt
-2026-02-23,Receivable Invoice,58,HL-INV-2511020,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,610,Accounts Receivable,266290.00,,266290.00,Tax Exempt
-2026-02-23,Receivable Invoice,58,HL-INV-2511020,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,200,Sales,,266290.00,-266290.00,Tax Exempt
-2026-02-23,Spend Money,59,SM-02-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,1600.00,,1600.00,Tax Exempt
-2026-02-23,Spend Money,59,SM-02-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,1600.00,-1600.00,Tax Exempt
-2026-02-26,Receivable Payment,60,HL-INV-2511011,Kirby Components JSC,Receipt HL-INV-2511011,090,Victoria Harbour Bank - HKD Current,352890.00,,352890.00,Tax Exempt
-2026-02-26,Receivable Payment,60,HL-INV-2511011,Kirby Components JSC,Receipt HL-INV-2511011,610,Accounts Receivable,,352890.00,-352890.00,Tax Exempt
-2026-02-27,Spend Money,61,FEE-02,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-02-27,Spend Money,61,FEE-02,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-02-27,Receive Money,62,INT-02,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1580.00,,1580.00,Tax Exempt
-2026-02-27,Receive Money,62,INT-02,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1580.00,-1580.00,Tax Exempt
-2026-02-27,Spend Money,63,MPF-02,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-02-27,Spend Money,63,MPF-02,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-02-27,Spend Money,64,PAY-02,Payroll,Payroll Feb 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-02-27,Spend Money,64,PAY-02,Payroll,Payroll Feb 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-02-27,Spend Money,64,PAY-02,Payroll,Payroll Feb 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-02-27,Spend Money,64,PAY-02,Payroll,Payroll Feb 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
-2026-03-02,Payable Invoice,65,CD-9967,CloudDesk Inc.,CloudDesk Inc. CD-9967,485,Software Subscriptions,11339.00,,11339.00,Tax Exempt
-2026-03-02,Payable Invoice,65,CD-9967,CloudDesk Inc.,CloudDesk Inc. CD-9967,800,Accounts Payable,,11339.00,-11339.00,Tax Exempt
-2026-03-02,Payable Invoice,66,KBP/R/2603,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2603,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-03-02,Payable Invoice,66,KBP/R/2603,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2603,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-03-02,Spend Money,67,SM-03-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,471,Building Management Fees,6800.00,,6800.00,Tax Exempt
-2026-03-02,Spend Money,67,SM-03-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,090,Victoria Harbour Bank - HKD Current,,6800.00,-6800.00,Tax Exempt
-2026-03-03,Receivable Invoice,68,HL-INV-2511021,Young Industrial Ltd,Sales - Young Industrial Ltd,610,Accounts Receivable,298450.00,,298450.00,Tax Exempt
-2026-03-03,Receivable Invoice,68,HL-INV-2511021,Young Industrial Ltd,Sales - Young Industrial Ltd,200,Sales,,298450.00,-298450.00,Tax Exempt
-2026-03-03,Payable Invoice,69,INV-2028,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2028,425,Freight & Courier,22485.00,,22485.00,Tax Exempt
-2026-03-03,Payable Invoice,69,INV-2028,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2028,800,Accounts Payable,,22485.00,-22485.00,Tax Exempt
-2026-03-03,Spend Money,70,SM-03-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-03-03,Spend Money,70,SM-03-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-03-05,Payable Payment,71,INV-1984,Pacific Freight Logistics Ltd,Payment INV-1984,800,Accounts Payable,16290.00,,16290.00,Tax Exempt
-2026-03-05,Payable Payment,71,INV-1984,Pacific Freight Logistics Ltd,Payment INV-1984,090,Victoria Harbour Bank - HKD Current,,16290.00,-16290.00,Tax Exempt
-2026-03-05,Spend Money,72,SM-03-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-03-05,Spend Money,72,SM-03-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-03-09,Receivable Payment,73,HL-INV-2511015,Griffiths Technology Ltd,Receipt HL-INV-2511015,090,Victoria Harbour Bank - HKD Current,288790.00,,288790.00,Tax Exempt
-2026-03-09,Receivable Payment,73,HL-INV-2511015,Griffiths Technology Ltd,Receipt HL-INV-2511015,610,Accounts Receivable,,288790.00,-288790.00,Tax Exempt
-2026-03-09,Receivable Invoice,74,HL-INV-2511022,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,610,Accounts Receivable,180990.00,,180990.00,Tax Exempt
-2026-03-09,Receivable Invoice,74,HL-INV-2511022,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,200,Sales,,180990.00,-180990.00,Tax Exempt
-2026-03-09,Payable Payment,75,KBP/R/2603,Kowloon Bay Properties Ltd,Payment KBP/R/2603,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-03-09,Payable Payment,75,KBP/R/2603,Kowloon Bay Properties Ltd,Payment KBP/R/2603,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-03-09,Payable Payment,76,SP-2026-0666,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0666,800,Accounts Payable,342718.40,,342718.40,Tax Exempt
-2026-03-09,Payable Payment,76,SP-2026-0666,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0666,497,Foreign Exchange Gain/Loss,2237.90,,2237.90,Tax Exempt
-2026-03-09,Payable Payment,76,SP-2026-0666,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0666,090,Victoria Harbour Bank - HKD Current,,344956.30,-344956.30,Tax Exempt
-2026-03-09,Payable Payment,76,SP-2026-0666,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0666,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-03-09,Payable Payment,76,SP-2026-0666,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0666,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-03-09,Payable Invoice,77,SP-2026-0715,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0715",310,Cost of Goods Sold,401355.63,,401355.63,Tax Exempt
-2026-03-09,Payable Invoice,77,SP-2026-0715,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0715",800,Accounts Payable,,401355.63,-401355.63,Tax Exempt
-2026-03-11,Receivable Payment,78,HL-INV-2511014,Kirby Components JSC,Receipt HL-INV-2511014,090,Victoria Harbour Bank - HKD Current,208960.00,,208960.00,Tax Exempt
-2026-03-11,Receivable Payment,78,HL-INV-2511014,Kirby Components JSC,Receipt HL-INV-2511014,610,Accounts Receivable,,208960.00,-208960.00,Tax Exempt
-2026-03-12,Spend Money,79,SM-03-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,4363.00,,4363.00,Tax Exempt
-2026-03-12,Spend Money,79,SM-03-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,4363.00,-4363.00,Tax Exempt
-2026-03-13,Receivable Invoice,80,HL-INV-2511023,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",610,Accounts Receivable,276600.00,,276600.00,Tax Exempt
-2026-03-13,Receivable Invoice,80,HL-INV-2511023,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",200,Sales,,276600.00,-276600.00,Tax Exempt
-2026-03-16,Payable Invoice,81,DPE/INV/0325,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0325",310,Cost of Goods Sold,261891.80,,261891.80,Tax Exempt
-2026-03-16,Payable Invoice,81,DPE/INV/0325,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0325",800,Accounts Payable,,261891.80,-261891.80,Tax Exempt
-2026-03-17,Payable Payment,82,CD-9967,CloudDesk Inc.,Payment CD-9967,800,Accounts Payable,11339.00,,11339.00,Tax Exempt
-2026-03-17,Payable Payment,82,CD-9967,CloudDesk Inc.,Payment CD-9967,090,Victoria Harbour Bank - HKD Current,,11339.00,-11339.00,Tax Exempt
-2026-03-17,Payable Payment,82,CD-9967,CloudDesk Inc.,Payment CD-9967,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-03-17,Payable Payment,82,CD-9967,CloudDesk Inc.,Payment CD-9967,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-03-18,Payable Payment,83,DPE/INV/0316,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0316,800,Accounts Payable,294827.50,,294827.50,Tax Exempt
-2026-03-18,Payable Payment,83,DPE/INV/0316,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0316,497,Foreign Exchange Gain/Loss,377.50,,377.50,Tax Exempt
-2026-03-18,Payable Payment,83,DPE/INV/0316,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0316,090,Victoria Harbour Bank - HKD Current,,295205.00,-295205.00,Tax Exempt
-2026-03-18,Payable Payment,83,DPE/INV/0316,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0316,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-03-18,Payable Payment,83,DPE/INV/0316,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0316,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-03-18,Receivable Invoice,84,HL-INV-2511024,Nash Components Pte. Ltd.,Sales - Nash Components Pte. Ltd.,610,Accounts Receivable,232960.00,,232960.00,Tax Exempt
-2026-03-18,Receivable Invoice,84,HL-INV-2511024,Nash Components Pte. Ltd.,Sales - Nash Components Pte. Ltd.,200,Sales,,232960.00,-232960.00,Tax Exempt
-2026-03-18,Spend Money,85,SM-03-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1900.00,,1900.00,Tax Exempt
-2026-03-18,Spend Money,85,SM-03-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1900.00,-1900.00,Tax Exempt
-2026-03-20,Spend Money,86,SM-03-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,3200.00,,3200.00,Tax Exempt
-2026-03-20,Spend Money,86,SM-03-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,3200.00,-3200.00,Tax Exempt
-2026-03-20,Spend Money,87,SM-0320,Lam & Partners CPA,2025 statutory audit fee,412,Consulting & Accounting,45000.00,,45000.00,Tax Exempt
-2026-03-20,Spend Money,87,SM-0320,Lam & Partners CPA,2025 statutory audit fee,090,Victoria Harbour Bank - HKD Current,,45000.00,-45000.00,Tax Exempt
-2026-03-23,Receivable Invoice,88,HL-INV-2511025,Young Industrial Ltd,Sales - Young Industrial Ltd,610,Accounts Receivable,343450.00,,343450.00,Tax Exempt
-2026-03-23,Receivable Invoice,88,HL-INV-2511025,Young Industrial Ltd,Sales - Young Industrial Ltd,200,Sales,,343450.00,-343450.00,Tax Exempt
-2026-03-23,Spend Money,89,SM-03-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,1300.00,,1300.00,Tax Exempt
-2026-03-23,Spend Money,89,SM-03-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,1300.00,-1300.00,Tax Exempt
-2026-03-26,Receivable Payment,90,HL-INV-2511017,Kirby Components JSC,Receipt HL-INV-2511017,090,Victoria Harbour Bank - HKD Current,357300.00,,357300.00,Tax Exempt
-2026-03-26,Receivable Payment,90,HL-INV-2511017,Kirby Components JSC,Receipt HL-INV-2511017,610,Accounts Receivable,,357300.00,-357300.00,Tax Exempt
-2026-03-27,Receivable Payment,91,HL-INV-2511020,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511020,090,Victoria Harbour Bank - HKD Current,266290.00,,266290.00,Tax Exempt
-2026-03-27,Receivable Payment,91,HL-INV-2511020,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511020,610,Accounts Receivable,,266290.00,-266290.00,Tax Exempt
-2026-03-31,Spend Money,92,FEE-03,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-03-31,Spend Money,92,FEE-03,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-03-31,Receive Money,93,INT-03,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1638.00,,1638.00,Tax Exempt
-2026-03-31,Receive Money,93,INT-03,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1638.00,-1638.00,Tax Exempt
-2026-03-31,Spend Money,94,MPF-03,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-03-31,Spend Money,94,MPF-03,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-03-31,Spend Money,95,PAY-03,Payroll,Payroll Mar 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-03-31,Spend Money,95,PAY-03,Payroll,Payroll Mar 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-03-31,Spend Money,95,PAY-03,Payroll,Payroll Mar 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-03-31,Spend Money,95,PAY-03,Payroll,Payroll Mar 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
-2026-04-01,Payable Invoice,96,CD-9978,CloudDesk Inc.,CloudDesk Inc. CD-9978,485,Software Subscriptions,11310.00,,11310.00,Tax Exempt
-2026-04-01,Payable Invoice,96,CD-9978,CloudDesk Inc.,CloudDesk Inc. CD-9978,800,Accounts Payable,,11310.00,-11310.00,Tax Exempt
-2026-04-01,Receivable Payment,97,HL-INV-2511016,Hussain Components Pte. Ltd.,Receipt HL-INV-2511016,090,Victoria Harbour Bank - HKD Current,135340.00,,135340.00,Tax Exempt
-2026-04-01,Receivable Payment,97,HL-INV-2511016,Hussain Components Pte. Ltd.,Receipt HL-INV-2511016,610,Accounts Receivable,,135340.00,-135340.00,Tax Exempt
-2026-04-01,Payable Invoice,98,KBP/R/2604,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2604,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-04-01,Payable Invoice,98,KBP/R/2604,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2604,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-04-02,Payable Payment,99,INV-2028,Pacific Freight Logistics Ltd,Payment INV-2028,800,Accounts Payable,22485.00,,22485.00,Tax Exempt
-2026-04-02,Payable Payment,99,INV-2028,Pacific Freight Logistics Ltd,Payment INV-2028,090,Victoria Harbour Bank - HKD Current,,22485.00,-22485.00,Tax Exempt
-2026-04-02,Spend Money,100,SM-04-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,471,Building Management Fees,6800.00,,6800.00,Tax Exempt
-2026-04-02,Spend Money,100,SM-04-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,090,Victoria Harbour Bank - HKD Current,,6800.00,-6800.00,Tax Exempt
-2026-04-03,Receivable Payment,101,HL-INV-2511018,"Brown Systems Co., Ltd.",Receipt HL-INV-2511018,090,Victoria Harbour Bank - HKD Current,332690.00,,332690.00,Tax Exempt
-2026-04-03,Receivable Payment,101,HL-INV-2511018,"Brown Systems Co., Ltd.",Receipt HL-INV-2511018,610,Accounts Receivable,,332690.00,-332690.00,Tax Exempt
-2026-04-03,Receivable Invoice,102,HL-INV-2511026,White Systems Ltd,Sales - White Systems Ltd,610,Accounts Receivable,288100.00,,288100.00,Tax Exempt
-2026-04-03,Receivable Invoice,102,HL-INV-2511026,White Systems Ltd,Sales - White Systems Ltd,200,Sales,,288100.00,-288100.00,Tax Exempt
-2026-04-03,Payable Invoice,103,INV-2072,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2072,425,Freight & Courier,16335.00,,16335.00,Tax Exempt
-2026-04-03,Payable Invoice,103,INV-2072,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2072,800,Accounts Payable,,16335.00,-16335.00,Tax Exempt
-2026-04-03,Spend Money,104,SM-04-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-04-03,Spend Money,104,SM-04-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-04-06,Spend Money,105,SM-04-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-04-06,Spend Money,105,SM-04-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-04-08,Receivable Invoice,106,HL-INV-2511027,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,610,Accounts Receivable,323590.00,,323590.00,Tax Exempt
-2026-04-08,Receivable Invoice,106,HL-INV-2511027,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,200,Sales,,323590.00,-323590.00,Tax Exempt
-2026-04-08,Payable Payment,107,KBP/R/2604,Kowloon Bay Properties Ltd,Payment KBP/R/2604,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-04-08,Payable Payment,107,KBP/R/2604,Kowloon Bay Properties Ltd,Payment KBP/R/2604,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-04-08,Payable Invoice,108,SP-2026-0741,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0741",310,Cost of Goods Sold,316440.84,,316440.84,Tax Exempt
-2026-04-08,Payable Invoice,108,SP-2026-0741,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0741",800,Accounts Payable,,316440.84,-316440.84,Tax Exempt
-2026-04-09,Receivable Payment,109,HL-INV-2511021,Young Industrial Ltd,Receipt HL-INV-2511021,090,Victoria Harbour Bank - HKD Current,298450.00,,298450.00,Tax Exempt
-2026-04-09,Receivable Payment,109,HL-INV-2511021,Young Industrial Ltd,Receipt HL-INV-2511021,610,Accounts Receivable,,298450.00,-298450.00,Tax Exempt
-2026-04-10,Payable Payment,110,SP-2026-0692,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0692,800,Accounts Payable,304823.31,,304823.31,Tax Exempt
-2026-04-10,Payable Payment,110,SP-2026-0692,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0692,497,Foreign Exchange Gain/Loss,,283.03,-283.03,Tax Exempt
-2026-04-10,Payable Payment,110,SP-2026-0692,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0692,090,Victoria Harbour Bank - HKD Current,,304540.28,-304540.28,Tax Exempt
-2026-04-10,Payable Payment,110,SP-2026-0692,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0692,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-04-10,Payable Payment,110,SP-2026-0692,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0692,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-04-13,Receivable Payment,111,HL-INV-2511019,Griffiths Technology Ltd,Receipt HL-INV-2511019,090,Victoria Harbour Bank - HKD Current,197360.00,,197360.00,Tax Exempt
-2026-04-13,Receivable Payment,111,HL-INV-2511019,Griffiths Technology Ltd,Receipt HL-INV-2511019,610,Accounts Receivable,,197360.00,-197360.00,Tax Exempt
-2026-04-13,Receivable Invoice,112,HL-INV-2511028,White Systems Ltd,Sales - White Systems Ltd,610,Accounts Receivable,260570.00,,260570.00,Tax Exempt
-2026-04-13,Receivable Invoice,112,HL-INV-2511028,White Systems Ltd,Sales - White Systems Ltd,200,Sales,,260570.00,-260570.00,Tax Exempt
-2026-04-13,Spend Money,113,SM-04-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,4006.00,,4006.00,Tax Exempt
-2026-04-13,Spend Money,113,SM-04-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,4006.00,-4006.00,Tax Exempt
-2026-04-15,Payable Payment,114,DPE/INV/0325,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0325,800,Accounts Payable,261891.80,,261891.80,Tax Exempt
-2026-04-15,Payable Payment,114,DPE/INV/0325,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0325,497,Foreign Exchange Gain/Loss,,669.80,-669.80,Tax Exempt
-2026-04-15,Payable Payment,114,DPE/INV/0325,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0325,090,Victoria Harbour Bank - HKD Current,,261222.00,-261222.00,Tax Exempt
-2026-04-15,Payable Payment,114,DPE/INV/0325,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0325,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-04-15,Payable Payment,114,DPE/INV/0325,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0325,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-04-15,Payable Invoice,115,DPE/INV/0334,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0334",310,Cost of Goods Sold,234468.00,,234468.00,Tax Exempt
-2026-04-15,Payable Invoice,115,DPE/INV/0334,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0334",800,Accounts Payable,,234468.00,-234468.00,Tax Exempt
-2026-04-16,Payable Payment,116,CD-9978,CloudDesk Inc.,Payment CD-9978,800,Accounts Payable,11310.00,,11310.00,Tax Exempt
-2026-04-16,Payable Payment,116,CD-9978,CloudDesk Inc.,Payment CD-9978,090,Victoria Harbour Bank - HKD Current,,11310.00,-11310.00,Tax Exempt
-2026-04-16,Payable Payment,116,CD-9978,CloudDesk Inc.,Payment CD-9978,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-04-16,Payable Payment,116,CD-9978,CloudDesk Inc.,Payment CD-9978,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-04-16,Receivable Payment,117,HL-INV-2511022,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511022,090,Victoria Harbour Bank - HKD Current,180990.00,,180990.00,Tax Exempt
-2026-04-16,Receivable Payment,117,HL-INV-2511022,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511022,610,Accounts Receivable,,180990.00,-180990.00,Tax Exempt
-2026-04-20,Receivable Invoice,118,HL-INV-2511029,Doyle Components Ltd,Sales - Doyle Components Ltd,610,Accounts Receivable,226920.00,,226920.00,Tax Exempt
-2026-04-20,Receivable Invoice,118,HL-INV-2511029,Doyle Components Ltd,Sales - Doyle Components Ltd,200,Sales,,226920.00,-226920.00,Tax Exempt
-2026-04-20,Spend Money,119,SM-04-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1200.00,,1200.00,Tax Exempt
-2026-04-20,Spend Money,119,SM-04-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1200.00,-1200.00,Tax Exempt
-2026-04-20,Spend Money,120,SM-04-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,4500.00,,4500.00,Tax Exempt
-2026-04-20,Spend Money,120,SM-04-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,4500.00,-4500.00,Tax Exempt
-2026-04-22,Spend Money,121,SM-04-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,2400.00,,2400.00,Tax Exempt
-2026-04-22,Spend Money,121,SM-04-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,2400.00,-2400.00,Tax Exempt
-2026-04-23,Receivable Invoice,122,HL-INV-2511030,White Systems Ltd,Sales - White Systems Ltd,610,Accounts Receivable,336870.00,,336870.00,Tax Exempt
-2026-04-23,Receivable Invoice,122,HL-INV-2511030,White Systems Ltd,Sales - White Systems Ltd,200,Sales,,336870.00,-336870.00,Tax Exempt
-2026-04-30,Spend Money,123,FEE-04,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-04-30,Spend Money,123,FEE-04,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-04-30,Receivable Payment,124,HL-INV-2511023,"Brown Systems Co., Ltd.",Receipt HL-INV-2511023,090,Victoria Harbour Bank - HKD Current,276600.00,,276600.00,Tax Exempt
-2026-04-30,Receivable Payment,124,HL-INV-2511023,"Brown Systems Co., Ltd.",Receipt HL-INV-2511023,610,Accounts Receivable,,276600.00,-276600.00,Tax Exempt
-2026-04-30,Receive Money,125,INT-04,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1107.00,,1107.00,Tax Exempt
-2026-04-30,Receive Money,125,INT-04,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1107.00,-1107.00,Tax Exempt
-2026-04-30,Spend Money,126,MPF-04,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-04-30,Spend Money,126,MPF-04,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-04-30,Spend Money,127,PAY-04,Payroll,Payroll Apr 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-04-30,Spend Money,127,PAY-04,Payroll,Payroll Apr 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-04-30,Spend Money,127,PAY-04,Payroll,Payroll Apr 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-04-30,Spend Money,127,PAY-04,Payroll,Payroll Apr 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
-2026-05-01,Payable Invoice,128,CD-9989,CloudDesk Inc.,CloudDesk Inc. CD-9989,485,Software Subscriptions,11295.50,,11295.50,Tax Exempt
-2026-05-01,Payable Invoice,128,CD-9989,CloudDesk Inc.,CloudDesk Inc. CD-9989,800,Accounts Payable,,11295.50,-11295.50,Tax Exempt
-2026-05-01,Payable Invoice,129,KBP/R/2605,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2605,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-05-01,Payable Invoice,129,KBP/R/2605,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2605,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-05-04,Receivable Payment,130,HL-INV-2511025,Young Industrial Ltd,Receipt HL-INV-2511025,090,Victoria Harbour Bank - HKD Current,343450.00,,343450.00,Tax Exempt
-2026-05-04,Receivable Payment,130,HL-INV-2511025,Young Industrial Ltd,Receipt HL-INV-2511025,610,Accounts Receivable,,343450.00,-343450.00,Tax Exempt
-2026-05-04,Receivable Invoice,131,HL-INV-2511031,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,610,Accounts Receivable,273580.00,,273580.00,Tax Exempt
-2026-05-04,Receivable Invoice,131,HL-INV-2511031,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,200,Sales,,273580.00,-273580.00,Tax Exempt
-2026-05-04,Payable Payment,132,INV-2072,Pacific Freight Logistics Ltd,Payment INV-2072,800,Accounts Payable,16335.00,,16335.00,Tax Exempt
-2026-05-04,Payable Payment,132,INV-2072,Pacific Freight Logistics Ltd,Payment INV-2072,090,Victoria Harbour Bank - HKD Current,,16335.00,-16335.00,Tax Exempt
-2026-05-04,Payable Invoice,133,INV-2116,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2116,425,Freight & Courier,11760.00,,11760.00,Tax Exempt
-2026-05-04,Payable Invoice,133,INV-2116,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2116,800,Accounts Payable,,11760.00,-11760.00,Tax Exempt
-2026-05-04,Spend Money,134,SM-05-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,471,Building Management Fees,6800.00,,6800.00,Tax Exempt
-2026-05-04,Spend Money,134,SM-05-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office,090,Victoria Harbour Bank - HKD Current,,6800.00,-6800.00,Tax Exempt
-2026-05-04,Spend Money,135,SM-05-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-05-04,Spend Money,135,SM-05-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-05-05,Spend Money,136,SM-05-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-05-05,Spend Money,136,SM-05-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-05-08,Receivable Payment,137,HL-INV-2511027,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511027,090,Victoria Harbour Bank - HKD Current,323590.00,,323590.00,Tax Exempt
-2026-05-08,Receivable Payment,137,HL-INV-2511027,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511027,610,Accounts Receivable,,323590.00,-323590.00,Tax Exempt
-2026-05-08,Receivable Invoice,138,HL-INV-2511032,Doyle Components Ltd,Sales - Doyle Components Ltd,610,Accounts Receivable,365590.00,,365590.00,Tax Exempt
-2026-05-08,Receivable Invoice,138,HL-INV-2511032,Doyle Components Ltd,Sales - Doyle Components Ltd,200,Sales,,365590.00,-365590.00,Tax Exempt
-2026-05-08,Payable Payment,139,KBP/R/2605,Kowloon Bay Properties Ltd,Payment KBP/R/2605,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-05-08,Payable Payment,139,KBP/R/2605,Kowloon Bay Properties Ltd,Payment KBP/R/2605,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-05-08,Payable Payment,140,SP-2026-0715,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0715,800,Accounts Payable,401355.63,,401355.63,Tax Exempt
-2026-05-08,Payable Payment,140,SP-2026-0715,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0715,497,Foreign Exchange Gain/Loss,,2231.82,-2231.82,Tax Exempt
-2026-05-08,Payable Payment,140,SP-2026-0715,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0715,090,Victoria Harbour Bank - HKD Current,,399123.81,-399123.81,Tax Exempt
-2026-05-08,Payable Payment,140,SP-2026-0715,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0715,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-05-08,Payable Payment,140,SP-2026-0715,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0715,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-05-08,Payable Invoice,141,SP-2026-0767,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0767",310,Cost of Goods Sold,330623.49,,330623.49,Tax Exempt
-2026-05-08,Payable Invoice,141,SP-2026-0767,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0767",800,Accounts Payable,,330623.49,-330623.49,Tax Exempt
-2026-05-11,Receivable Payment,142,HL-INV-2511024,Nash Components Pte. Ltd.,Receipt HL-INV-2511024,090,Victoria Harbour Bank - HKD Current,232960.00,,232960.00,Tax Exempt
-2026-05-11,Receivable Payment,142,HL-INV-2511024,Nash Components Pte. Ltd.,Receipt HL-INV-2511024,610,Accounts Receivable,,232960.00,-232960.00,Tax Exempt
-2026-05-12,Spend Money,143,SM-05-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,4293.00,,4293.00,Tax Exempt
-2026-05-12,Spend Money,143,SM-05-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,4293.00,-4293.00,Tax Exempt
-2026-05-13,Receivable Invoice,144,HL-INV-2511033,Doyle Components Ltd,Sales - Doyle Components Ltd,610,Accounts Receivable,331850.00,,331850.00,Tax Exempt
-2026-05-13,Receivable Invoice,144,HL-INV-2511033,Doyle Components Ltd,Sales - Doyle Components Ltd,200,Sales,,331850.00,-331850.00,Tax Exempt
-2026-05-15,Payable Payment,145,DPE/INV/0334,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0334,800,Accounts Payable,234468.00,,234468.00,Tax Exempt
-2026-05-15,Payable Payment,145,DPE/INV/0334,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0334,497,Foreign Exchange Gain/Loss,,300.60,-300.60,Tax Exempt
-2026-05-15,Payable Payment,145,DPE/INV/0334,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0334,090,Victoria Harbour Bank - HKD Current,,234167.40,-234167.40,Tax Exempt
-2026-05-15,Payable Payment,145,DPE/INV/0334,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0334,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-05-15,Payable Payment,145,DPE/INV/0334,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0334,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-05-15,Payable Invoice,146,DPE/INV/0343,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0343",310,Cost of Goods Sold,252863.40,,252863.40,Tax Exempt
-2026-05-15,Payable Invoice,146,DPE/INV/0343,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0343",800,Accounts Payable,,252863.40,-252863.40,Tax Exempt
-2026-05-18,Payable Payment,147,CD-9989,CloudDesk Inc.,Payment CD-9989,800,Accounts Payable,11295.50,,11295.50,Tax Exempt
-2026-05-18,Payable Payment,147,CD-9989,CloudDesk Inc.,Payment CD-9989,090,Victoria Harbour Bank - HKD Current,,11295.50,-11295.50,Tax Exempt
-2026-05-18,Payable Payment,147,CD-9989,CloudDesk Inc.,Payment CD-9989,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-05-18,Payable Payment,147,CD-9989,CloudDesk Inc.,Payment CD-9989,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-05-18,Receivable Invoice,148,HL-INV-2511034,Griffiths Technology Ltd,Sales - Griffiths Technology Ltd,610,Accounts Receivable,185450.00,,185450.00,Tax Exempt
-2026-05-18,Receivable Invoice,148,HL-INV-2511034,Griffiths Technology Ltd,Sales - Griffiths Technology Ltd,200,Sales,,185450.00,-185450.00,Tax Exempt
-2026-05-18,Spend Money,149,SM-05-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1600.00,,1600.00,Tax Exempt
-2026-05-18,Spend Money,149,SM-05-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1600.00,-1600.00,Tax Exempt
-2026-05-20,Spend Money,150,SM-05-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,2100.00,,2100.00,Tax Exempt
-2026-05-20,Spend Money,150,SM-05-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,2100.00,-2100.00,Tax Exempt
-2026-05-22,Spend Money,151,SM-05-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,1500.00,,1500.00,Tax Exempt
-2026-05-22,Spend Money,151,SM-05-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,1500.00,-1500.00,Tax Exempt
-2026-05-25,Receivable Invoice,152,HL-INV-2511035,White Systems Ltd,Sales - White Systems Ltd,610,Accounts Receivable,323560.00,,323560.00,Tax Exempt
-2026-05-25,Receivable Invoice,152,HL-INV-2511035,White Systems Ltd,Sales - White Systems Ltd,200,Sales,,323560.00,-323560.00,Tax Exempt
-2026-05-27,Receivable Payment,153,HL-INV-2511029,Doyle Components Ltd,Receipt HL-INV-2511029,090,Victoria Harbour Bank - HKD Current,226920.00,,226920.00,Tax Exempt
-2026-05-27,Receivable Payment,153,HL-INV-2511029,Doyle Components Ltd,Receipt HL-INV-2511029,610,Accounts Receivable,,226920.00,-226920.00,Tax Exempt
-2026-05-29,Spend Money,154,FEE-05,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-05-29,Spend Money,154,FEE-05,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-05-29,Receive Money,155,INT-05,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1315.00,,1315.00,Tax Exempt
-2026-05-29,Receive Money,155,INT-05,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1315.00,-1315.00,Tax Exempt
-2026-05-29,Spend Money,156,MPF-05,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-05-29,Spend Money,156,MPF-05,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-05-29,Spend Money,157,PAY-05,Payroll,Payroll May 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-05-29,Spend Money,157,PAY-05,Payroll,Payroll May 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-05-29,Spend Money,157,PAY-05,Payroll,Payroll May 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-05-29,Spend Money,157,PAY-05,Payroll,Payroll May 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
-2026-06-01,Payable Invoice,158,CD-10000,CloudDesk Inc.,CloudDesk Inc. CD-10000,485,Software Subscriptions,11324.50,,11324.50,Tax Exempt
-2026-06-01,Payable Invoice,158,CD-10000,CloudDesk Inc.,CloudDesk Inc. CD-10000,800,Accounts Payable,,11324.50,-11324.50,Tax Exempt
-2026-06-01,Receivable Payment,159,HL-INV-2511026,White Systems Ltd,Receipt HL-INV-2511026,090,Victoria Harbour Bank - HKD Current,288100.00,,288100.00,Tax Exempt
-2026-06-01,Receivable Payment,159,HL-INV-2511026,White Systems Ltd,Receipt HL-INV-2511026,610,Accounts Receivable,,288100.00,-288100.00,Tax Exempt
-2026-06-01,Payable Invoice,160,KBP/R/2606,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2606,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-06-01,Payable Invoice,160,KBP/R/2606,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2606,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-06-02,Spend Money,161,SM-06-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office (revised fee from Jun 2026),471,Building Management Fees,8000.00,,8000.00,Tax Exempt
-2026-06-02,Spend Money,161,SM-06-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office (revised fee from Jun 2026),090,Victoria Harbour Bank - HKD Current,,8000.00,-8000.00,Tax Exempt
-2026-06-03,Receivable Invoice,162,HL-INV-2511036,Doyle Components Ltd,Sales - Doyle Components Ltd,610,Accounts Receivable,257310.00,,257310.00,Tax Exempt
-2026-06-03,Receivable Invoice,162,HL-INV-2511036,Doyle Components Ltd,Sales - Doyle Components Ltd,200,Sales,,257310.00,-257310.00,Tax Exempt
-2026-06-03,Payable Payment,163,INV-2116,Pacific Freight Logistics Ltd,Payment INV-2116,800,Accounts Payable,11760.00,,11760.00,Tax Exempt
-2026-06-03,Payable Payment,163,INV-2116,Pacific Freight Logistics Ltd,Payment INV-2116,090,Victoria Harbour Bank - HKD Current,,11760.00,-11760.00,Tax Exempt
-2026-06-03,Payable Invoice,164,INV-2160,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2160,425,Freight & Courier,16290.00,,16290.00,Tax Exempt
-2026-06-03,Payable Invoice,164,INV-2160,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2160,800,Accounts Payable,,16290.00,-16290.00,Tax Exempt
-2026-06-03,Spend Money,165,SM-06-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-06-03,Spend Money,165,SM-06-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-06-04,Receivable Payment,166,HL-INV-2511028,White Systems Ltd,Receipt HL-INV-2511028,090,Victoria Harbour Bank - HKD Current,260570.00,,260570.00,Tax Exempt
-2026-06-04,Receivable Payment,166,HL-INV-2511028,White Systems Ltd,Receipt HL-INV-2511028,610,Accounts Receivable,,260570.00,-260570.00,Tax Exempt
-2026-06-05,Spend Money,167,SM-06-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-06-05,Spend Money,167,SM-06-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-06-08,Receivable Invoice,168,HL-INV-2511037,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,610,Accounts Receivable,142620.00,,142620.00,Tax Exempt
-2026-06-08,Receivable Invoice,168,HL-INV-2511037,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,200,Sales,,142620.00,-142620.00,Tax Exempt
-2026-06-08,Payable Payment,169,KBP/R/2606,Kowloon Bay Properties Ltd,Payment KBP/R/2606,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-06-08,Payable Payment,169,KBP/R/2606,Kowloon Bay Properties Ltd,Payment KBP/R/2606,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-06-08,Payable Payment,170,SP-2026-0741,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0741,800,Accounts Payable,316440.84,,316440.84,Tax Exempt
-2026-06-08,Payable Payment,170,SP-2026-0741,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0741,497,Foreign Exchange Gain/Loss,588.18,,588.18,Tax Exempt
-2026-06-08,Payable Payment,170,SP-2026-0741,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0741,090,Victoria Harbour Bank - HKD Current,,317029.02,-317029.02,Tax Exempt
-2026-06-08,Payable Payment,170,SP-2026-0741,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0741,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-06-08,Payable Payment,170,SP-2026-0741,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0741,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-06-08,Payable Invoice,171,SP-2026-0790,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0790",310,Cost of Goods Sold,361453.40,,361453.40,Tax Exempt
-2026-06-08,Payable Invoice,171,SP-2026-0790,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0790",800,Accounts Payable,,361453.40,-361453.40,Tax Exempt
-2026-06-10,Receivable Payment,172,HL-INV-2511030,White Systems Ltd,Receipt HL-INV-2511030,090,Victoria Harbour Bank - HKD Current,336870.00,,336870.00,Tax Exempt
-2026-06-10,Receivable Payment,172,HL-INV-2511030,White Systems Ltd,Receipt HL-INV-2511030,610,Accounts Receivable,,336870.00,-336870.00,Tax Exempt
-2026-06-12,Spend Money,173,SM-06-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,5981.00,,5981.00,Tax Exempt
-2026-06-12,Spend Money,173,SM-06-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,5981.00,-5981.00,Tax Exempt
-2026-06-15,Payable Payment,174,DPE/INV/0343,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0343,800,Accounts Payable,252863.40,,252863.40,Tax Exempt
-2026-06-15,Payable Payment,174,DPE/INV/0343,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0343,497,Foreign Exchange Gain/Loss,649.20,,649.20,Tax Exempt
-2026-06-15,Payable Payment,174,DPE/INV/0343,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0343,090,Victoria Harbour Bank - HKD Current,,253512.60,-253512.60,Tax Exempt
-2026-06-15,Payable Payment,174,DPE/INV/0343,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0343,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-06-15,Payable Payment,174,DPE/INV/0343,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0343,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-06-15,Payable Invoice,175,DPE/INV/0352,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0352",310,Cost of Goods Sold,309354.10,,309354.10,Tax Exempt
-2026-06-15,Payable Invoice,175,DPE/INV/0352,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0352",800,Accounts Payable,,309354.10,-309354.10,Tax Exempt
-2026-06-15,Receivable Payment,176,HL-INV-2511031,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511031,090,Victoria Harbour Bank - HKD Current,273580.00,,273580.00,Tax Exempt
-2026-06-15,Receivable Payment,176,HL-INV-2511031,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511031,610,Accounts Receivable,,273580.00,-273580.00,Tax Exempt
-2026-06-15,Receivable Payment,177,HL-INV-2511032,Doyle Components Ltd,Receipt HL-INV-2511032,090,Victoria Harbour Bank - HKD Current,365590.00,,365590.00,Tax Exempt
-2026-06-15,Receivable Payment,177,HL-INV-2511032,Doyle Components Ltd,Receipt HL-INV-2511032,610,Accounts Receivable,,365590.00,-365590.00,Tax Exempt
-2026-06-15,Receivable Payment,178,HL-INV-2511033,Doyle Components Ltd,Receipt HL-INV-2511033,090,Victoria Harbour Bank - HKD Current,331850.00,,331850.00,Tax Exempt
-2026-06-15,Receivable Payment,178,HL-INV-2511033,Doyle Components Ltd,Receipt HL-INV-2511033,610,Accounts Receivable,,331850.00,-331850.00,Tax Exempt
-2026-06-15,Receivable Invoice,179,HL-INV-2511038,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",610,Accounts Receivable,261220.00,,261220.00,Tax Exempt
-2026-06-15,Receivable Invoice,179,HL-INV-2511038,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",200,Sales,,261220.00,-261220.00,Tax Exempt
-2026-06-16,Payable Payment,180,CD-10000,CloudDesk Inc.,Payment CD-10000,800,Accounts Payable,11324.50,,11324.50,Tax Exempt
-2026-06-16,Payable Payment,180,CD-10000,CloudDesk Inc.,Payment CD-10000,090,Victoria Harbour Bank - HKD Current,,11324.50,-11324.50,Tax Exempt
-2026-06-16,Payable Payment,180,CD-10000,CloudDesk Inc.,Payment CD-10000,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-06-16,Payable Payment,180,CD-10000,CloudDesk Inc.,Payment CD-10000,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-06-18,Receivable Invoice,181,HL-INV-2511039,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,610,Accounts Receivable,375440.00,,375440.00,Tax Exempt
-2026-06-18,Receivable Invoice,181,HL-INV-2511039,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,200,Sales,,375440.00,-375440.00,Tax Exempt
-2026-06-18,Spend Money,182,SM-06-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1800.00,,1800.00,Tax Exempt
-2026-06-18,Spend Money,182,SM-06-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1800.00,-1800.00,Tax Exempt
-2026-06-22,Spend Money,183,SM-06-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,1200.00,,1200.00,Tax Exempt
-2026-06-22,Spend Money,183,SM-06-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,1200.00,-1200.00,Tax Exempt
-2026-06-22,Spend Money,184,SM-06-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,3300.00,,3300.00,Tax Exempt
-2026-06-22,Spend Money,184,SM-06-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,3300.00,-3300.00,Tax Exempt
-2026-06-23,Receivable Invoice,185,HL-INV-2511040,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",610,Accounts Receivable,314810.00,,314810.00,Tax Exempt
-2026-06-23,Receivable Invoice,185,HL-INV-2511040,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",200,Sales,,314810.00,-314810.00,Tax Exempt
-2026-06-30,Spend Money,186,FEE-06,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-06-30,Spend Money,186,FEE-06,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-06-30,Receive Money,187,INT-06,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1782.00,,1782.00,Tax Exempt
-2026-06-30,Receive Money,187,INT-06,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1782.00,-1782.00,Tax Exempt
-2026-06-30,Spend Money,188,MPF-06,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-06-30,Spend Money,188,MPF-06,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-06-30,Spend Money,189,PAY-06,Payroll,Payroll Jun 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-06-30,Spend Money,189,PAY-06,Payroll,Payroll Jun 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-06-30,Spend Money,189,PAY-06,Payroll,Payroll Jun 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-06-30,Spend Money,189,PAY-06,Payroll,Payroll Jun 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
-2026-07-01,Payable Invoice,190,CD-10011,CloudDesk Inc.,CloudDesk Inc. CD-10011,485,Software Subscriptions,11339.00,,11339.00,Tax Exempt
-2026-07-01,Payable Invoice,190,CD-10011,CloudDesk Inc.,CloudDesk Inc. CD-10011,800,Accounts Payable,,11339.00,-11339.00,Tax Exempt
-2026-07-01,Payable Invoice,191,KBP/R/2607,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2607,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-07-01,Payable Invoice,191,KBP/R/2607,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2607,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-07-02,Spend Money,192,SM-07-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office (revised fee from Jun 2026),471,Building Management Fees,8000.00,,8000.00,Tax Exempt
-2026-07-02,Spend Money,192,SM-07-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office (revised fee from Jun 2026),090,Victoria Harbour Bank - HKD Current,,8000.00,-8000.00,Tax Exempt
-2026-07-03,Receivable Invoice,193,HL-INV-2511041,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",610,Accounts Receivable,223680.00,,223680.00,Tax Exempt
-2026-07-03,Receivable Invoice,193,HL-INV-2511041,"Brown Systems Co., Ltd.","Sales - Brown Systems Co., Ltd.",200,Sales,,223680.00,-223680.00,Tax Exempt
-2026-07-03,Payable Payment,194,INV-2160,Pacific Freight Logistics Ltd,Payment INV-2160,800,Accounts Payable,16290.00,,16290.00,Tax Exempt
-2026-07-03,Payable Payment,194,INV-2160,Pacific Freight Logistics Ltd,Payment INV-2160,090,Victoria Harbour Bank - HKD Current,,16290.00,-16290.00,Tax Exempt
-2026-07-03,Payable Invoice,195,INV-2204,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2204,425,Freight & Courier,23925.00,,23925.00,Tax Exempt
-2026-07-03,Payable Invoice,195,INV-2204,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2204,800,Accounts Payable,,23925.00,-23925.00,Tax Exempt
-2026-07-03,Spend Money,196,SM-07-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-07-03,Spend Money,196,SM-07-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-07-06,Receivable Payment,197,HL-INV-2511034,Griffiths Technology Ltd,Receipt HL-INV-2511034,090,Victoria Harbour Bank - HKD Current,185450.00,,185450.00,Tax Exempt
-2026-07-06,Receivable Payment,197,HL-INV-2511034,Griffiths Technology Ltd,Receipt HL-INV-2511034,610,Accounts Receivable,,185450.00,-185450.00,Tax Exempt
-2026-07-06,Spend Money,198,SM-07-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-07-06,Spend Money,198,SM-07-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-07-07,Payable Payment,199,SP-2026-0767,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0767,800,Accounts Payable,330623.49,,330623.49,Tax Exempt
-2026-07-07,Payable Payment,199,SP-2026-0767,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0767,497,Foreign Exchange Gain/Loss,3081.30,,3081.30,Tax Exempt
-2026-07-07,Payable Payment,199,SP-2026-0767,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0767,090,Victoria Harbour Bank - HKD Current,,333704.79,-333704.79,Tax Exempt
-2026-07-07,Payable Payment,199,SP-2026-0767,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0767,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-07-07,Payable Payment,199,SP-2026-0767,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0767,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-07-08,Receivable Payment,200,HL-INV-2511036,Doyle Components Ltd,Receipt HL-INV-2511036,090,Victoria Harbour Bank - HKD Current,257310.00,,257310.00,Tax Exempt
-2026-07-08,Receivable Payment,200,HL-INV-2511036,Doyle Components Ltd,Receipt HL-INV-2511036,610,Accounts Receivable,,257310.00,-257310.00,Tax Exempt
-2026-07-08,Receivable Invoice,201,HL-INV-2511042,Doyle Components Ltd,Sales - Doyle Components Ltd,610,Accounts Receivable,424060.00,,424060.00,Tax Exempt
-2026-07-08,Receivable Invoice,201,HL-INV-2511042,Doyle Components Ltd,Sales - Doyle Components Ltd,200,Sales,,424060.00,-424060.00,Tax Exempt
-2026-07-08,Payable Payment,202,KBP/R/2607,Kowloon Bay Properties Ltd,Payment KBP/R/2607,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-07-08,Payable Payment,202,KBP/R/2607,Kowloon Bay Properties Ltd,Payment KBP/R/2607,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-07-08,Payable Invoice,203,SP-2026-0816,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0816",310,Cost of Goods Sold,335199.33,,335199.33,Tax Exempt
-2026-07-08,Payable Invoice,203,SP-2026-0816,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0816",800,Accounts Payable,,335199.33,-335199.33,Tax Exempt
-2026-07-13,Receivable Invoice,204,HL-INV-2511043,Nash Components Pte. Ltd.,Sales - Nash Components Pte. Ltd.,610,Accounts Receivable,366480.00,,366480.00,Tax Exempt
-2026-07-13,Receivable Invoice,204,HL-INV-2511043,Nash Components Pte. Ltd.,Sales - Nash Components Pte. Ltd.,200,Sales,,366480.00,-366480.00,Tax Exempt
-2026-07-13,Spend Money,205,SM-07-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,5775.00,,5775.00,Tax Exempt
-2026-07-13,Spend Money,205,SM-07-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,5775.00,-5775.00,Tax Exempt
-2026-07-14,Receivable Payment,206,HL-INV-2511035,White Systems Ltd,Receipt HL-INV-2511035,090,Victoria Harbour Bank - HKD Current,323560.00,,323560.00,Tax Exempt
-2026-07-14,Receivable Payment,206,HL-INV-2511035,White Systems Ltd,Receipt HL-INV-2511035,610,Accounts Receivable,,323560.00,-323560.00,Tax Exempt
-2026-07-14,Spend Money,207,SM-0714,Arctic Breeze Engineering Co,Emergency air-con compressor replacement - warehouse Unit 9A,473,Repairs & Maintenance,38500.00,,38500.00,Tax Exempt
-2026-07-14,Spend Money,207,SM-0714,Arctic Breeze Engineering Co,Emergency air-con compressor replacement - warehouse Unit 9A,090,Victoria Harbour Bank - HKD Current,,38500.00,-38500.00,Tax Exempt
-2026-07-15,Payable Payment,208,DPE/INV/0352,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0352,800,Accounts Payable,309354.10,,309354.10,Tax Exempt
-2026-07-15,Payable Payment,208,DPE/INV/0352,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0352,497,Foreign Exchange Gain/Loss,396.10,,396.10,Tax Exempt
-2026-07-15,Payable Payment,208,DPE/INV/0352,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0352,090,Victoria Harbour Bank - HKD Current,,309750.20,-309750.20,Tax Exempt
-2026-07-15,Payable Payment,208,DPE/INV/0352,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0352,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-07-15,Payable Payment,208,DPE/INV/0352,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0352,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-07-15,Payable Invoice,209,DPE/INV/0361,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0361",310,Cost of Goods Sold,265723.60,,265723.60,Tax Exempt
-2026-07-15,Payable Invoice,209,DPE/INV/0361,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0361",800,Accounts Payable,,265723.60,-265723.60,Tax Exempt
-2026-07-16,Payable Payment,210,CD-10011,CloudDesk Inc.,Payment CD-10011,800,Accounts Payable,11339.00,,11339.00,Tax Exempt
-2026-07-16,Payable Payment,210,CD-10011,CloudDesk Inc.,Payment CD-10011,090,Victoria Harbour Bank - HKD Current,,11339.00,-11339.00,Tax Exempt
-2026-07-16,Payable Payment,210,CD-10011,CloudDesk Inc.,Payment CD-10011,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-07-16,Payable Payment,210,CD-10011,CloudDesk Inc.,Payment CD-10011,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-07-20,Receivable Invoice,211,HL-INV-2511044,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,610,Accounts Receivable,215040.00,,215040.00,Tax Exempt
-2026-07-20,Receivable Invoice,211,HL-INV-2511044,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,200,Sales,,215040.00,-215040.00,Tax Exempt
-2026-07-20,Spend Money,212,SM-07-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1000.00,,1000.00,Tax Exempt
-2026-07-20,Spend Money,212,SM-07-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1000.00,-1000.00,Tax Exempt
-2026-07-20,Spend Money,213,SM-07-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,3300.00,,3300.00,Tax Exempt
-2026-07-20,Spend Money,213,SM-07-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,3300.00,-3300.00,Tax Exempt
-2026-07-22,Spend Money,214,SM-07-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,3100.00,,3100.00,Tax Exempt
-2026-07-22,Spend Money,214,SM-07-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,3100.00,-3100.00,Tax Exempt
-2026-07-23,Receivable Invoice,215,HL-INV-2511045,Young Industrial Ltd,Sales - Young Industrial Ltd,610,Accounts Receivable,227450.00,,227450.00,Tax Exempt
-2026-07-23,Receivable Invoice,215,HL-INV-2511045,Young Industrial Ltd,Sales - Young Industrial Ltd,200,Sales,,227450.00,-227450.00,Tax Exempt
-2026-07-31,Spend Money,216,FEE-07,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-07-31,Spend Money,216,FEE-07,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-07-31,Receivable Payment,217,HL-INV-2511038,"Brown Systems Co., Ltd.",Receipt HL-INV-2511038,090,Victoria Harbour Bank - HKD Current,261220.00,,261220.00,Tax Exempt
-2026-07-31,Receivable Payment,217,HL-INV-2511038,"Brown Systems Co., Ltd.",Receipt HL-INV-2511038,610,Accounts Receivable,,261220.00,-261220.00,Tax Exempt
-2026-07-31,Receive Money,218,INT-07,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1223.00,,1223.00,Tax Exempt
-2026-07-31,Receive Money,218,INT-07,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1223.00,-1223.00,Tax Exempt
-2026-07-31,Spend Money,219,MPF-07,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-07-31,Spend Money,219,MPF-07,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-07-31,Spend Money,220,PAY-07,Payroll,Payroll Jul 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-07-31,Spend Money,220,PAY-07,Payroll,Payroll Jul 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-07-31,Spend Money,220,PAY-07,Payroll,Payroll Jul 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-07-31,Spend Money,220,PAY-07,Payroll,Payroll Jul 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
-2026-08-03,Payable Invoice,221,CD-10022,CloudDesk Inc.,CloudDesk Inc. CD-10022,485,Software Subscriptions,11324.50,,11324.50,Tax Exempt
-2026-08-03,Payable Invoice,221,CD-10022,CloudDesk Inc.,CloudDesk Inc. CD-10022,800,Accounts Payable,,11324.50,-11324.50,Tax Exempt
-2026-08-03,Receivable Payment,222,HL-INV-2511039,Hussain Components Pte. Ltd.,Receipt HL-INV-2511039,090,Victoria Harbour Bank - HKD Current,375440.00,,375440.00,Tax Exempt
-2026-08-03,Receivable Payment,222,HL-INV-2511039,Hussain Components Pte. Ltd.,Receipt HL-INV-2511039,610,Accounts Receivable,,375440.00,-375440.00,Tax Exempt
-2026-08-03,Receivable Invoice,223,HL-INV-2511046,Kirby Components JSC,Sales - Kirby Components JSC,610,Accounts Receivable,228230.00,,228230.00,Tax Exempt
-2026-08-03,Receivable Invoice,223,HL-INV-2511046,Kirby Components JSC,Sales - Kirby Components JSC,200,Sales,,228230.00,-228230.00,Tax Exempt
-2026-08-03,Payable Payment,224,INV-2204,Pacific Freight Logistics Ltd,Payment INV-2204,800,Accounts Payable,23925.00,,23925.00,Tax Exempt
-2026-08-03,Payable Payment,224,INV-2204,Pacific Freight Logistics Ltd,Payment INV-2204,090,Victoria Harbour Bank - HKD Current,,23925.00,-23925.00,Tax Exempt
-2026-08-03,Payable Invoice,225,INV-2247,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2247,425,Freight & Courier,33180.00,,33180.00,Tax Exempt
-2026-08-03,Payable Invoice,225,INV-2247,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2247,800,Accounts Payable,,33180.00,-33180.00,Tax Exempt
-2026-08-03,Payable Invoice,226,KBP/L/2608,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/L/2608,469,Rent,12000.00,,12000.00,Tax Exempt
-2026-08-03,Payable Invoice,226,KBP/L/2608,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/L/2608,800,Accounts Payable,,12000.00,-12000.00,Tax Exempt
-2026-08-03,Payable Invoice,227,KBP/R/2608,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2608,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-08-03,Payable Invoice,227,KBP/R/2608,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2608,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-08-03,Spend Money,228,SM-08-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office (revised fee from Jun 2026),471,Building Management Fees,8000.00,,8000.00,Tax Exempt
-2026-08-03,Spend Money,228,SM-08-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office (revised fee from Jun 2026),090,Victoria Harbour Bank - HKD Current,,8000.00,-8000.00,Tax Exempt
-2026-08-03,Spend Money,229,SM-08-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-08-03,Spend Money,229,SM-08-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-08-04,Receivable Payment,230,HL-INV-2511037,Hussain Components Pte. Ltd.,Receipt HL-INV-2511037,090,Victoria Harbour Bank - HKD Current,142620.00,,142620.00,Tax Exempt
-2026-08-04,Receivable Payment,230,HL-INV-2511037,Hussain Components Pte. Ltd.,Receipt HL-INV-2511037,610,Accounts Receivable,,142620.00,-142620.00,Tax Exempt
-2026-08-05,Spend Money,231,SM-08-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-08-05,Spend Money,231,SM-08-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-08-07,Payable Payment,232,SP-2026-0790,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0790,800,Accounts Payable,361453.40,,361453.40,Tax Exempt
-2026-08-07,Payable Payment,232,SP-2026-0790,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0790,497,Foreign Exchange Gain/Loss,1341.20,,1341.20,Tax Exempt
-2026-08-07,Payable Payment,232,SP-2026-0790,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0790,090,Victoria Harbour Bank - HKD Current,,362794.60,-362794.60,Tax Exempt
-2026-08-07,Payable Payment,232,SP-2026-0790,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0790,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-08-07,Payable Payment,232,SP-2026-0790,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0790,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-08-10,Receivable Invoice,233,HL-INV-2511047,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,610,Accounts Receivable,256200.00,,256200.00,Tax Exempt
-2026-08-10,Receivable Invoice,233,HL-INV-2511047,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,200,Sales,,256200.00,-256200.00,Tax Exempt
-2026-08-10,Payable Payment,234,KBP/L/2608,Kowloon Bay Properties Ltd,Payment KBP/L/2608,800,Accounts Payable,12000.00,,12000.00,Tax Exempt
-2026-08-10,Payable Payment,234,KBP/L/2608,Kowloon Bay Properties Ltd,Payment KBP/L/2608,090,Victoria Harbour Bank - HKD Current,,12000.00,-12000.00,Tax Exempt
-2026-08-10,Payable Payment,235,KBP/R/2608,Kowloon Bay Properties Ltd,Payment KBP/R/2608,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-08-10,Payable Payment,235,KBP/R/2608,Kowloon Bay Properties Ltd,Payment KBP/R/2608,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-08-10,Payable Invoice,236,SP-2026-0842,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0842",310,Cost of Goods Sold,318951.96,,318951.96,Tax Exempt
-2026-08-10,Payable Invoice,236,SP-2026-0842,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0842",800,Accounts Payable,,318951.96,-318951.96,Tax Exempt
-2026-08-12,Receivable Payment,237,HL-INV-2511040,"Brown Systems Co., Ltd.",Receipt HL-INV-2511040,090,Victoria Harbour Bank - HKD Current,314810.00,,314810.00,Tax Exempt
-2026-08-12,Receivable Payment,237,HL-INV-2511040,"Brown Systems Co., Ltd.",Receipt HL-INV-2511040,610,Accounts Receivable,,314810.00,-314810.00,Tax Exempt
-2026-08-12,Spend Money,238,SM-08-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,5705.00,,5705.00,Tax Exempt
-2026-08-12,Spend Money,238,SM-08-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,5705.00,-5705.00,Tax Exempt
-2026-08-13,Receivable Invoice,239,HL-INV-2511048,Kirby Components JSC,Sales - Kirby Components JSC,610,Accounts Receivable,360660.00,,360660.00,Tax Exempt
-2026-08-13,Receivable Invoice,239,HL-INV-2511048,Kirby Components JSC,Sales - Kirby Components JSC,200,Sales,,360660.00,-360660.00,Tax Exempt
-2026-08-14,Payable Payment,240,DPE/INV/0361,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0361,800,Accounts Payable,265723.60,,265723.60,Tax Exempt
-2026-08-14,Payable Payment,240,DPE/INV/0361,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0361,497,Foreign Exchange Gain/Loss,,339.80,-339.80,Tax Exempt
-2026-08-14,Payable Payment,240,DPE/INV/0361,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0361,090,Victoria Harbour Bank - HKD Current,,265383.80,-265383.80,Tax Exempt
-2026-08-14,Payable Payment,240,DPE/INV/0361,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0361,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-08-14,Payable Payment,240,DPE/INV/0361,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0361,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-08-17,Payable Invoice,241,DPE/INV/0370,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0370",310,Cost of Goods Sold,294827.50,,294827.50,Tax Exempt
-2026-08-17,Payable Invoice,241,DPE/INV/0370,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0370",800,Accounts Payable,,294827.50,-294827.50,Tax Exempt
-2026-08-18,Payable Payment,242,CD-10022,CloudDesk Inc.,Payment CD-10022,800,Accounts Payable,11324.50,,11324.50,Tax Exempt
-2026-08-18,Payable Payment,242,CD-10022,CloudDesk Inc.,Payment CD-10022,090,Victoria Harbour Bank - HKD Current,,11324.50,-11324.50,Tax Exempt
-2026-08-18,Payable Payment,242,CD-10022,CloudDesk Inc.,Payment CD-10022,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-08-18,Payable Payment,242,CD-10022,CloudDesk Inc.,Payment CD-10022,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-08-18,Receivable Payment,243,HL-INV-2511042,Doyle Components Ltd,Receipt HL-INV-2511042,090,Victoria Harbour Bank - HKD Current,424060.00,,424060.00,Tax Exempt
-2026-08-18,Receivable Payment,243,HL-INV-2511042,Doyle Components Ltd,Receipt HL-INV-2511042,610,Accounts Receivable,,424060.00,-424060.00,Tax Exempt
-2026-08-18,Receivable Invoice,244,HL-INV-2511049,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,610,Accounts Receivable,251090.00,,251090.00,Tax Exempt
-2026-08-18,Receivable Invoice,244,HL-INV-2511049,Fisher Technology Sdn. Bhd.,Sales - Fisher Technology Sdn. Bhd.,200,Sales,,251090.00,-251090.00,Tax Exempt
-2026-08-18,Spend Money,245,SM-08-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1700.00,,1700.00,Tax Exempt
-2026-08-18,Spend Money,245,SM-08-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1700.00,-1700.00,Tax Exempt
-2026-08-19,Receivable Payment,246,HL-INV-2511044,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511044,090,Victoria Harbour Bank - HKD Current,215040.00,,215040.00,Tax Exempt
-2026-08-19,Receivable Payment,246,HL-INV-2511044,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511044,610,Accounts Receivable,,215040.00,-215040.00,Tax Exempt
-2026-08-20,Spend Money,247,SM-08-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,5400.00,,5400.00,Tax Exempt
-2026-08-20,Spend Money,247,SM-08-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,5400.00,-5400.00,Tax Exempt
-2026-08-24,Receivable Invoice,248,HL-INV-2511050,Doyle Components Ltd,Sales - Doyle Components Ltd,610,Accounts Receivable,238570.00,,238570.00,Tax Exempt
-2026-08-24,Receivable Invoice,248,HL-INV-2511050,Doyle Components Ltd,Sales - Doyle Components Ltd,200,Sales,,238570.00,-238570.00,Tax Exempt
-2026-08-24,Spend Money,249,SM-08-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,3100.00,,3100.00,Tax Exempt
-2026-08-24,Spend Money,249,SM-08-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,3100.00,-3100.00,Tax Exempt
-2026-08-25,Receivable Payment,250,HL-INV-2511045,Young Industrial Ltd,Receipt HL-INV-2511045,090,Victoria Harbour Bank - HKD Current,227450.00,,227450.00,Tax Exempt
-2026-08-25,Receivable Payment,250,HL-INV-2511045,Young Industrial Ltd,Receipt HL-INV-2511045,610,Accounts Receivable,,227450.00,-227450.00,Tax Exempt
-2026-08-31,Spend Money,251,FEE-08,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-08-31,Spend Money,251,FEE-08,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-08-31,Receivable Payment,252,HL-INV-2511041,"Brown Systems Co., Ltd.",Receipt HL-INV-2511041,090,Victoria Harbour Bank - HKD Current,223680.00,,223680.00,Tax Exempt
-2026-08-31,Receivable Payment,252,HL-INV-2511041,"Brown Systems Co., Ltd.",Receipt HL-INV-2511041,610,Accounts Receivable,,223680.00,-223680.00,Tax Exempt
-2026-08-31,Receivable Payment,253,HL-INV-2511043,Nash Components Pte. Ltd.,Receipt HL-INV-2511043,090,Victoria Harbour Bank - HKD Current,366480.00,,366480.00,Tax Exempt
-2026-08-31,Receivable Payment,253,HL-INV-2511043,Nash Components Pte. Ltd.,Receipt HL-INV-2511043,610,Accounts Receivable,,366480.00,-366480.00,Tax Exempt
-2026-08-31,Receive Money,254,INT-08,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1162.00,,1162.00,Tax Exempt
-2026-08-31,Receive Money,254,INT-08,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1162.00,-1162.00,Tax Exempt
-2026-08-31,Spend Money,255,MPF-08,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-08-31,Spend Money,255,MPF-08,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-08-31,Spend Money,256,PAY-08,Payroll,Payroll Aug 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-08-31,Spend Money,256,PAY-08,Payroll,Payroll Aug 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-08-31,Spend Money,256,PAY-08,Payroll,Payroll Aug 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-08-31,Spend Money,256,PAY-08,Payroll,Payroll Aug 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
-2026-09-01,Payable Invoice,257,CD-10033,CloudDesk Inc.,CloudDesk Inc. CD-10033,485,Software Subscriptions,11310.00,,11310.00,Tax Exempt
-2026-09-01,Payable Invoice,257,CD-10033,CloudDesk Inc.,CloudDesk Inc. CD-10033,800,Accounts Payable,,11310.00,-11310.00,Tax Exempt
-2026-09-01,Payable Invoice,258,INV-2291,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2291,425,Freight & Courier,27660.00,,27660.00,Tax Exempt
-2026-09-01,Payable Invoice,258,INV-2291,Pacific Freight Logistics Ltd,Pacific Freight Logistics Ltd INV-2291,800,Accounts Payable,,27660.00,-27660.00,Tax Exempt
-2026-09-01,Payable Invoice,259,KBP/R/2609,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2609,469,Rent,80000.00,,80000.00,Tax Exempt
-2026-09-01,Payable Invoice,259,KBP/R/2609,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/R/2609,800,Accounts Payable,,80000.00,-80000.00,Tax Exempt
-2026-09-02,Payable Payment,260,INV-2247,Pacific Freight Logistics Ltd,Payment INV-2247,800,Accounts Payable,33180.00,,33180.00,Tax Exempt
-2026-09-02,Payable Payment,260,INV-2247,Pacific Freight Logistics Ltd,Payment INV-2247,090,Victoria Harbour Bank - HKD Current,,33180.00,-33180.00,Tax Exempt
-2026-09-02,Spend Money,261,SM-09-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office (revised fee from Jun 2026),471,Building Management Fees,8000.00,,8000.00,Tax Exempt
-2026-09-02,Spend Money,261,SM-09-471,Oceanic Godown Centre Management Office,Oceanic Godown Centre Management Office (revised fee from Jun 2026),090,Victoria Harbour Bank - HKD Current,,8000.00,-8000.00,Tax Exempt
-2026-09-03,Receivable Invoice,262,HL-INV-2511051,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,610,Accounts Receivable,383910.00,,383910.00,Tax Exempt
-2026-09-03,Receivable Invoice,262,HL-INV-2511051,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,200,Sales,,383910.00,-383910.00,Tax Exempt
-2026-09-03,Payable Invoice,263,KBP/L/2609,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/L/2609,469,Rent,12000.00,,12000.00,Tax Exempt
-2026-09-03,Payable Invoice,263,KBP/L/2609,Kowloon Bay Properties Ltd,Kowloon Bay Properties Ltd KBP/L/2609,800,Accounts Payable,,12000.00,-12000.00,Tax Exempt
-2026-09-03,Spend Money,264,SM-09-485,OfficeSuite licences (card),OfficeSuite licences (card),485,Software Subscriptions,1320.00,,1320.00,Tax Exempt
-2026-09-03,Spend Money,264,SM-09-485,OfficeSuite licences (card),OfficeSuite licences (card),090,Victoria Harbour Bank - HKD Current,,1320.00,-1320.00,Tax Exempt
-2026-09-07,Spend Money,265,SM-09-489,Harbourtel Broadband,Harbourtel Broadband,489,Telephone & Internet,1880.00,,1880.00,Tax Exempt
-2026-09-07,Spend Money,265,SM-09-489,Harbourtel Broadband,Harbourtel Broadband,090,Victoria Harbour Bank - HKD Current,,1880.00,-1880.00,Tax Exempt
-2026-09-07,Payable Payment,266,SP-2026-0816,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0816,800,Accounts Payable,335199.33,,335199.33,Tax Exempt
-2026-09-07,Payable Payment,266,SP-2026-0816,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0816,497,Foreign Exchange Gain/Loss,,928.53,-928.53,Tax Exempt
-2026-09-07,Payable Payment,266,SP-2026-0816,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0816,090,Victoria Harbour Bank - HKD Current,,334270.80,-334270.80,Tax Exempt
-2026-09-07,Payable Payment,266,SP-2026-0816,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0816,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-09-07,Payable Payment,266,SP-2026-0816,"Shenzhen Parts Co., Ltd.",Payment SP-2026-0816,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-09-08,Receivable Invoice,267,HL-INV-2511052,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,610,Accounts Receivable,328840.00,,328840.00,Tax Exempt
-2026-09-08,Receivable Invoice,267,HL-INV-2511052,Hussain Components Pte. Ltd.,Sales - Hussain Components Pte. Ltd.,200,Sales,,328840.00,-328840.00,Tax Exempt
-2026-09-08,Payable Payment,268,KBP/R/2609,Kowloon Bay Properties Ltd,Payment KBP/R/2609,800,Accounts Payable,80000.00,,80000.00,Tax Exempt
-2026-09-08,Payable Payment,268,KBP/R/2609,Kowloon Bay Properties Ltd,Payment KBP/R/2609,090,Victoria Harbour Bank - HKD Current,,80000.00,-80000.00,Tax Exempt
-2026-09-08,Payable Invoice,269,SP-2026-0865,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0865",310,Cost of Goods Sold,359499.60,,359499.60,Tax Exempt
-2026-09-08,Payable Invoice,269,SP-2026-0865,"Shenzhen Parts Co., Ltd.","Shenzhen Parts Co., Ltd. SP-2026-0865",800,Accounts Payable,,359499.60,-359499.60,Tax Exempt
-2026-09-10,Payable Payment,270,KBP/L/2609,Kowloon Bay Properties Ltd,Payment KBP/L/2609,800,Accounts Payable,12000.00,,12000.00,Tax Exempt
-2026-09-10,Payable Payment,270,KBP/L/2609,Kowloon Bay Properties Ltd,Payment KBP/L/2609,090,Victoria Harbour Bank - HKD Current,,12000.00,-12000.00,Tax Exempt
-2026-09-14,Receivable Invoice,271,HL-INV-2511053,Young Industrial Ltd,Sales - Young Industrial Ltd,610,Accounts Receivable,289330.00,,289330.00,Tax Exempt
-2026-09-14,Receivable Invoice,271,HL-INV-2511053,Young Industrial Ltd,Sales - Young Industrial Ltd,200,Sales,,289330.00,-289330.00,Tax Exempt
-2026-09-14,Spend Money,272,SM-09-445,City Power Ltd,City Power Ltd,445,Utilities - Electricity,5819.00,,5819.00,Tax Exempt
-2026-09-14,Spend Money,272,SM-09-445,City Power Ltd,City Power Ltd,090,Victoria Harbour Bank - HKD Current,,5819.00,-5819.00,Tax Exempt
-2026-09-15,Payable Invoice,273,DPE/INV/0379,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0379",310,Cost of Goods Sold,275730.00,,275730.00,Tax Exempt
-2026-09-15,Payable Invoice,273,DPE/INV/0379,"Dongguan Precision Electronics Co., Ltd.","Dongguan Precision Electronics Co., Ltd. DPE/INV/0379",800,Accounts Payable,,275730.00,-275730.00,Tax Exempt
-2026-09-16,Payable Payment,274,CD-10033,CloudDesk Inc.,Payment CD-10033,800,Accounts Payable,11310.00,,11310.00,Tax Exempt
-2026-09-16,Payable Payment,274,CD-10033,CloudDesk Inc.,Payment CD-10033,090,Victoria Harbour Bank - HKD Current,,11310.00,-11310.00,Tax Exempt
-2026-09-16,Payable Payment,274,CD-10033,CloudDesk Inc.,Payment CD-10033,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-09-16,Payable Payment,274,CD-10033,CloudDesk Inc.,Payment CD-10033,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-09-16,Payable Payment,275,DPE/INV/0370,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0370,800,Accounts Payable,294827.50,,294827.50,Tax Exempt
-2026-09-16,Payable Payment,275,DPE/INV/0370,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0370,497,Foreign Exchange Gain/Loss,,377.50,-377.50,Tax Exempt
-2026-09-16,Payable Payment,275,DPE/INV/0370,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0370,090,Victoria Harbour Bank - HKD Current,,294450.00,-294450.00,Tax Exempt
-2026-09-16,Payable Payment,275,DPE/INV/0370,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0370,404,Bank Fees,150.00,,150.00,Tax Exempt
-2026-09-16,Payable Payment,275,DPE/INV/0370,"Dongguan Precision Electronics Co., Ltd.",Payment DPE/INV/0370,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
-2026-09-16,Spend Money,276,SM-0916,Steelform Racking Ltd,Pallet racking repair after safety inspection,473,Repairs & Maintenance,9800.00,,9800.00,Tax Exempt
-2026-09-16,Spend Money,276,SM-0916,Steelform Racking Ltd,Pallet racking repair after safety inspection,090,Victoria Harbour Bank - HKD Current,,9800.00,-9800.00,Tax Exempt
-2026-09-18,Receivable Invoice,277,HL-INV-2511054,Nash Components Pte. Ltd.,Sales - Nash Components Pte. Ltd.,610,Accounts Receivable,161780.00,,161780.00,Tax Exempt
-2026-09-18,Receivable Invoice,277,HL-INV-2511054,Nash Components Pte. Ltd.,Sales - Nash Components Pte. Ltd.,200,Sales,,161780.00,-161780.00,Tax Exempt
-2026-09-18,Spend Money,278,SM-09-473,Hart Kee Hardware,Hart Kee Hardware,473,Repairs & Maintenance,1000.00,,1000.00,Tax Exempt
-2026-09-18,Spend Money,278,SM-09-473,Hart Kee Hardware,Hart Kee Hardware,090,Victoria Harbour Bank - HKD Current,,1000.00,-1000.00,Tax Exempt
-2026-09-21,Spend Money,279,SM-09-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),493,Travel - Local & Cross-border,2300.00,,2300.00,Tax Exempt
-2026-09-21,Spend Money,279,SM-09-493,Cross-border coach & hotel (staff claims),Cross-border coach & hotel (staff claims),090,Victoria Harbour Bank - HKD Current,,2300.00,-2300.00,Tax Exempt
-2026-09-22,Spend Money,280,SM-09-429,Grant Stationery Co,Grant Stationery Co,429,General Expenses,2500.00,,2500.00,Tax Exempt
-2026-09-22,Spend Money,280,SM-09-429,Grant Stationery Co,Grant Stationery Co,090,Victoria Harbour Bank - HKD Current,,2500.00,-2500.00,Tax Exempt
-2026-09-23,Receivable Invoice,281,HL-INV-2511055,Young Industrial Ltd,Sales - Young Industrial Ltd,610,Accounts Receivable,296180.00,,296180.00,Tax Exempt
-2026-09-23,Receivable Invoice,281,HL-INV-2511055,Young Industrial Ltd,Sales - Young Industrial Ltd,200,Sales,,296180.00,-296180.00,Tax Exempt
-2026-09-24,Receivable Payment,282,HL-INV-2511049,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511049,090,Victoria Harbour Bank - HKD Current,251090.00,,251090.00,Tax Exempt
-2026-09-24,Receivable Payment,282,HL-INV-2511049,Fisher Technology Sdn. Bhd.,Receipt HL-INV-2511049,610,Accounts Receivable,,251090.00,-251090.00,Tax Exempt
-2026-09-28,Receivable Payment,283,HL-INV-2511046,Kirby Components JSC,Receipt HL-INV-2511046,090,Victoria Harbour Bank - HKD Current,228230.00,,228230.00,Tax Exempt
-2026-09-28,Receivable Payment,283,HL-INV-2511046,Kirby Components JSC,Receipt HL-INV-2511046,610,Accounts Receivable,,228230.00,-228230.00,Tax Exempt
-2026-09-28,Receivable Payment,284,HL-INV-2511047,Hussain Components Pte. Ltd.,Receipt HL-INV-2511047,090,Victoria Harbour Bank - HKD Current,256200.00,,256200.00,Tax Exempt
-2026-09-28,Receivable Payment,284,HL-INV-2511047,Hussain Components Pte. Ltd.,Receipt HL-INV-2511047,610,Accounts Receivable,,256200.00,-256200.00,Tax Exempt
-2026-09-28,Receivable Payment,285,HL-INV-2511050,Doyle Components Ltd,Receipt HL-INV-2511050,090,Victoria Harbour Bank - HKD Current,238570.00,,238570.00,Tax Exempt
-2026-09-28,Receivable Payment,285,HL-INV-2511050,Doyle Components Ltd,Receipt HL-INV-2511050,610,Accounts Receivable,,238570.00,-238570.00,Tax Exempt
-2026-09-30,Spend Money,286,FEE-09,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
-2026-09-30,Spend Money,286,FEE-09,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
-2026-09-30,Receive Money,287,INT-09,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,1149.00,,1149.00,Tax Exempt
-2026-09-30,Receive Money,287,INT-09,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,1149.00,-1149.00,Tax Exempt
-2026-09-30,Spend Money,288,MPF-09,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,52800.00,,52800.00,Tax Exempt
-2026-09-30,Spend Money,288,MPF-09,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,52800.00,-52800.00,Tax Exempt
-2026-09-30,Spend Money,289,PAY-09,Payroll,Payroll Sep 2026 (18 staff),477,Salaries,432000.00,,432000.00,Tax Exempt
-2026-09-30,Spend Money,289,PAY-09,Payroll,Payroll Sep 2026 (18 staff),478,MPF Contributions,26400.00,,26400.00,Tax Exempt
-2026-09-30,Spend Money,289,PAY-09,Payroll,Payroll Sep 2026 (18 staff),090,Victoria Harbour Bank - HKD Current,,405600.00,-405600.00,Tax Exempt
-2026-09-30,Spend Money,289,PAY-09,Payroll,Payroll Sep 2026 (18 staff),825,MPF Payable,,52800.00,-52800.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,090,Victoria Harbour Bank - HKD Current,18500000.00,,18500000.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,150,Investments - Private Funds (at cost),152400000.00,,152400000.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,151,Investments - Listed Portfolio (custodian),2350000000.00,,2350000000.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,160,Investment Property,186000000.00,,186000000.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,620,Prepayments,96000.00,,96000.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,800,Accounts Payable,,18500.00,-18500.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,830,Tenant Deposits Held,,471000.00,-471000.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,970,Share Capital,,10000.00,-10000.00,Tax Exempt
+2026-01-01,Manual Journal,1,OB-2026,,Opening balances b/f 31 Dec 2025,960,Family Capital & Retained Earnings,,2706496500.00,-2706496500.00,Tax Exempt
+2026-01-01,Payable Invoice,2,MAI-10033,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10033,433,Insurance,19085.50,,19085.50,Tax Exempt
+2026-01-01,Payable Invoice,2,MAI-10033,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10033,800,Accounts Payable,,19085.50,-19085.50,Tax Exempt
+2026-01-01,Receive Money,3,RNT-01-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Jan 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-01-01,Receive Money,3,RNT-01-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Jan 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-01-02,Payable Invoice,4,HCP3-MF-2026Q1,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-MF-2026Q1,455,Fund Management Fees,292125.00,,292125.00,Tax Exempt
+2026-01-02,Payable Invoice,4,HCP3-MF-2026Q1,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-MF-2026Q1,800,Accounts Payable,,292125.00,-292125.00,Tax Exempt
+2026-01-02,Payable Payment,5,INV-PM-2006,Peak Estates Property Management Ltd,Payment INV-PM-2006,800,Accounts Payable,18500.00,,18500.00,Tax Exempt
+2026-01-02,Payable Payment,5,INV-PM-2006,Peak Estates Property Management Ltd,Payment INV-PM-2006,090,Victoria Harbour Bank - HKD Current,,18500.00,-18500.00,Tax Exempt
+2026-01-02,Receive Money,6,RNT-01-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Jan 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-01-02,Receive Money,6,RNT-01-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Jan 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-01-02,Spend Money,7,SM-01-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,475,Building Management & Government Rates,11600.00,,11600.00,Tax Exempt
+2026-01-02,Spend Money,7,SM-01-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,090,Victoria Harbour Bank - HKD Current,,11600.00,-11600.00,Tax Exempt
+2026-01-05,Payable Invoice,8,INV-PM-2028,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2028,471,Property Management Fees,17300.00,,17300.00,Tax Exempt
+2026-01-05,Payable Invoice,8,INV-PM-2028,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2028,800,Accounts Payable,,17300.00,-17300.00,Tax Exempt
+2026-01-05,Spend Money,9,SM-01-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-01-05,Spend Money,9,SM-01-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-01-05,Spend Money,10,SM-01-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-01-05,Spend Money,10,SM-01-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-01-08,Payable Invoice,11,PRG2-DN-014,Pearl River Growth Fund II LP,Pearl River Growth Fund II LP PRG2-DN-014,150,Investments - Private Funds (at cost),2144000.00,,2144000.00,Tax Exempt
+2026-01-08,Payable Invoice,11,PRG2-DN-014,Pearl River Growth Fund II LP,Pearl River Growth Fund II LP PRG2-DN-014,800,Accounts Payable,,2144000.00,-2144000.00,Tax Exempt
+2026-01-12,Spend Money,12,SM-0112,Peak Assurance Ltd,Household & contents policy 2026 - family residence,433,Insurance,48000.00,,48000.00,Tax Exempt
+2026-01-12,Spend Money,12,SM-0112,Peak Assurance Ltd,Household & contents policy 2026 - family residence,090,Victoria Harbour Bank - HKD Current,,48000.00,-48000.00,Tax Exempt
+2026-01-15,Spend Money,13,SM-0115,Island International School,Spring term 2026 tuition - 2 children,481,School & Tuition Fees,286000.00,,286000.00,Tax Exempt
+2026-01-15,Spend Money,13,SM-0115,Island International School,Spring term 2026 tuition - 2 children,090,Victoria Harbour Bank - HKD Current,,286000.00,-286000.00,Tax Exempt
+2026-01-16,Payable Payment,14,MAI-10033,Meridian Fine Art Insurance Ltd,Payment MAI-10033,800,Accounts Payable,19085.50,,19085.50,Tax Exempt
+2026-01-16,Payable Payment,14,MAI-10033,Meridian Fine Art Insurance Ltd,Payment MAI-10033,090,Victoria Harbour Bank - HKD Current,,19085.50,-19085.50,Tax Exempt
+2026-01-16,Payable Payment,14,MAI-10033,Meridian Fine Art Insurance Ltd,Payment MAI-10033,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-01-16,Payable Payment,14,MAI-10033,Meridian Fine Art Insurance Ltd,Payment MAI-10033,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-01-19,Spend Money,15,SM-01-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,1100.00,,1100.00,Tax Exempt
+2026-01-19,Spend Money,15,SM-01-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,1100.00,-1100.00,Tax Exempt
+2026-01-20,Spend Money,16,SM-01-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,107000.00,,107000.00,Tax Exempt
+2026-01-20,Spend Money,16,SM-01-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,107000.00,-107000.00,Tax Exempt
+2026-01-22,Payable Payment,17,PRG2-DN-014,Pearl River Growth Fund II LP,Payment PRG2-DN-014,800,Accounts Payable,2144000.00,,2144000.00,Tax Exempt
+2026-01-22,Payable Payment,17,PRG2-DN-014,Pearl River Growth Fund II LP,Payment PRG2-DN-014,090,Victoria Harbour Bank - HKD Current,,2144000.00,-2144000.00,Tax Exempt
+2026-01-22,Payable Payment,17,PRG2-DN-014,Pearl River Growth Fund II LP,Payment PRG2-DN-014,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-01-22,Payable Payment,17,PRG2-DN-014,Pearl River Growth Fund II LP,Payment PRG2-DN-014,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-01-22,Spend Money,18,SM-01-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,10800.00,,10800.00,Tax Exempt
+2026-01-22,Spend Money,18,SM-01-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,10800.00,-10800.00,Tax Exempt
+2026-01-26,Spend Money,19,SM-01-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-01-26,Spend Money,19,SM-01-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-01-26,Receive Money,20,SWP-01,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3553000.00,,3553000.00,Tax Exempt
+2026-01-26,Receive Money,20,SWP-01,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3553000.00,-3553000.00,Tax Exempt
+2026-01-30,Spend Money,21,FEE-01,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-01-30,Spend Money,21,FEE-01,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-01-30,Receive Money,22,INT-01,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,75992.00,,75992.00,Tax Exempt
+2026-01-30,Receive Money,22,INT-01,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,75992.00,-75992.00,Tax Exempt
+2026-01-30,Spend Money,23,MPF-01,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-01-30,Spend Money,23,MPF-01,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-01-30,Spend Money,24,PAY-01,Payroll,Payroll Jan 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-01-30,Spend Money,24,PAY-01,Payroll,Payroll Jan 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-01-30,Spend Money,24,PAY-01,Payroll,Payroll Jan 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-01-30,Spend Money,24,PAY-01,Payroll,Payroll Jan 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt
+2026-02-02,Payable Payment,25,HCP3-MF-2026Q1,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q1,800,Accounts Payable,292125.00,,292125.00,Tax Exempt
+2026-02-02,Payable Payment,25,HCP3-MF-2026Q1,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q1,497,Foreign Exchange Gain/Loss,750.00,,750.00,Tax Exempt
+2026-02-02,Payable Payment,25,HCP3-MF-2026Q1,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q1,090,Victoria Harbour Bank - HKD Current,,292875.00,-292875.00,Tax Exempt
+2026-02-02,Payable Payment,25,HCP3-MF-2026Q1,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q1,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-02-02,Payable Payment,25,HCP3-MF-2026Q1,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q1,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-02-02,Payable Invoice,26,MAI-10044,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10044,433,Insurance,19134.50,,19134.50,Tax Exempt
+2026-02-02,Payable Invoice,26,MAI-10044,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10044,800,Accounts Payable,,19134.50,-19134.50,Tax Exempt
+2026-02-02,Receive Money,27,RNT-02-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Feb 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-02-02,Receive Money,27,RNT-02-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Feb 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-02-02,Receive Money,28,RNT-02-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Feb 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-02-02,Receive Money,28,RNT-02-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Feb 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-02-02,Spend Money,29,SM-02-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,475,Building Management & Government Rates,11600.00,,11600.00,Tax Exempt
+2026-02-02,Spend Money,29,SM-02-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,090,Victoria Harbour Bank - HKD Current,,11600.00,-11600.00,Tax Exempt
+2026-02-03,Payable Invoice,30,INV-PM-2050,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2050,471,Property Management Fees,17300.00,,17300.00,Tax Exempt
+2026-02-03,Payable Invoice,30,INV-PM-2050,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2050,800,Accounts Payable,,17300.00,-17300.00,Tax Exempt
+2026-02-03,Spend Money,31,SM-02-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-02-03,Spend Money,31,SM-02-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-02-04,Payable Payment,32,INV-PM-2028,Peak Estates Property Management Ltd,Payment INV-PM-2028,800,Accounts Payable,17300.00,,17300.00,Tax Exempt
+2026-02-04,Payable Payment,32,INV-PM-2028,Peak Estates Property Management Ltd,Payment INV-PM-2028,090,Victoria Harbour Bank - HKD Current,,17300.00,-17300.00,Tax Exempt
+2026-02-05,Spend Money,33,SM-02-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-02-05,Spend Money,33,SM-02-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-02-16,Payable Invoice,34,HCP3-CN-2026-01,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-CN-2026-01,150,Investments - Private Funds (at cost),3124000.00,,3124000.00,Tax Exempt
+2026-02-16,Payable Invoice,34,HCP3-CN-2026-01,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-CN-2026-01,800,Accounts Payable,,3124000.00,-3124000.00,Tax Exempt
+2026-02-17,Payable Payment,35,MAI-10044,Meridian Fine Art Insurance Ltd,Payment MAI-10044,800,Accounts Payable,19134.50,,19134.50,Tax Exempt
+2026-02-17,Payable Payment,35,MAI-10044,Meridian Fine Art Insurance Ltd,Payment MAI-10044,090,Victoria Harbour Bank - HKD Current,,19134.50,-19134.50,Tax Exempt
+2026-02-17,Payable Payment,35,MAI-10044,Meridian Fine Art Insurance Ltd,Payment MAI-10044,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-02-17,Payable Payment,35,MAI-10044,Meridian Fine Art Insurance Ltd,Payment MAI-10044,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-02-18,Spend Money,36,SM-02-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,1800.00,,1800.00,Tax Exempt
+2026-02-18,Spend Money,36,SM-02-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,1800.00,-1800.00,Tax Exempt
+2026-02-20,Spend Money,37,SM-02-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,119000.00,,119000.00,Tax Exempt
+2026-02-20,Spend Money,37,SM-02-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,119000.00,-119000.00,Tax Exempt
+2026-02-23,Spend Money,38,SM-02-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,9900.00,,9900.00,Tax Exempt
+2026-02-23,Spend Money,38,SM-02-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,9900.00,-9900.00,Tax Exempt
+2026-02-25,Spend Money,39,SM-02-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-02-25,Spend Money,39,SM-02-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-02-25,Receive Money,40,SWP-02,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3775000.00,,3775000.00,Tax Exempt
+2026-02-25,Receive Money,40,SWP-02,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3775000.00,-3775000.00,Tax Exempt
+2026-02-26,Payable Payment,41,HCP3-CN-2026-01,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-01,800,Accounts Payable,3124000.00,,3124000.00,Tax Exempt
+2026-02-26,Payable Payment,41,HCP3-CN-2026-01,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-01,090,Victoria Harbour Bank - HKD Current,,3124000.00,-3124000.00,Tax Exempt
+2026-02-26,Payable Payment,41,HCP3-CN-2026-01,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-01,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-02-26,Payable Payment,41,HCP3-CN-2026-01,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-01,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-02-27,Spend Money,42,FEE-02,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-02-27,Spend Money,42,FEE-02,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-02-27,Receive Money,43,INT-02,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,92788.00,,92788.00,Tax Exempt
+2026-02-27,Receive Money,43,INT-02,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,92788.00,-92788.00,Tax Exempt
+2026-02-27,Spend Money,44,MPF-02,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-02-27,Spend Money,44,MPF-02,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-02-27,Spend Money,45,PAY-02,Payroll,Payroll Feb 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-02-27,Spend Money,45,PAY-02,Payroll,Payroll Feb 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-02-27,Spend Money,45,PAY-02,Payroll,Payroll Feb 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-02-27,Spend Money,45,PAY-02,Payroll,Payroll Feb 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt
+2026-03-02,Payable Invoice,46,MAI-10055,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10055,433,Insurance,19159.00,,19159.00,Tax Exempt
+2026-03-02,Payable Invoice,46,MAI-10055,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10055,800,Accounts Payable,,19159.00,-19159.00,Tax Exempt
+2026-03-02,Receive Money,47,RNT-03-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Mar 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-03-02,Receive Money,47,RNT-03-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Mar 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-03-02,Receive Money,48,RNT-03-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Mar 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-03-02,Receive Money,48,RNT-03-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Mar 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-03-02,Spend Money,49,SM-03-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,475,Building Management & Government Rates,11600.00,,11600.00,Tax Exempt
+2026-03-02,Spend Money,49,SM-03-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,090,Victoria Harbour Bank - HKD Current,,11600.00,-11600.00,Tax Exempt
+2026-03-03,Payable Invoice,50,INV-PM-2072,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2072,471,Property Management Fees,23200.00,,23200.00,Tax Exempt
+2026-03-03,Payable Invoice,50,INV-PM-2072,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2072,800,Accounts Payable,,23200.00,-23200.00,Tax Exempt
+2026-03-03,Spend Money,51,SM-03-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-03-03,Spend Money,51,SM-03-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-03-05,Payable Payment,52,INV-PM-2050,Peak Estates Property Management Ltd,Payment INV-PM-2050,800,Accounts Payable,17300.00,,17300.00,Tax Exempt
+2026-03-05,Payable Payment,52,INV-PM-2050,Peak Estates Property Management Ltd,Payment INV-PM-2050,090,Victoria Harbour Bank - HKD Current,,17300.00,-17300.00,Tax Exempt
+2026-03-05,Spend Money,53,SM-03-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-03-05,Spend Money,53,SM-03-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-03-09,Payable Invoice,54,PRG2-DN-015,Pearl River Growth Fund II LP,Pearl River Growth Fund II LP PRG2-DN-015,150,Investments - Private Funds (at cost),3776500.00,,3776500.00,Tax Exempt
+2026-03-09,Payable Invoice,54,PRG2-DN-015,Pearl River Growth Fund II LP,Pearl River Growth Fund II LP PRG2-DN-015,800,Accounts Payable,,3776500.00,-3776500.00,Tax Exempt
+2026-03-17,Payable Payment,55,MAI-10055,Meridian Fine Art Insurance Ltd,Payment MAI-10055,800,Accounts Payable,19159.00,,19159.00,Tax Exempt
+2026-03-17,Payable Payment,55,MAI-10055,Meridian Fine Art Insurance Ltd,Payment MAI-10055,090,Victoria Harbour Bank - HKD Current,,19159.00,-19159.00,Tax Exempt
+2026-03-17,Payable Payment,55,MAI-10055,Meridian Fine Art Insurance Ltd,Payment MAI-10055,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-03-17,Payable Payment,55,MAI-10055,Meridian Fine Art Insurance Ltd,Payment MAI-10055,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-03-18,Spend Money,56,SM-03-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,2600.00,,2600.00,Tax Exempt
+2026-03-18,Spend Money,56,SM-03-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,2600.00,-2600.00,Tax Exempt
+2026-03-20,Spend Money,57,SM-03-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,143000.00,,143000.00,Tax Exempt
+2026-03-20,Spend Money,57,SM-03-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,143000.00,-143000.00,Tax Exempt
+2026-03-20,Spend Money,58,SM-0320,Lam & Partners CPA,2025 audit and tax compliance,412,"Legal, Tax & Audit Fees",120000.00,,120000.00,Tax Exempt
+2026-03-20,Spend Money,58,SM-0320,Lam & Partners CPA,2025 audit and tax compliance,090,Victoria Harbour Bank - HKD Current,,120000.00,-120000.00,Tax Exempt
+2026-03-23,Payable Payment,59,PRG2-DN-015,Pearl River Growth Fund II LP,Payment PRG2-DN-015,800,Accounts Payable,3776500.00,,3776500.00,Tax Exempt
+2026-03-23,Payable Payment,59,PRG2-DN-015,Pearl River Growth Fund II LP,Payment PRG2-DN-015,090,Victoria Harbour Bank - HKD Current,,3776500.00,-3776500.00,Tax Exempt
+2026-03-23,Payable Payment,59,PRG2-DN-015,Pearl River Growth Fund II LP,Payment PRG2-DN-015,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-03-23,Payable Payment,59,PRG2-DN-015,Pearl River Growth Fund II LP,Payment PRG2-DN-015,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-03-23,Spend Money,60,SM-03-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,7400.00,,7400.00,Tax Exempt
+2026-03-23,Spend Money,60,SM-03-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,7400.00,-7400.00,Tax Exempt
+2026-03-25,Spend Money,61,SM-03-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-03-25,Spend Money,61,SM-03-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-03-25,Receive Money,62,SWP-03,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3815000.00,,3815000.00,Tax Exempt
+2026-03-25,Receive Money,62,SWP-03,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3815000.00,-3815000.00,Tax Exempt
+2026-03-31,Spend Money,63,FEE-03,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-03-31,Spend Money,63,FEE-03,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-03-31,Receive Money,64,INT-03,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,70772.00,,70772.00,Tax Exempt
+2026-03-31,Receive Money,64,INT-03,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,70772.00,-70772.00,Tax Exempt
+2026-03-31,Spend Money,65,MPF-03,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-03-31,Spend Money,65,MPF-03,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-03-31,Spend Money,66,PAY-03,Payroll,Payroll Mar 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-03-31,Spend Money,66,PAY-03,Payroll,Payroll Mar 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-03-31,Spend Money,66,PAY-03,Payroll,Payroll Mar 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-03-31,Spend Money,66,PAY-03,Payroll,Payroll Mar 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt
+2026-04-01,Payable Invoice,67,HCP3-MF-2026Q2,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-MF-2026Q2,455,Fund Management Fees,292500.00,,292500.00,Tax Exempt
+2026-04-01,Payable Invoice,67,HCP3-MF-2026Q2,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-MF-2026Q2,800,Accounts Payable,,292500.00,-292500.00,Tax Exempt
+2026-04-01,Payable Invoice,68,MAI-10066,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10066,433,Insurance,19110.00,,19110.00,Tax Exempt
+2026-04-01,Payable Invoice,68,MAI-10066,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10066,800,Accounts Payable,,19110.00,-19110.00,Tax Exempt
+2026-04-01,Receive Money,69,RNT-04-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Apr 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-04-01,Receive Money,69,RNT-04-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Apr 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-04-02,Payable Payment,70,INV-PM-2072,Peak Estates Property Management Ltd,Payment INV-PM-2072,800,Accounts Payable,23200.00,,23200.00,Tax Exempt
+2026-04-02,Payable Payment,70,INV-PM-2072,Peak Estates Property Management Ltd,Payment INV-PM-2072,090,Victoria Harbour Bank - HKD Current,,23200.00,-23200.00,Tax Exempt
+2026-04-02,Receive Money,71,RNT-04-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Apr 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-04-02,Receive Money,71,RNT-04-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Apr 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-04-02,Spend Money,72,SM-04-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,475,Building Management & Government Rates,11600.00,,11600.00,Tax Exempt
+2026-04-02,Spend Money,72,SM-04-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,090,Victoria Harbour Bank - HKD Current,,11600.00,-11600.00,Tax Exempt
+2026-04-03,Payable Invoice,73,INV-PM-2094,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2094,471,Property Management Fees,23200.00,,23200.00,Tax Exempt
+2026-04-03,Payable Invoice,73,INV-PM-2094,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2094,800,Accounts Payable,,23200.00,-23200.00,Tax Exempt
+2026-04-03,Spend Money,74,SM-04-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-04-03,Spend Money,74,SM-04-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-04-06,Spend Money,75,SM-04-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-04-06,Spend Money,75,SM-04-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-04-16,Payable Payment,76,MAI-10066,Meridian Fine Art Insurance Ltd,Payment MAI-10066,800,Accounts Payable,19110.00,,19110.00,Tax Exempt
+2026-04-16,Payable Payment,76,MAI-10066,Meridian Fine Art Insurance Ltd,Payment MAI-10066,090,Victoria Harbour Bank - HKD Current,,19110.00,-19110.00,Tax Exempt
+2026-04-16,Payable Payment,76,MAI-10066,Meridian Fine Art Insurance Ltd,Payment MAI-10066,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-04-16,Payable Payment,76,MAI-10066,Meridian Fine Art Insurance Ltd,Payment MAI-10066,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-04-20,Spend Money,77,SM-04-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,1500.00,,1500.00,Tax Exempt
+2026-04-20,Spend Money,77,SM-04-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,1500.00,-1500.00,Tax Exempt
+2026-04-20,Spend Money,78,SM-04-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,146000.00,,146000.00,Tax Exempt
+2026-04-20,Spend Money,78,SM-04-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,146000.00,-146000.00,Tax Exempt
+2026-04-22,Spend Money,79,SM-04-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,9000.00,,9000.00,Tax Exempt
+2026-04-22,Spend Money,79,SM-04-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,9000.00,-9000.00,Tax Exempt
+2026-04-27,Spend Money,80,SM-04-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-04-27,Spend Money,80,SM-04-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-04-27,Receive Money,81,SWP-04,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3776000.00,,3776000.00,Tax Exempt
+2026-04-27,Receive Money,81,SWP-04,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3776000.00,-3776000.00,Tax Exempt
+2026-04-30,Spend Money,82,FEE-04,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-04-30,Spend Money,82,FEE-04,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-04-30,Receive Money,83,INT-04,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,89138.00,,89138.00,Tax Exempt
+2026-04-30,Receive Money,83,INT-04,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,89138.00,-89138.00,Tax Exempt
+2026-04-30,Spend Money,84,MPF-04,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-04-30,Spend Money,84,MPF-04,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-04-30,Spend Money,85,PAY-04,Payroll,Payroll Apr 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-04-30,Spend Money,85,PAY-04,Payroll,Payroll Apr 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-04-30,Spend Money,85,PAY-04,Payroll,Payroll Apr 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-04-30,Spend Money,85,PAY-04,Payroll,Payroll Apr 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt
+2026-05-01,Payable Payment,86,HCP3-MF-2026Q2,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q2,800,Accounts Payable,292500.00,,292500.00,Tax Exempt
+2026-05-01,Payable Payment,86,HCP3-MF-2026Q2,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q2,497,Foreign Exchange Gain/Loss,,375.00,-375.00,Tax Exempt
+2026-05-01,Payable Payment,86,HCP3-MF-2026Q2,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q2,090,Victoria Harbour Bank - HKD Current,,292125.00,-292125.00,Tax Exempt
+2026-05-01,Payable Payment,86,HCP3-MF-2026Q2,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q2,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-05-01,Payable Payment,86,HCP3-MF-2026Q2,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q2,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-05-01,Payable Invoice,87,MAI-10077,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10077,433,Insurance,19085.50,,19085.50,Tax Exempt
+2026-05-01,Payable Invoice,87,MAI-10077,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10077,800,Accounts Payable,,19085.50,-19085.50,Tax Exempt
+2026-05-01,Receive Money,88,RNT-05-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (May 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-05-01,Receive Money,88,RNT-05-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (May 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-05-04,Payable Payment,89,INV-PM-2094,Peak Estates Property Management Ltd,Payment INV-PM-2094,800,Accounts Payable,23200.00,,23200.00,Tax Exempt
+2026-05-04,Payable Payment,89,INV-PM-2094,Peak Estates Property Management Ltd,Payment INV-PM-2094,090,Victoria Harbour Bank - HKD Current,,23200.00,-23200.00,Tax Exempt
+2026-05-04,Payable Invoice,90,INV-PM-2116,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2116,471,Property Management Fees,23200.00,,23200.00,Tax Exempt
+2026-05-04,Payable Invoice,90,INV-PM-2116,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2116,800,Accounts Payable,,23200.00,-23200.00,Tax Exempt
+2026-05-04,Receive Money,91,RNT-05-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (May 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-05-04,Receive Money,91,RNT-05-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (May 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-05-04,Spend Money,92,SM-05-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,475,Building Management & Government Rates,11600.00,,11600.00,Tax Exempt
+2026-05-04,Spend Money,92,SM-05-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices,090,Victoria Harbour Bank - HKD Current,,11600.00,-11600.00,Tax Exempt
+2026-05-04,Spend Money,93,SM-05-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-05-04,Spend Money,93,SM-05-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-05-05,Spend Money,94,SM-05-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-05-05,Spend Money,94,SM-05-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-05-08,Payable Invoice,95,PRG2-DN-016,Pearl River Growth Fund II LP,Pearl River Growth Fund II LP PRG2-DN-016,150,Investments - Private Funds (at cost),2682500.00,,2682500.00,Tax Exempt
+2026-05-08,Payable Invoice,95,PRG2-DN-016,Pearl River Growth Fund II LP,Pearl River Growth Fund II LP PRG2-DN-016,800,Accounts Payable,,2682500.00,-2682500.00,Tax Exempt
+2026-05-15,Payable Invoice,96,HCP3-CN-2026-02,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-CN-2026-02,150,Investments - Private Funds (at cost),3895000.00,,3895000.00,Tax Exempt
+2026-05-15,Payable Invoice,96,HCP3-CN-2026-02,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-CN-2026-02,800,Accounts Payable,,3895000.00,-3895000.00,Tax Exempt
+2026-05-18,Payable Payment,97,MAI-10077,Meridian Fine Art Insurance Ltd,Payment MAI-10077,800,Accounts Payable,19085.50,,19085.50,Tax Exempt
+2026-05-18,Payable Payment,97,MAI-10077,Meridian Fine Art Insurance Ltd,Payment MAI-10077,090,Victoria Harbour Bank - HKD Current,,19085.50,-19085.50,Tax Exempt
+2026-05-18,Payable Payment,97,MAI-10077,Meridian Fine Art Insurance Ltd,Payment MAI-10077,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-05-18,Payable Payment,97,MAI-10077,Meridian Fine Art Insurance Ltd,Payment MAI-10077,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-05-18,Spend Money,98,SM-05-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,2300.00,,2300.00,Tax Exempt
+2026-05-18,Spend Money,98,SM-05-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,2300.00,-2300.00,Tax Exempt
+2026-05-20,Spend Money,99,SM-05-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,152000.00,,152000.00,Tax Exempt
+2026-05-20,Spend Money,99,SM-05-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,152000.00,-152000.00,Tax Exempt
+2026-05-22,Payable Payment,100,PRG2-DN-016,Pearl River Growth Fund II LP,Payment PRG2-DN-016,800,Accounts Payable,2682500.00,,2682500.00,Tax Exempt
+2026-05-22,Payable Payment,100,PRG2-DN-016,Pearl River Growth Fund II LP,Payment PRG2-DN-016,090,Victoria Harbour Bank - HKD Current,,2682500.00,-2682500.00,Tax Exempt
+2026-05-22,Payable Payment,100,PRG2-DN-016,Pearl River Growth Fund II LP,Payment PRG2-DN-016,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-05-22,Payable Payment,100,PRG2-DN-016,Pearl River Growth Fund II LP,Payment PRG2-DN-016,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-05-22,Spend Money,101,SM-05-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,8000.00,,8000.00,Tax Exempt
+2026-05-22,Spend Money,101,SM-05-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,8000.00,-8000.00,Tax Exempt
+2026-05-25,Payable Payment,102,HCP3-CN-2026-02,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-02,800,Accounts Payable,3895000.00,,3895000.00,Tax Exempt
+2026-05-25,Payable Payment,102,HCP3-CN-2026-02,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-02,090,Victoria Harbour Bank - HKD Current,,3895000.00,-3895000.00,Tax Exempt
+2026-05-25,Payable Payment,102,HCP3-CN-2026-02,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-02,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-05-25,Payable Payment,102,HCP3-CN-2026-02,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-02,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-05-25,Spend Money,103,SM-05-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-05-25,Spend Money,103,SM-05-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-05-25,Receive Money,104,SWP-05,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3700000.00,,3700000.00,Tax Exempt
+2026-05-25,Receive Money,104,SWP-05,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3700000.00,-3700000.00,Tax Exempt
+2026-05-29,Spend Money,105,FEE-05,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-05-29,Spend Money,105,FEE-05,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-05-29,Receive Money,106,INT-05,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,81251.00,,81251.00,Tax Exempt
+2026-05-29,Receive Money,106,INT-05,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,81251.00,-81251.00,Tax Exempt
+2026-05-29,Spend Money,107,MPF-05,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-05-29,Spend Money,107,MPF-05,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-05-29,Spend Money,108,PAY-05,Payroll,Payroll May 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-05-29,Spend Money,108,PAY-05,Payroll,Payroll May 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-05-29,Spend Money,108,PAY-05,Payroll,Payroll May 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-05-29,Spend Money,108,PAY-05,Payroll,Payroll May 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt
+2026-06-01,Payable Invoice,109,MAI-10088,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10088,433,Insurance,19134.50,,19134.50,Tax Exempt
+2026-06-01,Payable Invoice,109,MAI-10088,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10088,800,Accounts Payable,,19134.50,-19134.50,Tax Exempt
+2026-06-01,Receive Money,110,RNT-06-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Jun 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-06-01,Receive Money,110,RNT-06-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Jun 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-06-02,Receive Money,111,RNT-06-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Jun 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-06-02,Receive Money,111,RNT-06-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Jun 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-06-02,Spend Money,112,SM-06-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices (revised fee from Jun 2026),475,Building Management & Government Rates,12800.00,,12800.00,Tax Exempt
+2026-06-02,Spend Money,112,SM-06-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices (revised fee from Jun 2026),090,Victoria Harbour Bank - HKD Current,,12800.00,-12800.00,Tax Exempt
+2026-06-03,Payable Payment,113,INV-PM-2116,Peak Estates Property Management Ltd,Payment INV-PM-2116,800,Accounts Payable,23200.00,,23200.00,Tax Exempt
+2026-06-03,Payable Payment,113,INV-PM-2116,Peak Estates Property Management Ltd,Payment INV-PM-2116,090,Victoria Harbour Bank - HKD Current,,23200.00,-23200.00,Tax Exempt
+2026-06-03,Payable Invoice,114,INV-PM-2138,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2138,471,Property Management Fees,23200.00,,23200.00,Tax Exempt
+2026-06-03,Payable Invoice,114,INV-PM-2138,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2138,800,Accounts Payable,,23200.00,-23200.00,Tax Exempt
+2026-06-03,Spend Money,115,SM-06-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-06-03,Spend Money,115,SM-06-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-06-05,Spend Money,116,SM-06-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-06-05,Spend Money,116,SM-06-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-06-16,Payable Payment,117,MAI-10088,Meridian Fine Art Insurance Ltd,Payment MAI-10088,800,Accounts Payable,19134.50,,19134.50,Tax Exempt
+2026-06-16,Payable Payment,117,MAI-10088,Meridian Fine Art Insurance Ltd,Payment MAI-10088,090,Victoria Harbour Bank - HKD Current,,19134.50,-19134.50,Tax Exempt
+2026-06-16,Payable Payment,117,MAI-10088,Meridian Fine Art Insurance Ltd,Payment MAI-10088,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-06-16,Payable Payment,117,MAI-10088,Meridian Fine Art Insurance Ltd,Payment MAI-10088,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-06-18,Spend Money,118,SM-06-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,1800.00,,1800.00,Tax Exempt
+2026-06-18,Spend Money,118,SM-06-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,1800.00,-1800.00,Tax Exempt
+2026-06-22,Spend Money,119,SM-06-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,9900.00,,9900.00,Tax Exempt
+2026-06-22,Spend Money,119,SM-06-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,9900.00,-9900.00,Tax Exempt
+2026-06-22,Spend Money,120,SM-06-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,88000.00,,88000.00,Tax Exempt
+2026-06-22,Spend Money,120,SM-06-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,88000.00,-88000.00,Tax Exempt
+2026-06-25,Spend Money,121,SM-06-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-06-25,Spend Money,121,SM-06-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-06-25,Receive Money,122,SWP-06,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3784000.00,,3784000.00,Tax Exempt
+2026-06-25,Receive Money,122,SWP-06,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3784000.00,-3784000.00,Tax Exempt
+2026-06-30,Spend Money,123,FEE-06,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-06-30,Spend Money,123,FEE-06,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-06-30,Receive Money,124,INT-06,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,70651.00,,70651.00,Tax Exempt
+2026-06-30,Receive Money,124,INT-06,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,70651.00,-70651.00,Tax Exempt
+2026-06-30,Spend Money,125,MPF-06,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-06-30,Spend Money,125,MPF-06,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-06-30,Spend Money,126,PAY-06,Payroll,Payroll Jun 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-06-30,Spend Money,126,PAY-06,Payroll,Payroll Jun 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-06-30,Spend Money,126,PAY-06,Payroll,Payroll Jun 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-06-30,Spend Money,126,PAY-06,Payroll,Payroll Jun 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt
+2026-07-01,Payable Invoice,127,HCP3-MF-2026Q3,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-MF-2026Q3,455,Fund Management Fees,293250.00,,293250.00,Tax Exempt
+2026-07-01,Payable Invoice,127,HCP3-MF-2026Q3,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-MF-2026Q3,800,Accounts Payable,,293250.00,-293250.00,Tax Exempt
+2026-07-01,Payable Invoice,128,MAI-10099,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10099,433,Insurance,19159.00,,19159.00,Tax Exempt
+2026-07-01,Payable Invoice,128,MAI-10099,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10099,800,Accounts Payable,,19159.00,-19159.00,Tax Exempt
+2026-07-01,Receive Money,129,RNT-07-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Jul 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-07-01,Receive Money,129,RNT-07-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Jul 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-07-02,Receive Money,130,RNT-07-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Jul 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-07-02,Receive Money,130,RNT-07-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Jul 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-07-02,Spend Money,131,SM-07-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices (revised fee from Jun 2026),475,Building Management & Government Rates,12800.00,,12800.00,Tax Exempt
+2026-07-02,Spend Money,131,SM-07-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices (revised fee from Jun 2026),090,Victoria Harbour Bank - HKD Current,,12800.00,-12800.00,Tax Exempt
+2026-07-03,Payable Payment,132,INV-PM-2138,Peak Estates Property Management Ltd,Payment INV-PM-2138,800,Accounts Payable,23200.00,,23200.00,Tax Exempt
+2026-07-03,Payable Payment,132,INV-PM-2138,Peak Estates Property Management Ltd,Payment INV-PM-2138,090,Victoria Harbour Bank - HKD Current,,23200.00,-23200.00,Tax Exempt
+2026-07-03,Payable Invoice,133,INV-PM-2204,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2204,471,Property Management Fees,23200.00,,23200.00,Tax Exempt
+2026-07-03,Payable Invoice,133,INV-PM-2204,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2204,800,Accounts Payable,,23200.00,-23200.00,Tax Exempt
+2026-07-03,Spend Money,134,SM-07-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-07-03,Spend Money,134,SM-07-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-07-06,Spend Money,135,SM-07-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-07-06,Spend Money,135,SM-07-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-07-08,Payable Invoice,136,PRG2-DN-017,Pearl River Growth Fund II LP,Pearl River Growth Fund II LP PRG2-DN-017,150,Investments - Private Funds (at cost),3249000.00,,3249000.00,Tax Exempt
+2026-07-08,Payable Invoice,136,PRG2-DN-017,Pearl River Growth Fund II LP,Pearl River Growth Fund II LP PRG2-DN-017,800,Accounts Payable,,3249000.00,-3249000.00,Tax Exempt
+2026-07-14,Spend Money,137,SM-0714,Swiftfix Building Services,Emergency water-pipe repair after typhoon - Flat 12A Seaview Court,473,Property Repairs & Maintenance,38500.00,,38500.00,Tax Exempt
+2026-07-14,Spend Money,137,SM-0714,Swiftfix Building Services,Emergency water-pipe repair after typhoon - Flat 12A Seaview Court,090,Victoria Harbour Bank - HKD Current,,38500.00,-38500.00,Tax Exempt
+2026-07-16,Payable Payment,138,MAI-10099,Meridian Fine Art Insurance Ltd,Payment MAI-10099,800,Accounts Payable,19159.00,,19159.00,Tax Exempt
+2026-07-16,Payable Payment,138,MAI-10099,Meridian Fine Art Insurance Ltd,Payment MAI-10099,090,Victoria Harbour Bank - HKD Current,,19159.00,-19159.00,Tax Exempt
+2026-07-16,Payable Payment,138,MAI-10099,Meridian Fine Art Insurance Ltd,Payment MAI-10099,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-07-16,Payable Payment,138,MAI-10099,Meridian Fine Art Insurance Ltd,Payment MAI-10099,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-07-20,Spend Money,139,SM-07-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,1100.00,,1100.00,Tax Exempt
+2026-07-20,Spend Money,139,SM-07-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,1100.00,-1100.00,Tax Exempt
+2026-07-20,Spend Money,140,SM-07-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,135000.00,,135000.00,Tax Exempt
+2026-07-20,Spend Money,140,SM-07-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,135000.00,-135000.00,Tax Exempt
+2026-07-22,Payable Payment,141,PRG2-DN-017,Pearl River Growth Fund II LP,Payment PRG2-DN-017,800,Accounts Payable,3249000.00,,3249000.00,Tax Exempt
+2026-07-22,Payable Payment,141,PRG2-DN-017,Pearl River Growth Fund II LP,Payment PRG2-DN-017,090,Victoria Harbour Bank - HKD Current,,3249000.00,-3249000.00,Tax Exempt
+2026-07-22,Payable Payment,141,PRG2-DN-017,Pearl River Growth Fund II LP,Payment PRG2-DN-017,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-07-22,Payable Payment,141,PRG2-DN-017,Pearl River Growth Fund II LP,Payment PRG2-DN-017,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-07-22,Spend Money,142,SM-07-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,6400.00,,6400.00,Tax Exempt
+2026-07-22,Spend Money,142,SM-07-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,6400.00,-6400.00,Tax Exempt
+2026-07-27,Spend Money,143,SM-07-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-07-27,Spend Money,143,SM-07-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-07-27,Receive Money,144,SWP-07,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3680000.00,,3680000.00,Tax Exempt
+2026-07-27,Receive Money,144,SWP-07,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3680000.00,-3680000.00,Tax Exempt
+2026-07-31,Spend Money,145,FEE-07,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-07-31,Spend Money,145,FEE-07,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-07-31,Payable Payment,146,HCP3-MF-2026Q3,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q3,800,Accounts Payable,293250.00,,293250.00,Tax Exempt
+2026-07-31,Payable Payment,146,HCP3-MF-2026Q3,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q3,090,Victoria Harbour Bank - HKD Current,,293250.00,-293250.00,Tax Exempt
+2026-07-31,Payable Payment,146,HCP3-MF-2026Q3,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q3,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-07-31,Payable Payment,146,HCP3-MF-2026Q3,Harbourview Capital Partners III LP,Payment HCP3-MF-2026Q3,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-07-31,Receive Money,147,INT-07,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,71843.00,,71843.00,Tax Exempt
+2026-07-31,Receive Money,147,INT-07,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,71843.00,-71843.00,Tax Exempt
+2026-07-31,Spend Money,148,MPF-07,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-07-31,Spend Money,148,MPF-07,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-07-31,Spend Money,149,PAY-07,Payroll,Payroll Jul 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-07-31,Spend Money,149,PAY-07,Payroll,Payroll Jul 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-07-31,Spend Money,149,PAY-07,Payroll,Payroll Jul 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-07-31,Spend Money,149,PAY-07,Payroll,Payroll Jul 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt
+2026-08-03,Payable Payment,150,INV-PM-2204,Peak Estates Property Management Ltd,Payment INV-PM-2204,800,Accounts Payable,23200.00,,23200.00,Tax Exempt
+2026-08-03,Payable Payment,150,INV-PM-2204,Peak Estates Property Management Ltd,Payment INV-PM-2204,090,Victoria Harbour Bank - HKD Current,,23200.00,-23200.00,Tax Exempt
+2026-08-03,Payable Invoice,151,INV-PM-2247,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2247,471,Property Management Fees,17300.00,,17300.00,Tax Exempt
+2026-08-03,Payable Invoice,151,INV-PM-2247,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2247,800,Accounts Payable,,17300.00,-17300.00,Tax Exempt
+2026-08-03,Payable Invoice,152,MAI-10110,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10110,433,Insurance,19134.50,,19134.50,Tax Exempt
+2026-08-03,Payable Invoice,152,MAI-10110,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10110,800,Accounts Payable,,19134.50,-19134.50,Tax Exempt
+2026-08-03,Receive Money,153,RNT-08-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Aug 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-08-03,Receive Money,153,RNT-08-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Aug 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-08-03,Receive Money,154,RNT-08-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Aug 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-08-03,Receive Money,154,RNT-08-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Aug 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-08-03,Spend Money,155,SM-08-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices (revised fee from Jun 2026),475,Building Management & Government Rates,12800.00,,12800.00,Tax Exempt
+2026-08-03,Spend Money,155,SM-08-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices (revised fee from Jun 2026),090,Victoria Harbour Bank - HKD Current,,12800.00,-12800.00,Tax Exempt
+2026-08-03,Spend Money,156,SM-08-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-08-03,Spend Money,156,SM-08-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-08-05,Spend Money,157,SM-08-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-08-05,Spend Money,157,SM-08-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-08-14,Payable Invoice,158,HCP3-CN-2026-03,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-CN-2026-03,150,Investments - Private Funds (at cost),3905000.00,,3905000.00,Tax Exempt
+2026-08-14,Payable Invoice,158,HCP3-CN-2026-03,Harbourview Capital Partners III LP,Harbourview Capital Partners III LP HCP3-CN-2026-03,800,Accounts Payable,,3905000.00,-3905000.00,Tax Exempt
+2026-08-17,Spend Money,159,SM-0817,Island International School,Autumn term 2026 tuition - 2 children (fees +2%),481,School & Tuition Fees,318000.00,,318000.00,Tax Exempt
+2026-08-17,Spend Money,159,SM-0817,Island International School,Autumn term 2026 tuition - 2 children (fees +2%),090,Victoria Harbour Bank - HKD Current,,318000.00,-318000.00,Tax Exempt
+2026-08-18,Payable Payment,160,MAI-10110,Meridian Fine Art Insurance Ltd,Payment MAI-10110,800,Accounts Payable,19134.50,,19134.50,Tax Exempt
+2026-08-18,Payable Payment,160,MAI-10110,Meridian Fine Art Insurance Ltd,Payment MAI-10110,090,Victoria Harbour Bank - HKD Current,,19134.50,-19134.50,Tax Exempt
+2026-08-18,Payable Payment,160,MAI-10110,Meridian Fine Art Insurance Ltd,Payment MAI-10110,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-08-18,Payable Payment,160,MAI-10110,Meridian Fine Art Insurance Ltd,Payment MAI-10110,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-08-18,Spend Money,161,SM-08-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,2300.00,,2300.00,Tax Exempt
+2026-08-18,Spend Money,161,SM-08-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,2300.00,-2300.00,Tax Exempt
+2026-08-20,Spend Money,162,SM-08-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,89000.00,,89000.00,Tax Exempt
+2026-08-20,Spend Money,162,SM-08-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,89000.00,-89000.00,Tax Exempt
+2026-08-24,Payable Payment,163,HCP3-CN-2026-03,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-03,800,Accounts Payable,3905000.00,,3905000.00,Tax Exempt
+2026-08-24,Payable Payment,163,HCP3-CN-2026-03,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-03,090,Victoria Harbour Bank - HKD Current,,3905000.00,-3905000.00,Tax Exempt
+2026-08-24,Payable Payment,163,HCP3-CN-2026-03,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-03,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-08-24,Payable Payment,163,HCP3-CN-2026-03,Harbourview Capital Partners III LP,Payment HCP3-CN-2026-03,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-08-24,Spend Money,164,SM-08-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,10200.00,,10200.00,Tax Exempt
+2026-08-24,Spend Money,164,SM-08-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,10200.00,-10200.00,Tax Exempt
+2026-08-25,Spend Money,165,SM-08-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-08-25,Spend Money,165,SM-08-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-08-25,Receive Money,166,SWP-08,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3703000.00,,3703000.00,Tax Exempt
+2026-08-25,Receive Money,166,SWP-08,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3703000.00,-3703000.00,Tax Exempt
+2026-08-31,Spend Money,167,FEE-08,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-08-31,Spend Money,167,FEE-08,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-08-31,Receive Money,168,INT-08,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,75602.00,,75602.00,Tax Exempt
+2026-08-31,Receive Money,168,INT-08,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,75602.00,-75602.00,Tax Exempt
+2026-08-31,Spend Money,169,MPF-08,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-08-31,Spend Money,169,MPF-08,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-08-31,Spend Money,170,PAY-08,Payroll,Payroll Aug 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-08-31,Spend Money,170,PAY-08,Payroll,Payroll Aug 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-08-31,Spend Money,170,PAY-08,Payroll,Payroll Aug 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-08-31,Spend Money,170,PAY-08,Payroll,Payroll Aug 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt
+2026-09-01,Payable Invoice,171,INV-PM-2291,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2291,471,Property Management Fees,23200.00,,23200.00,Tax Exempt
+2026-09-01,Payable Invoice,171,INV-PM-2291,Peak Estates Property Management Ltd,Peak Estates Property Management Ltd INV-PM-2291,800,Accounts Payable,,23200.00,-23200.00,Tax Exempt
+2026-09-01,Payable Invoice,172,MAI-10121,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10121,433,Insurance,19110.00,,19110.00,Tax Exempt
+2026-09-01,Payable Invoice,172,MAI-10121,Meridian Fine Art Insurance Ltd,Meridian Fine Art Insurance Ltd MAI-10121,800,Accounts Payable,,19110.00,-19110.00,Tax Exempt
+2026-09-01,Receive Money,173,RNT-09-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Sep 2026),090,Victoria Harbour Bank - HKD Current,95000.00,,95000.00,Tax Exempt
+2026-09-01,Receive Money,173,RNT-09-12A,Halcyon Re Asia Ltd,Rent Flat 12A Seaview Court (Sep 2026),260,Rental Income,,95000.00,-95000.00,Tax Exempt
+2026-09-02,Payable Payment,174,INV-PM-2247,Peak Estates Property Management Ltd,Payment INV-PM-2247,800,Accounts Payable,17300.00,,17300.00,Tax Exempt
+2026-09-02,Payable Payment,174,INV-PM-2247,Peak Estates Property Management Ltd,Payment INV-PM-2247,090,Victoria Harbour Bank - HKD Current,,17300.00,-17300.00,Tax Exempt
+2026-09-02,Receive Money,175,RNT-09-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Sep 2026),090,Victoria Harbour Bank - HKD Current,62000.00,,62000.00,Tax Exempt
+2026-09-02,Receive Money,175,RNT-09-21B,Brightwater Consulting Ltd,Rent Flat 21B Pinecrest Tower (Sep 2026),260,Rental Income,,62000.00,-62000.00,Tax Exempt
+2026-09-02,Spend Money,176,SM-09-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices (revised fee from Jun 2026),475,Building Management & Government Rates,12800.00,,12800.00,Tax Exempt
+2026-09-02,Spend Money,176,SM-09-475,Seaview Court & Pinecrest Tower management offices,Seaview Court & Pinecrest Tower management offices (revised fee from Jun 2026),090,Victoria Harbour Bank - HKD Current,,12800.00,-12800.00,Tax Exempt
+2026-09-03,Spend Money,177,SM-09-485,Wealth platform & software licences (card),Wealth platform & software licences (card),485,Software Subscriptions,3150.00,,3150.00,Tax Exempt
+2026-09-03,Spend Money,177,SM-09-485,Wealth platform & software licences (card),Wealth platform & software licences (card),090,Victoria Harbour Bank - HKD Current,,3150.00,-3150.00,Tax Exempt
+2026-09-07,Spend Money,178,SM-09-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,489,Telephone & Internet,2380.00,,2380.00,Tax Exempt
+2026-09-07,Spend Money,178,SM-09-489,Harbourtel Broadband & Mobile,Harbourtel Broadband & Mobile,090,Victoria Harbour Bank - HKD Current,,2380.00,-2380.00,Tax Exempt
+2026-09-16,Payable Payment,179,MAI-10121,Meridian Fine Art Insurance Ltd,Payment MAI-10121,800,Accounts Payable,19110.00,,19110.00,Tax Exempt
+2026-09-16,Payable Payment,179,MAI-10121,Meridian Fine Art Insurance Ltd,Payment MAI-10121,090,Victoria Harbour Bank - HKD Current,,19110.00,-19110.00,Tax Exempt
+2026-09-16,Payable Payment,179,MAI-10121,Meridian Fine Art Insurance Ltd,Payment MAI-10121,404,Bank Fees,150.00,,150.00,Tax Exempt
+2026-09-16,Payable Payment,179,MAI-10121,Meridian Fine Art Insurance Ltd,Payment MAI-10121,090,Victoria Harbour Bank - HKD Current,,150.00,-150.00,Tax Exempt
+2026-09-16,Spend Money,180,SM-0916,Arctic Breeze Engineering Co,Air-con replacement - Flat 21B Pinecrest Tower,473,Property Repairs & Maintenance,9800.00,,9800.00,Tax Exempt
+2026-09-16,Spend Money,180,SM-0916,Arctic Breeze Engineering Co,Air-con replacement - Flat 21B Pinecrest Tower,090,Victoria Harbour Bank - HKD Current,,9800.00,-9800.00,Tax Exempt
+2026-09-18,Spend Money,181,SM-09-473,Island Wide Handyman Services,Island Wide Handyman Services,473,Property Repairs & Maintenance,2500.00,,2500.00,Tax Exempt
+2026-09-18,Spend Money,181,SM-09-473,Island Wide Handyman Services,Island Wide Handyman Services,090,Victoria Harbour Bank - HKD Current,,2500.00,-2500.00,Tax Exempt
+2026-09-21,Spend Money,182,SM-09-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),493,Travel & Aviation Charter,148000.00,,148000.00,Tax Exempt
+2026-09-21,Spend Money,182,SM-09-493,SkyJet Charter Asia (travel desk),SkyJet Charter Asia (travel desk),090,Victoria Harbour Bank - HKD Current,,148000.00,-148000.00,Tax Exempt
+2026-09-22,Spend Money,183,SM-09-429,Central Office Supplies Co,Central Office Supplies Co,429,General Office Expenses,6400.00,,6400.00,Tax Exempt
+2026-09-22,Spend Money,183,SM-09-429,Central Office Supplies Co,Central Office Supplies Co,090,Victoria Harbour Bank - HKD Current,,6400.00,-6400.00,Tax Exempt
+2026-09-25,Spend Money,184,SM-09-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,412,"Legal, Tax & Audit Fees",28000.00,,28000.00,Tax Exempt
+2026-09-25,Spend Money,184,SM-09-412,Kwan & Partners Tax Advisory,Kwan & Partners Tax Advisory,090,Victoria Harbour Bank - HKD Current,,28000.00,-28000.00,Tax Exempt
+2026-09-25,Receive Money,185,SWP-09,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),090,Victoria Harbour Bank - HKD Current,3554000.00,,3554000.00,Tax Exempt
+2026-09-25,Receive Money,185,SWP-09,Lion Rock Private Bank (custodian),Portfolio income sweep (dividends and coupons),275,Dividend & Portfolio Income,,3554000.00,-3554000.00,Tax Exempt
+2026-09-30,Spend Money,186,FEE-09,Victoria Harbour Bank Limited,Account maintenance fee,404,Bank Fees,120.00,,120.00,Tax Exempt
+2026-09-30,Spend Money,186,FEE-09,Victoria Harbour Bank Limited,Account maintenance fee,090,Victoria Harbour Bank - HKD Current,,120.00,-120.00,Tax Exempt
+2026-09-30,Receive Money,187,INT-09,Victoria Harbour Bank Limited,Credit interest,090,Victoria Harbour Bank - HKD Current,75748.00,,75748.00,Tax Exempt
+2026-09-30,Receive Money,187,INT-09,Victoria Harbour Bank Limited,Credit interest,270,Interest Income,,75748.00,-75748.00,Tax Exempt
+2026-09-30,Spend Money,188,MPF-09,Orchid Trust MPF Scheme,MPF contributions (ER + EE),825,MPF Payable,30000.00,,30000.00,Tax Exempt
+2026-09-30,Spend Money,188,MPF-09,Orchid Trust MPF Scheme,MPF contributions (ER + EE),090,Victoria Harbour Bank - HKD Current,,30000.00,-30000.00,Tax Exempt
+2026-09-30,Spend Money,189,PAY-09,Payroll,Payroll Sep 2026 (4 office + 6 household staff),477,Salaries - Office & Household Staff,420000.00,,420000.00,Tax Exempt
+2026-09-30,Spend Money,189,PAY-09,Payroll,Payroll Sep 2026 (4 office + 6 household staff),478,MPF Contributions,15000.00,,15000.00,Tax Exempt
+2026-09-30,Spend Money,189,PAY-09,Payroll,Payroll Sep 2026 (4 office + 6 household staff),090,Victoria Harbour Bank - HKD Current,,405000.00,-405000.00,Tax Exempt
+2026-09-30,Spend Money,189,PAY-09,Payroll,Payroll Sep 2026 (4 office + 6 household staff),825,MPF Payable,,30000.00,-30000.00,Tax Exempt

@@ -7,12 +7,6 @@ from pathlib import Path
 
 from app.config import settings
 
-USERS = {
-    "Anna Chan": "anna.chan@harbourlane.com.hk",
-    "Ken Lau": "ken.lau@harbourlane.com.hk",
-    "David Wong": "david.wong@harbourlane.com.hk",
-}
-
 
 def root() -> Path:
     return Path(settings.trace_workspace).resolve()
@@ -66,8 +60,17 @@ def ensure() -> None:
         reset()
 
 
+def users() -> dict[str, str]:
+    """name -> email for the people in COMPANY.md (commit authors and decision makers)."""
+    from app.data import company  # late import: company reads files through this module
+
+    return {p["name"]: p["email"] for p in company.people()}
+
+
 def commit(paths: list[str], subject: str, body: str, author: str) -> str:
-    email = USERS.get(author, "trace@harbourlane.com.hk")
+    from app.data import company
+
+    email = users().get(author, f"trace@{company.domain()}")
     env = {
         "GIT_AUTHOR_NAME": author,
         "GIT_AUTHOR_EMAIL": email,

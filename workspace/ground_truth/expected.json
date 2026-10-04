@@ -4,22 +4,23 @@
     {
       "id": "P1",
       "control": "PRICE-001",
-      "invoice_file": "docs/invoices/inbox/scan_1002.pdf",
-      "invoice_no": "SP-2026-0917",
-      "supplier_id": "S01",
+      "invoice_file": "docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf",
+      "invoice_no": "HCP3-MF-2026Q4",
+      "supplier_id": "S02",
       "evidence": {
-        "item": "SP-4410",
-        "invoice_unit_price": 118.0,
-        "contract_unit_price": 109.0,
-        "currency": "RMB",
-        "pct_over": 8.26,
+        "kind": "fee_rate",
+        "invoice_fee_rate_pct": 2.0,
+        "contract_fee_rate_pct": 1.5,
+        "currency": "USD",
+        "pct_over": 33.33,
         "tolerance_pct": 1.0,
-        "qty": 2000,
-        "overcharge_rmb": 18000.0,
+        "invoice_amount": 50000.0,
+        "expected_amount": 37500.0,
+        "overcharge_usd": 12500.0,
         "contract_ref": {
-          "doc": "docs/contracts/S01_supply_agreement_2026.pdf",
+          "doc": "docs/contracts/S02_side_letter_2024.pdf",
           "page": 1,
-          "clause": "4.2"
+          "clause": "3.1"
         }
       }
     },
@@ -27,7 +28,7 @@
       "id": "P2",
       "control": "BANK-001",
       "invoice_file": "docs/invoices/inbox/scan_1002.pdf",
-      "invoice_no": "SP-2026-0917",
+      "invoice_no": "PRG2-DN-018",
       "supplier_id": "S01",
       "evidence": {
         "invoice_bank_account": "6230 5821 4407 7731",
@@ -36,45 +37,45 @@
         "master_last4": "2049",
         "last_6_payments": [
           {
-            "date": "2026-04-10",
-            "invoice_no": "SP-2026-0692",
-            "amount": 283030.0,
+            "date": "2025-09-22",
+            "invoice_no": "PRG2-DN-012",
+            "amount": 2500000.0,
             "account": "6214 8320 0019 2049"
           },
           {
-            "date": "2026-05-08",
-            "invoice_no": "SP-2026-0715",
-            "amount": 371970.0,
+            "date": "2025-11-24",
+            "invoice_no": "PRG2-DN-013",
+            "amount": 3000000.0,
             "account": "6214 8320 0019 2049"
           },
           {
-            "date": "2026-06-08",
-            "invoice_no": "SP-2026-0741",
-            "amount": 294090.0,
+            "date": "2026-01-22",
+            "invoice_no": "PRG2-DN-014",
+            "amount": 2000000.0,
             "account": "6214 8320 0019 2049"
           },
           {
-            "date": "2026-07-07",
-            "invoice_no": "SP-2026-0767",
-            "amount": 308130.0,
+            "date": "2026-03-23",
+            "invoice_no": "PRG2-DN-015",
+            "amount": 3500000.0,
             "account": "6214 8320 0019 2049"
           },
           {
-            "date": "2026-08-07",
-            "invoice_no": "SP-2026-0790",
-            "amount": 335300.0,
+            "date": "2026-05-22",
+            "invoice_no": "PRG2-DN-016",
+            "amount": 2500000.0,
             "account": "6214 8320 0019 2049"
           },
           {
-            "date": "2026-09-07",
-            "invoice_no": "SP-2026-0816",
-            "amount": 309510.0,
+            "date": "2026-07-22",
+            "invoice_no": "PRG2-DN-017",
+            "amount": 3000000.0,
             "account": "6214 8320 0019 2049"
           }
         ],
-        "email": "docs/emails/2026-10-02_shenzhenparts_bank_change.eml",
+        "email": "docs/emails/2026-10-02_prg_bank_change.eml",
         "contract_clause": {
-          "doc": "docs/contracts/S01_supply_agreement_2026.pdf",
+          "doc": "docs/contracts/S01_subscription_agreement_2024.pdf",
           "page": 1,
           "clause": "5.3"
         }
@@ -84,70 +85,71 @@
       "id": "P3",
       "control": "DOMAIN-001",
       "invoice_file": "docs/invoices/inbox/scan_1002.pdf",
-      "invoice_no": "SP-2026-0917",
+      "invoice_no": "PRG2-DN-018",
       "supplier_id": "S01",
       "evidence": {
-        "sender_domain": "shenzhen-parts.co",
-        "known_domain": "shenzhenparts.com",
-        "email": "docs/emails/2026-10-02_shenzhenparts_bank_change.eml",
-        "invoice_contact_email": "accounts@shenzhen-parts.co"
+        "sender_domain": "prg-fund.co",
+        "known_domain": "prgfund.com",
+        "email": "docs/emails/2026-10-02_prg_bank_change.eml",
+        "invoice_contact_email": "accounts@prg-fund.co"
       }
     },
     {
       "id": "P4",
       "control": "DUP-001",
       "invoice_file": "docs/invoices/inbox/Invoice (3).pdf",
-      "invoice_no": "INV-2291-R",
+      "invoice_no": "INV-PM-2291-R",
       "supplier_id": "S03",
       "evidence": {
-        "matches_invoice_no": "INV-2291",
+        "matches_invoice_no": "INV-PM-2291",
         "original_date": "2026-09-01",
         "entered": "2026-09-03",
-        "amount": 27660.0,
+        "amount": 23200.0,
         "currency": "HKD",
-        "register_row": 13,
+        "register_row": 9,
         "original_status": "Approved (due 2026-10-01, unpaid)"
       }
     }
   ],
   "clean_invoices": [
-    "docs/invoices/inbox/DPE-INV-0388.pdf",
+    "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
     "docs/invoices/inbox/scan_0930_2.pdf",
-    "docs/invoices/inbox/Invoice_CD-10044.pdf"
+    "docs/invoices/inbox/Invoice_MAI-10044.pdf"
   ],
+  "register_seed_rows": 9,
   "tasks": [
     {
       "id": 1,
-      "prompt": "We signed the new warehouse lease. Update the forecast.",
+      "prompt": "Halcyon Re signed the Repulse Bay renewal. Update the forecast.",
       "expected": {
         "file": "sheets/forecast_2027_2028.xlsx",
-        "named_range": "RENT_FORECAST",
+        "named_range": "RENT_INCOME_FORECAST",
         "sheet": "Forecast",
         "cells": {
-          "C9": 82400.0,
-          "D9": 82400.0,
-          "E9": 82400.0,
-          "F9": 82400.0,
-          "G9": 82400.0,
-          "H9": 82400.0,
-          "I9": 82400.0,
-          "J9": 82400.0,
-          "K9": 82400.0,
-          "L9": 82400.0,
-          "M9": 82400.0,
-          "N9": 82400.0,
-          "O9": 84872.0,
-          "P9": 84872.0,
-          "Q9": 84872.0,
-          "R9": 84872.0,
-          "S9": 84872.0,
-          "T9": 84872.0,
-          "U9": 84872.0,
-          "V9": 84872.0,
-          "W9": 84872.0,
-          "X9": 84872.0,
-          "Y9": 84872.0,
-          "Z9": 84872.0
+          "C5": 98800.0,
+          "D5": 98800.0,
+          "E5": 98800.0,
+          "F5": 98800.0,
+          "G5": 98800.0,
+          "H5": 98800.0,
+          "I5": 98800.0,
+          "J5": 98800.0,
+          "K5": 98800.0,
+          "L5": 98800.0,
+          "M5": 98800.0,
+          "N5": 98800.0,
+          "O5": 101764.0,
+          "P5": 101764.0,
+          "Q5": 101764.0,
+          "R5": 101764.0,
+          "S5": 101764.0,
+          "T5": 101764.0,
+          "U5": 101764.0,
+          "V5": 101764.0,
+          "W5": 101764.0,
+          "X5": 101764.0,
+          "Y5": 101764.0,
+          "Z5": 101764.0
         },
         "changed_cells": 24,
         "source": {
@@ -156,98 +158,121 @@
           "clause": "4"
         },
         "also": [
-          "COMPANY.md rent assumption should be updated (lease renewed, +3%/yr)",
+          "COMPANY.md rental income assumption should be updated (lease renewed, +3%/yr)",
           "supplier_master S04 contract_file -> S04_lease_2027_signed.pdf"
         ]
       }
     },
     {
       "id": 2,
-      "prompt": "Enter this week's supplier invoices.",
+      "prompt": "Enter this week's capital calls, fee notices and invoices.",
       "expected": {
         "rows": [
           {
             "date": "2026-09-30",
             "supplier_id": "S02",
-            "supplier": "Dongguan Precision Electronics Co., Ltd.",
-            "invoice_no": "DPE/INV/0388",
+            "supplier": "Harbourview Capital Partners III LP",
+            "invoice_no": "HCP3-CN-2026-04",
             "currency": "USD",
-            "amount": 35350.0,
+            "amount": 600000.0,
             "fx_rate": 7.8,
-            "amount_hkd": 275730.0,
-            "account_code": "310",
-            "due_date": "2026-10-30",
+            "amount_hkd": 4680000.0,
+            "account_code": "150",
+            "due_date": "2026-10-10",
             "status": "Entered",
-            "source_file": "docs/invoices/inbox/DPE-INV-0388.pdf",
-            "needs_director_approval": true,
+            "source_file": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
+            "kind": "capital_call",
+            "needs_principal_approval": true,
             "controls_fired": []
           },
           {
             "date": "2026-09-30",
             "supplier_id": "S03",
-            "supplier": "Pacific Freight Logistics Ltd",
-            "invoice_no": "INV-2318",
+            "supplier": "Peak Estates Property Management Ltd",
+            "invoice_no": "INV-PM-2318",
             "currency": "HKD",
-            "amount": 33900.0,
+            "amount": 18500.0,
             "fx_rate": 1.0,
-            "amount_hkd": 33900.0,
-            "account_code": "425",
+            "amount_hkd": 18500.0,
+            "account_code": "471",
             "due_date": "2026-10-30",
             "status": "Entered",
             "source_file": "docs/invoices/inbox/scan_0930_2.pdf",
-            "needs_director_approval": false,
+            "kind": "invoice",
+            "needs_principal_approval": false,
             "controls_fired": []
           },
           {
             "date": "2026-10-01",
             "supplier_id": "S05",
-            "supplier": "CloudDesk Inc.",
-            "invoice_no": "CD-10044",
+            "supplier": "Meridian Fine Art Insurance Ltd",
+            "invoice_no": "MAI-10044",
             "currency": "USD",
-            "amount": 1450.0,
+            "amount": 2450.0,
             "fx_rate": 7.8,
-            "amount_hkd": 11310.0,
-            "account_code": "485",
+            "amount_hkd": 19110.0,
+            "account_code": "433",
             "due_date": "2026-10-16",
             "status": "Entered",
-            "source_file": "docs/invoices/inbox/Invoice_CD-10044.pdf",
-            "needs_director_approval": false,
+            "source_file": "docs/invoices/inbox/Invoice_MAI-10044.pdf",
+            "kind": "invoice",
+            "needs_principal_approval": false,
             "controls_fired": []
           },
           {
             "date": "2026-09-30",
             "supplier_id": "S01",
-            "supplier": "Shenzhen Parts Co., Ltd.",
-            "invoice_no": "SP-2026-0917",
+            "supplier": "Pearl River Growth Fund II LP",
+            "invoice_no": "PRG2-DN-018",
             "currency": "RMB",
-            "amount": 306500.0,
+            "amount": 3500000.0,
             "fx_rate": 1.08,
-            "amount_hkd": 331020.0,
-            "account_code": "310",
-            "due_date": "2026-11-29",
+            "amount_hkd": 3780000.0,
+            "account_code": "150",
+            "due_date": "2026-10-14",
             "status": "HELD",
             "source_file": "docs/invoices/inbox/scan_1002.pdf",
-            "needs_director_approval": true,
+            "kind": "capital_call",
+            "needs_principal_approval": true,
             "controls_fired": [
-              "PRICE-001",
               "BANK-001",
               "DOMAIN-001"
             ]
           },
           {
+            "date": "2026-10-01",
+            "supplier_id": "S02",
+            "supplier": "Harbourview Capital Partners III LP",
+            "invoice_no": "HCP3-MF-2026Q4",
+            "currency": "USD",
+            "amount": 50000.0,
+            "fx_rate": 7.8,
+            "amount_hkd": 390000.0,
+            "account_code": "455",
+            "due_date": "2026-10-31",
+            "status": "HELD",
+            "source_file": "docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf",
+            "kind": "fee_notice",
+            "needs_principal_approval": false,
+            "controls_fired": [
+              "PRICE-001"
+            ]
+          },
+          {
             "date": "2026-09-25",
             "supplier_id": "S03",
-            "supplier": "Pacific Freight Logistics Ltd",
-            "invoice_no": "INV-2291-R",
+            "supplier": "Peak Estates Property Management Ltd",
+            "invoice_no": "INV-PM-2291-R",
             "currency": "HKD",
-            "amount": 27660.0,
+            "amount": 23200.0,
             "fx_rate": 1.0,
-            "amount_hkd": 27660.0,
-            "account_code": "425",
+            "amount_hkd": 23200.0,
+            "account_code": "471",
             "due_date": "2026-10-25",
             "status": "HELD",
             "source_file": "docs/invoices/inbox/Invoice (3).pdf",
-            "needs_director_approval": false,
+            "kind": "invoice",
+            "needs_principal_approval": false,
             "controls_fired": [
               "DUP-001"
             ]
@@ -257,14 +282,14 @@
     },
     {
       "id": 3,
-      "prompt": "Why is 2027 rent 82,400?",
+      "prompt": "Why is 2027 rental income for Flat 12A 98,800?",
       "expected": {
         "facts": [
-          "New tenancy agreement KBP/L/2027/09A signed 29 Sep 2026 with Kowloon Bay Properties",
-          "Clause 4.1 (page 3): rent HK$82,400/month from 1 Jan 2027",
-          "Clause 4.2: +3% every 1 January (HK$84,872 in 2028)",
-          "Previously HK$80,000 flat: old lease (expires 31 Dec 2026) and COMPANY.md assumption by D. Wong, Aug 2026",
-          "Increase vs prior forecast: +HK$2,400/month (+3.0%)"
+          "Renewal tenancy agreement LPFO/L/2027/12A with Halcyon Re Asia Ltd signed 29 Sep 2026",
+          "Clause 4.1 (page 3): rent HK$98,800/month from 1 Jan 2027",
+          "Clause 4.2: +3% every 1 January (HK$101,764 in 2028)",
+          "Previously HK$95,000 flat: old lease (expires 31 Dec 2026) and COMPANY.md assumption by R. Ho, Aug 2026",
+          "Increase vs prior forecast: +HK$3,800/month (+4.0%)"
         ],
         "sources": [
           {
@@ -273,17 +298,17 @@
             "clause": "4"
           },
           {
-            "doc": "docs/emails/2026-09-29_landlord_lease_signed.eml"
+            "doc": "docs/emails/2026-09-29_peakestates_lease_signed.eml"
           },
           {
             "doc": "COMPANY.md"
           },
           {
-            "doc": "docs/emails/2026-08-14_david_forecast_assumptions.eml"
+            "doc": "docs/emails/2026-08-14_raymond_forecast_assumptions.eml"
           },
           {
-            "commit": "cbcb6ffbc58a36682d5b7eb00c22e4aa289e9e3b",
-            "note": "forecast v1 rent flat"
+            "commit": "17b9fd46e3acb1efe5b99a12b7c1a315ba4f5193",
+            "note": "forecast v1 rental income flat"
           }
         ]
       }
@@ -294,84 +319,70 @@
       "expected": {
         "items": [
           {
-            "contract": "docs/contracts/S05_clouddesk_order_form.pdf",
+            "contract": "docs/contracts/S05_art_insurance_policy_2025.pdf",
             "supplier_id": "S05",
             "renewal_date": "2026-11-16",
             "notice_days": 30,
             "notice_deadline": "2026-10-17",
-            "commitment_if_missed": "12 months x USD 1,450 = USD 17,400"
+            "commitment_if_missed": "12 months x USD 2,450 = USD 29,400"
           }
         ],
         "not_in_window": [
-          "S04 old lease expires 2026-12-31 (already replaced by new lease)",
-          "S01/S02 supply agreements expire 2026-12-31"
+          "S04 old lease expires 2026-12-31 (already replaced by the renewal)",
+          "S03 property management agreement expires 2026-12-31"
         ]
       }
     },
     {
       "id": 5,
-      "prompt": "Why is Facilities over budget YTD?",
+      "prompt": "Why are property costs over budget YTD?",
       "expected": {
         "period": "Jan-Sep 2026",
         "accounts": {
-          "445": {
-            "budget": 43200,
-            "actual": 44672.0,
-            "variance": 1472.0
-          },
-          "469": {
-            "budget": 720000,
-            "actual": 744000.0,
-            "variance": 24000.0
-          },
           "471": {
-            "budget": 61200,
-            "actual": 66000.0,
-            "variance": 4800.0
+            "budget": 162000,
+            "actual": 191100.0,
+            "variance": 29100.0
           },
           "473": {
-            "budget": 18000,
-            "actual": 61500.0,
-            "variance": 43500.0
+            "budget": 27000,
+            "actual": 65300.0,
+            "variance": 38300.0
+          },
+          "475": {
+            "budget": 104400,
+            "actual": 109200.0,
+            "variance": 4800.0
           }
         },
-        "facilities_budget": 842400,
-        "facilities_actual": 916172.0,
-        "facilities_variance": 73772.0,
+        "property_budget": 293400,
+        "property_actual": 365600.0,
+        "property_variance": 72200.0,
         "drivers": [
           {
-            "driver": "Temporary storage licence Unit 3C (Kowloon Bay Properties), Aug + Sep 2026",
-            "account": "469",
-            "amount": 24000.0,
-            "refs": [
-              "KBP/L/2608",
-              "KBP/L/2609"
-            ]
-          },
-          {
-            "driver": "Emergency air-con compressor replacement, warehouse (Arctic Breeze Engineering), 14 Jul 2026",
+            "driver": "Emergency water-pipe repair after typhoon, Flat 12A Seaview Court (Swiftfix Building Services), 14 Jul 2026",
             "account": "473",
             "amount": 38500.0
           },
           {
-            "driver": "Pallet racking repair after safety inspection (Steelform Racking), 16 Sep 2026",
+            "driver": "Air-con replacement, Flat 21B Pinecrest Tower (Arctic Breeze Engineering), 16 Sep 2026",
             "account": "473",
             "amount": 9800.0
           },
           {
-            "driver": "Building management fee revised HK$6,800 -> HK$8,000/month from Jun 2026",
-            "account": "471",
+            "driver": "Building management fees revised HK$11,600 -> HK$12,800/month from Jun 2026",
+            "account": "475",
             "amount": 4800.0
           },
           {
-            "driver": "Summer electricity above budget (Jun-Sep), partly offset by lower Jan-May",
-            "account": "445",
-            "amount": 1472.0
+            "driver": "Routine small repairs (Island Wide Handyman) vs HK$3,000/month budget",
+            "account": "473",
+            "amount": -10000.0
           },
           {
-            "driver": "Routine small repairs vs HK$2,000/month budget",
-            "account": "473",
-            "amount": -4800.0
+            "driver": "Peak Estates extra inspections and cleaning vs HK$18,000/month budget",
+            "account": "471",
+            "amount": 29100.0
           }
         ]
       }
@@ -383,96 +394,112 @@
         "period": "Sep 2026",
         "currency": "HKD",
         "bank_account": "090",
-        "opening_cash": 4167996.59,
+        "opening_cash": 20469784.5,
         "receipts": {
-          "Customer receipts": {
-            "amount": 974090.0,
+          "Rental income": {
+            "amount": 157000.0,
             "journals": [
-              282,
-              283,
-              284,
-              285
+              173,
+              175
+            ]
+          },
+          "Portfolio income": {
+            "amount": 3554000.0,
+            "journals": [
+              185
             ]
           },
           "Interest income": {
-            "amount": 1149.0,
+            "amount": 75748.0,
             "journals": [
-              287
+              187
             ]
           }
         },
         "payments": {
-          "Suppliers (stock)": {
-            "amount": -628720.8,
+          "Staff & MPF": {
+            "amount": -435000.0,
             "journals": [
-              266,
-              275
+              188,
+              189
             ]
           },
-          "Payroll & MPF": {
-            "amount": -458400.0,
+          "Family travel": {
+            "amount": -148000.0,
             "journals": [
-              288,
-              289
+              182
             ]
           },
-          "Rent & facilities": {
-            "amount": -116619.0,
+          "Property": {
+            "amount": -42400.0,
             "journals": [
-              261,
-              268,
-              270,
-              272,
-              276,
-              278
+              174,
+              176,
+              180,
+              181
             ]
           },
-          "Freight": {
-            "amount": -33180.0,
+          "Professional fees": {
+            "amount": -28000.0,
             "journals": [
-              260
+              184
             ]
           },
-          "Software": {
-            "amount": -12630.0,
+          "Insurance": {
+            "amount": -19110.0,
             "journals": [
-              264,
-              274
+              179
             ]
           },
-          "Other": {
-            "amount": -6680.0,
+          "Office & admin": {
+            "amount": -11930.0,
             "journals": [
-              265,
-              279,
-              280
+              177,
+              178,
+              183
             ]
           },
           "Bank charges": {
-            "amount": -570.0,
+            "amount": -270.0,
             "journals": [
-              266,
-              274,
-              275,
-              286
+              179,
+              186
             ]
           }
         },
-        "total_receipts": 975239.0,
-        "total_payments": -1256799.8,
-        "net_cash_flow": -281560.8,
-        "closing_cash": 3886435.79,
+        "total_receipts": 3786748.0,
+        "total_payments": -684710.0,
+        "net_cash_flow": 3102038.0,
+        "closing_cash": 23571822.5,
         "reconciles_to": {
           "doc": "docs/bank/statement_2026-09.pdf",
-          "opening": 4167996.59,
-          "closing": 3886435.79
+          "opening": 20469784.5,
+          "closing": 23571822.5
         },
         "output_file": "sheets/cash_flow_2026-09.xlsx",
         "notes": [
           "Built from GL account 090 lines; journal numbers are the 'Journal No.' column of ledger/gl_export_2026.csv",
-          "TT charges (404) inside supplier payment journals are shown under Bank charges, not the supplier line",
-          "Payroll & MPF = net salaries paid plus MPF remitted (both employer and employee parts)"
+          "TT charges (404) inside payment journals are shown under Bank charges, not the counterparty line",
+          "Staff & MPF = net salaries paid plus MPF remitted (both employer and employee parts)"
         ]
+      }
+    },
+    {
+      "id": 7,
+      "prompt": "How much do we still owe Harbourview Capital Partners III?",
+      "expected": {
+        "file": "sheets/commitments.xlsx",
+        "fund": "Harbourview Capital Partners III LP",
+        "currency": "USD",
+        "commitment": 10000000.0,
+        "called_to_date": 5200000.0,
+        "unfunded": 4800000.0,
+        "as_of": "2026-09-30",
+        "pending": {
+          "doc": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
+          "amount": 600000.0,
+          "unfunded_after": 4200000.0
+        }
       }
     }
   ]

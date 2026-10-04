@@ -114,3 +114,23 @@ def append_row(file: str, sheet: str, values: dict[str, Any], comment: str | Non
 def header(file: str, sheet: str) -> list[str]:
     ws = load_workbook(workspace.path(file))[sheet]
     return [c.value for c in ws[1]]
+
+
+def named_range(file: str, name: str) -> tuple[str, str] | None:
+    """(sheet, 'C5:Z5') for a workbook-level defined name, or None."""
+    wb = load_workbook(workspace.path(file))
+    dn = wb.defined_names.get(name)
+    if dn is None:
+        return None
+    sheet, ref = next(iter(dn.destinations))
+    return sheet, ref.replace("$", "")
+
+
+def find_row(file: str, sheet: str, contains: str, column: str = "A") -> int | None:
+    """First row whose cell in `column` contains the text (case-insensitive)."""
+    ws = load_workbook(workspace.path(file))[sheet]
+    for row in range(1, ws.max_row + 1):
+        v = ws[f"{column}{row}"].value
+        if isinstance(v, str) and contains.lower() in v.lower():
+            return row
+    return None

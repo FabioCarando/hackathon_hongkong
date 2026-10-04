@@ -1,31 +1,30 @@
 Code,Name,Type,Report group,Tax
 090,Victoria Harbour Bank - HKD Current,Bank,Balance sheet,Tax Exempt
-200,Sales,Revenue,Revenue,Tax Exempt
-260,Other Revenue,Revenue,Revenue,Tax Exempt
-270,Interest Income,Revenue,Revenue,Tax Exempt
-310,Cost of Goods Sold,Direct Costs,Cost of sales,Tax Exempt
+150,Investments - Private Funds (at cost),Non-current Asset,Balance sheet,Tax Exempt
+151,Investments - Listed Portfolio (custodian),Non-current Asset,Balance sheet,Tax Exempt
+160,Investment Property,Non-current Asset,Balance sheet,Tax Exempt
+260,Rental Income,Revenue,Income,Tax Exempt
+270,Interest Income,Revenue,Income,Tax Exempt
+275,Dividend & Portfolio Income,Revenue,Income,Tax Exempt
 404,Bank Fees,Expense,Admin,Tax Exempt
-412,Consulting & Accounting,Expense,Admin,Tax Exempt
-425,Freight & Courier,Expense,Freight & logistics,Tax Exempt
-429,General Expenses,Expense,Admin,Tax Exempt
-433,Insurance,Expense,Admin,Tax Exempt
-445,Utilities - Electricity,Expense,Facilities,Tax Exempt
-469,Rent,Expense,Facilities,Tax Exempt
-471,Building Management Fees,Expense,Facilities,Tax Exempt
-473,Repairs & Maintenance,Expense,Facilities,Tax Exempt
-477,Salaries,Expense,Staff,Tax Exempt
+412,"Legal, Tax & Audit Fees",Expense,Professional fees,Tax Exempt
+429,General Office Expenses,Expense,Admin,Tax Exempt
+433,Insurance,Expense,Insurance,Tax Exempt
+455,Fund Management Fees,Expense,Fund fees,Tax Exempt
+471,Property Management Fees,Expense,Property,Tax Exempt
+473,Property Repairs & Maintenance,Expense,Property,Tax Exempt
+475,Building Management & Government Rates,Expense,Property,Tax Exempt
+477,Salaries - Office & Household Staff,Expense,Staff,Tax Exempt
 478,MPF Contributions,Expense,Staff,Tax Exempt
+481,School & Tuition Fees,Expense,Education,Tax Exempt
 485,Software Subscriptions,Expense,Admin,Tax Exempt
 489,Telephone & Internet,Expense,Admin,Tax Exempt
-493,Travel - Local & Cross-border,Expense,Admin,Tax Exempt
+493,Travel & Aviation Charter,Expense,Travel & aviation,Tax Exempt
 497,Foreign Exchange Gain/Loss,Expense,Admin,Tax Exempt
-610,Accounts Receivable,Current Asset,Balance sheet,Tax Exempt
 620,Prepayments,Current Asset,Balance sheet,Tax Exempt
-630,Inventory,Inventory,Balance sheet,Tax Exempt
-710,Office & Warehouse Equipment,Fixed Asset,Balance sheet,Tax Exempt
-711,Less Accumulated Depreciation,Fixed Asset,Balance sheet,Tax Exempt
 800,Accounts Payable,Current Liability,Balance sheet,Tax Exempt
 820,Accrued Liabilities,Current Liability,Balance sheet,Tax Exempt
 825,MPF Payable,Current Liability,Balance sheet,Tax Exempt
-960,Retained Earnings,Equity,Balance sheet,Tax Exempt
+830,Tenant Deposits Held,Current Liability,Balance sheet,Tax Exempt
+960,Family Capital & Retained Earnings,Equity,Balance sheet,Tax Exempt
 970,Share Capital,Equity,Balance sheet,Tax Exempt

@@ -30,16 +30,50 @@ def check_unknown(inv: InvoiceData) -> list[Finding]:
         Finding(
             control="UNKNOWN-001",
             severity="hold",
-            title="Supplier not on the supplier master",
-            detail=f"'{inv.supplier_name}' does not match any known supplier.",
+            title="Counterparty not on the master list",
+            detail=f"'{inv.supplier_name}' does not match any known counterparty.",
             actual=inv.supplier_name,
         )
     ]
 
 
-def check_price(inv: InvoiceData) -> list[Finding]:
+def _tolerance() -> float:
     tol = ex.get("company", "price_tolerance")
-    tolerance = float(tol.value) if tol else 0.01
+    return float(tol.value) if tol else 0.01
+
+
+def check_fee_rate(inv: InvoiceData) -> list[Finding]:
+    """PRICE-001 for fee notices: the fee rate charged vs the contract / side-letter rate."""
+    if inv.fee_rate_pct is None:
+        return []
+    e = ex.get(inv.supplier_id, "fee_rate", on=inv.invoice_date)
+    if not e:
+        return []
+    tolerance, expected, rate = _tolerance(), float(e.value), inv.fee_rate_pct
+    if rate <= expected * (1 + tolerance) + 1e-9:
+        return []
+    pct = (rate / expected - 1) * 100
+    extra = inv.total * (1 - expected / rate)
+    return [
+        Finding(
+            control="PRICE-001",
+            severity="hold",
+            title=f"Fee rate {pct:.0f}% above the agreed rate",
+            detail=(
+                f"Charged at {rate:.2f}% a year vs {expected:.2f}% in {e.source.label()} "
+                f"(+{pct:.1f}%, tolerance {tolerance:.0%}). Overcharge {inv.currency} {extra:,.2f}: "
+                f"should be {inv.currency} {inv.total - extra:,.2f}, not {inv.total:,.2f}."
+            ),
+            expected=expected,
+            actual=rate,
+            evidence=[r for r in (inv.evidence.get("fee_rate"), e.source) if r],
+            expectation_id=e.id,
+        )
+    ]
+
+
+def check_price(inv: InvoiceData) -> list[Finding]:
+    tolerance = _tolerance()
     out = []
     for ln in inv.lines:
         if not ln.item_code:
@@ -93,7 +127,7 @@ def check_bank(inv: InvoiceData) -> list[Finding]:
             title="Bank account changed",
             detail=(
                 f"Invoice asks for payment to …{_digits(inv.bank_account)[-4:]} "
-                f"({inv.bank_account}); the supplier master has …{_digits(str(e.value))[-4:]}.{history}"
+                f"({inv.bank_account}); the counterparty master has …{_digits(str(e.value))[-4:]}.{history}"
             ),
             expected=str(e.value),
             actual=inv.bank_account,
@@ -170,7 +204,9 @@ def check_duplicate(inv: InvoiceData) -> list[Finding]:
 
 def check_approval(inv: InvoiceData) -> list[Finding]:
     e = ex.get("company", "approval_limit")
-    limit = float(e.value) if e else 50000.0
+    if not e:
+        return []
+    limit = float(e.value)
     hkd = amount_hkd(inv)
     if hkd <= limit:
         return []
@@ -178,12 +214,12 @@ def check_approval(inv: InvoiceData) -> list[Finding]:
         Finding(
             control="APPROVAL-001",
             severity="approval",
-            title="Needs D. Wong approval",
+            title=f"Needs {e.key or 'director'} approval",
             detail=f"HK${hkd:,.2f} is above the HK${limit:,.0f} approval limit.",
             expected=limit,
             actual=hkd,
-            evidence=[e.source] if e else [],
-            expectation_id=e.id if e else None,
+            evidence=[e.source],
+            expectation_id=e.id,
         )
     ]
 
@@ -197,7 +233,15 @@ def sheets_payments() -> list[dict]:
         return list(csv.DictReader(f))
 
 
-CONTROLS = [check_unknown, check_price, check_bank, check_domain, check_duplicate, check_approval]
+CONTROLS = [
+    check_unknown,
+    check_price,
+    check_fee_rate,
+    check_bank,
+    check_domain,
+    check_duplicate,
+    check_approval,
+]
 
 
 def run(inv: InvoiceData) -> list[Finding]:

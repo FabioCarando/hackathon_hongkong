@@ -11,15 +11,15 @@ from pydantic import BaseModel
 
 from app.core import reader
 from app.core.models import InvoiceData, InvoiceLine, LeaseTerms, ReadResult, SourceRef
-from app.data import sheets, workspace
+from app.data import company, sheets, workspace
 from app.llm import get_llm
 
-OWN_DOMAIN = "harbourlane.com.hk"
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 
 
 class _InvoiceLLM(BaseModel):
     supplier_name: str
+    kind: Literal["invoice", "capital_call", "fee_notice"] = "invoice"
     invoice_no: str
     invoice_date: str  # YYYY-MM-DD
     due_date: str | None = None  # YYYY-MM-DD, only if printed
@@ -29,9 +29,11 @@ class _InvoiceLLM(BaseModel):
     tax: float
     total: float
     bank_account: str | None = None  # the supplier's account number printed for payment
+    fee_rate_pct: float | None = None  # yearly fee rate in percent if printed, e.g. 2.0
 
 
 class _LeaseLLM(BaseModel):
+    counterparty: str  # the other party to the lease (the tenant if we are the landlord)
     reference: str | None = None
     signed: str | None = None  # YYYY-MM-DD
     rent_monthly: float  # first-year monthly rent
@@ -40,10 +42,16 @@ class _LeaseLLM(BaseModel):
 
 
 INVOICE_SYSTEM = (
-    "You extract fields from supplier invoices for a Hong Kong finance team. Copy values exactly "
-    "as printed. Dates as YYYY-MM-DD. Currency: CNY / RMB / 人民币 / ¥ -> RMB; US$ -> USD; HK$ -> "
-    "HKD. Amounts as plain numbers without separators. bank_account is the supplier's receiving "
-    "account number, exactly as printed. Include every line item with its item code if printed."
+    "You extract fields from payable documents (supplier invoices, fund capital call / drawdown "
+    "notices, fund management fee notices) for a Hong Kong finance team. Copy values exactly as "
+    "printed. supplier_name is the issuer (the fund or company asking to be paid). invoice_no is "
+    "the invoice or notice number. kind: capital_call for a capital call / drawdown notice (缴款通知), "
+    "fee_notice for a management fee notice, otherwise invoice. Dates as YYYY-MM-DD; due_date is the "
+    "payment due date if printed. Currency: CNY / RMB / 人民币 / ¥ -> RMB; US$ -> USD; HK$ -> HKD. "
+    "Amounts as plain numbers without separators; total is the amount due now. bank_account is the "
+    "issuer's receiving account number, exactly as printed. fee_rate_pct is the yearly fee rate in "
+    "percent only if the document charges a fee rate (e.g. 2.0 for '2.00% p.a.'). Include every line "
+    "item with its item code if printed; a capital call is one line of qty 1 for the amount called."
 )
 
 
@@ -140,11 +148,16 @@ def extract_invoice(rel: str) -> InvoiceData:
     for ln in raw.lines:
         if ln.item_code and (q := find_quote(rr, ln.item_code)):
             ev[f"line:{ln.item_code}"] = q
+    if raw.fee_rate_pct is not None:
+        r = raw.fee_rate_pct
+        if q := find_quote(rr, f"{r:.2f}%", f"{r:.1f}%", f"{r:g}%"):
+            ev["fee_rate"] = q
     for key in ("invoice_no", "total"):
         if key not in ev:
             problems.append(f"Could not find {key} in the document text")
 
-    senders = [e for e in EMAIL_RE.findall(rr.text) if not e.lower().endswith(OWN_DOMAIN)]
+    own = company.domain()
+    senders = [e for e in EMAIL_RE.findall(rr.text) if not e.lower().endswith(own)]
     for e in senders:
         if q := find_quote(rr, e):
             ev.setdefault(f"email:{e}", q)
@@ -155,6 +168,7 @@ def extract_invoice(rel: str) -> InvoiceData:
     return InvoiceData(
         supplier_name=raw.supplier_name,
         supplier_id=sid,
+        kind=raw.kind,
         invoice_no=raw.invoice_no.strip(),
         invoice_date=inv_date,
         due_date=due,
@@ -164,6 +178,7 @@ def extract_invoice(rel: str) -> InvoiceData:
         tax=raw.tax,
         total=raw.total,
         bank_account=raw.bank_account,
+        fee_rate_pct=raw.fee_rate_pct,
         sender_emails=sorted(set(senders)),
         evidence=ev,
         problems=problems,
@@ -175,10 +190,17 @@ def extract_lease(rel: str) -> LeaseTerms:
     raw, _ = get_llm().extract(
         _pages_prompt(rr),
         _LeaseLLM,
-        system="Extract the rent terms of this tenancy agreement. Dates as YYYY-MM-DD.",
+        system=(
+            "Extract the rent terms of this tenancy agreement. counterparty is the other party: "
+            f"the tenant if {company.name()} is the landlord, else the landlord. Dates as YYYY-MM-DD."
+        ),
         label="extract_contract",
     )
-    sid, _ = match_supplier("Kowloon Bay Properties Ltd", rr.text)
+    sid, _ = match_supplier(raw.counterparty, "")
+    if not sid:  # fall back to the counterparty whose current contract is a lease
+        sid = next(
+            (s["id"] for s in sheets.suppliers() if "lease" in str(s["contract_file"]).lower()), None
+        )
     q = find_quote(rr, *_money_variants(raw.rent_monthly)) or SourceRef(doc=rel)
     q.clause = "4"
     return LeaseTerms(

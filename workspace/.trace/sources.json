@@ -2,62 +2,63 @@
   {
     "file": "sheets/forecast_2027_2028.xlsx",
     "sheet": "Forecast",
-    "cell": "C9:Z9",
-    "value": 80000,
+    "cell": "C5:Z5",
+    "value": 95000,
     "sources": [
       {
         "doc": "COMPANY.md",
         "page": null,
-        "quote": "Rent assumed flat at HK$80,000 in 2027 pending lease renewal (D. Wong, Aug 2026)."
+        "quote": "Rental income for Flat 12A Repulse Bay (Halcyon Re lease) assumed flat at HK$95,000/month in 2027-2028 pending lease renewal (R. Ho, Aug 2026)."
       },
       {
-        "doc": "docs/emails/2026-08-14_david_forecast_assumptions.eml",
+        "doc": "docs/emails/2026-08-14_raymond_forecast_assumptions.eml",
         "page": null,
-        "quote": "please keep rent flat at HK$80,000/month in 2027 until the warehouse lease is renewed"
+        "quote": "please keep the Repulse Bay rent (Flat 12A, Halcyon Re) flat at HK$95,000/month"
       },
       {
         "doc": "docs/contracts/S04_lease_2024_2026.pdf",
         "page": 2,
-        "quote": "The monthly rent shall be HK$80,000 (Hong Kong Dollars Eighty Thousand) exclusive of rates and management fees, fixed for the whole Term."
+        "quote": "The monthly rent shall be HK$95,000 (Hong Kong Dollars Ninety-Five Thousand) inclusive of management fees and exclusive of rates, fixed for the whole Term."
       }
     ],
-    "reason": "Rent held flat at current lease rate until the lease expiring 31 Dec 2026 is renewed.",
-    "commit": "cbcb6ffbc58a36682d5b7eb00c22e4aa289e9e3b"
+    "reason": "Repulse Bay rent held flat at the current lease rate until the lease expiring 31 Dec 2026 is renewed.",
+    "commit": "17b9fd46e3acb1efe5b99a12b7c1a315ba4f5193"
   },
   {
     "file": "sheets/invoice_register.xlsx",
     "sheet": "Register",
-    "cell": "F13",
-    "value": 27660.0,
+    "cell": "F9",
+    "value": 23200.0,
     "sources": [
       {
-        "doc": "docs/invoices/2026-09/Pacific Freight INV-2291.pdf",
+        "doc": "docs/invoices/2026-09/Peak Estates INV-PM-2291.pdf",
         "page": 1,
-        "quote": "TOTAL HKD 27,660.00"
+        "quote": "TOTAL HKD 23,200.00"
       }
     ],
-    "reason": "Entered Pacific Freight INV-2291 (August/September trucking).",
-    "commit": "5a1e9aa927a77f0871160c4653695cd038e177e8"
+    "reason": "Entered Peak Estates INV-PM-2291 (September management fees, inspections and cleaning).",
+    "commit": "54e67fb4cc2d415b2e953273b90931ccb7b9f4ea"
   },
   {
     "file": "sheets/invoice_register.xlsx",
     "sheet": "Register",
-    "cell": "F5",
-    "value": 309510.0,
+    "cell": "F2",
+    "value": 37500.0,
     "sources": [
       {
-        "doc": "docs/invoices/2026-07/INV-SP-2026-0816.pdf",
+        "doc": "docs/invoices/2026-07/Harbourview fee HCP3-MF-2026Q3.pdf",
         "page": 1,
-        "quote": "价税合计 人民币（RMB） 309,510.00"
+        "quote": "Fee rate: 1.50% p.a. on commitment of USD 10,000,000"
       },
       {
-        "doc": "docs/contracts/S01_supply_agreement_2026.pdf",
+        "doc": "docs/contracts/S02_side_letter_2024.pdf",
         "page": 1,
-        "quote": "SP-4410 ... RMB 109.00"
+        "clause": "3.1",
+        "quote": "calculated at the rate of 1.50% per annum of the Commitment"
       }
     ],
-    "reason": "Entered Shenzhen Parts July invoice; unit prices match contract §4.2.",
-    "commit": "e760fc371a566e646a9a481d67f6b6834063f8ac"
+    "reason": "Entered Harbourview Q3 2026 management fee; rate matches side letter clause 3.1.",
+    "commit": "094a6657b90fb2856821ad3042eb84b26244bd06"
   },
   {
     "file": "sheets/supplier_master.xlsx",
@@ -66,27 +67,27 @@
     "value": "6214 8320 0019 2049",
     "sources": [
       {
-        "doc": "docs/contracts/S01_supply_agreement_2026.pdf",
+        "doc": "docs/contracts/S01_subscription_agreement_2024.pdf",
         "page": 1,
-        "quote": "Seller's designated account ... account no. 6214 8320 0019 2049"
+        "quote": "The Fund's designated account ... account no. 6214 8320 0019 2049"
       }
     ],
-    "reason": "Supplier bank account per signed 2026 supply agreement clause 5.2.",
-    "commit": "b3a741980f74b1f79c3a8f5075dcfb6b8dd1dfcc"
+    "reason": "Fund bank account per signed subscription agreement clause 5.2.",
+    "commit": "be6661bf20b829f8e6fa4dda0bcdff6622f864c7"
   },
   {
     "file": "sheets/budget_vs_actual_2026.xlsx",
     "sheet": "Budget monthly",
-    "cell": "C8",
-    "value": 80000,
+    "cell": "C2",
+    "value": 157000,
     "sources": [
       {
         "doc": "docs/contracts/S04_lease_2024_2026.pdf",
         "page": 2,
-        "quote": "The monthly rent shall be HK$80,000"
+        "quote": "The monthly rent shall be HK$95,000"
       }
     ],
-    "reason": "Budget 2026 rent = current lease rent.",
-    "commit": "70c279fdd4f34238aeac2d9f106432f62144515e"
+    "reason": "Budget 2026 rental income = Flat 12A lease HK$95,000 + Flat 21B HK$62,000.",
+    "commit": "e56523ea4eb19b3ddcb73a1fdf190626e361e8c9"
   }
 ]

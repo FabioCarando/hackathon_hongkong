@@ -73,6 +73,7 @@ class InvoiceLine(BaseModel):
 class InvoiceData(BaseModel):
     supplier_name: str
     supplier_id: str | None = None  # matched in code against supplier_master, never by the LLM
+    kind: Literal["invoice", "capital_call", "fee_notice"] = "invoice"
     invoice_no: str
     invoice_date: date
     due_date: date | None = None
@@ -82,6 +83,7 @@ class InvoiceData(BaseModel):
     tax: float = 0.0
     total: float
     bank_account: str | None = None
+    fee_rate_pct: float | None = None  # yearly fee rate printed on a fee notice, e.g. 2.0
     sender_emails: list[str] = []  # found in code: invoice text + linked emails
     evidence: dict[str, SourceRef] = {}  # field name -> where it was read
     problems: list[str] = []  # code validation failures ("needs review")
@@ -102,6 +104,7 @@ class Expectation(BaseModel):
     subject: str  # supplier_id or "company"
     kind: Literal[
         "unit_price",
+        "fee_rate",
         "bank_account",
         "email_domain",
         "recurring_amount",

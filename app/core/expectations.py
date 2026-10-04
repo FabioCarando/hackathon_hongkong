@@ -7,7 +7,7 @@ from datetime import date, datetime
 
 from app.core import reader
 from app.core.models import Expectation, SourceRef
-from app.data import sheets, store
+from app.data import company, sheets, store
 
 FILE = "expectations.json"
 CODE_RE = re.compile(r"^[A-Z]{2,4}-[A-Z0-9]{2,6}$")
@@ -56,7 +56,7 @@ def _price_schedule(doc: str, supplier_id: str, ccy: str) -> list[Expectation]:
             for nxt in lines[i + 1 : i + 5]:
                 if m := PRICE_RE.match(nxt):
                     price = float(m.group(2).replace(",", ""))
-                    clause = "4.2" if "supply_agreement" in doc else None
+                    clause = _clause_before(lines[:i])
                     out.append(
                         Expectation(
                             id=f"E-{supplier_id}-price-{ln}",
@@ -70,6 +70,16 @@ def _price_schedule(doc: str, supplier_id: str, ccy: str) -> list[Expectation]:
                     )
                     break
     return out
+
+
+def _clause_before(lines: list[str]) -> str | None:
+    """Nearest clause / schedule heading above a price table, e.g. '4.2' or 'Schedule 1'."""
+    for ln in reversed(lines):
+        if m := re.match(r"^(\d+\.\d+)\s", ln):
+            return m.group(1)
+        if m := re.match(r"^(Schedule \d+)", ln):
+            return m.group(1)
+    return None
 
 
 def _contract_terms(doc: str, supplier_id: str) -> list[Expectation]:
@@ -94,46 +104,100 @@ def _contract_terms(doc: str, supplier_id: str) -> list[Expectation]:
     return out
 
 
-def seed() -> list[Expectation]:
+def _fee_rate(doc: str, supplier_id: str) -> list[Expectation]:
+    """Side letter / LPA: 'calculated at the rate of 1.50% per annum' -> fee_rate expectation."""
+    for page in reader.read(doc, ocr=False).pages:
+        flat = _flat(page.text)
+        m = re.search(r"fee[^.]*?rate of (\d+(?:\.\d+)?)% per annum", flat, re.I)
+        if m:
+            nums = re.findall(r"(?:^|\n)(\d+\.\d+)\n", page.text[: page.text.find("rate of")])
+            clause = nums[-1] if nums else None
+            return [
+                Expectation(
+                    id=f"E-{supplier_id}-fee-rate",
+                    subject=supplier_id,
+                    kind="fee_rate",
+                    key="management_fee",
+                    value=float(m.group(1)),
+                    note=f"Management fee {float(m.group(1)):.2f}% a year",
+                    source=SourceRef(
+                        doc=doc,
+                        page=page.page,
+                        quote=f"rate of {m.group(1)}% per annum",
+                        clause=clause,
+                    ),
+                )
+            ]
+    return []
+
+
+def _flat(text: str) -> str:
+    return re.sub(r"\s+", " ", text)
+
+
+def _company() -> list[Expectation]:
+    """Policies, approval rule, account conventions and forecast assumptions from COMPANY.md."""
+    doc, text = "COMPANY.md", company.text()
+    flat = _flat(text)
     items: list[Expectation] = []
-    company = "COMPANY.md"
-    items.append(
-        Expectation(
-            id="E-company-tolerance",
-            subject="company",
-            kind="price_tolerance",
-            value=0.01,
-            note="Invoice unit price may exceed contract price by at most 1%",
-            source=SourceRef(
-                doc=company, quote="may not exceed the contract price by more than 1%"
-            ),
+    if m := re.search(r"by more than (\d+(?:\.\d+)?)%", flat):
+        items.append(
+            Expectation(
+                id="E-company-tolerance",
+                subject="company",
+                kind="price_tolerance",
+                value=float(m.group(1)) / 100,
+                note=f"Unit prices and fee rates may exceed the contract by at most {m.group(1)}%",
+                source=SourceRef(doc=doc, quote=m.group(0)),
+            )
         )
-    )
-    items.append(
-        Expectation(
-            id="E-company-approval",
-            subject="company",
-            kind="approval_limit",
-            value=50000.0,
-            note="Anything above HK$50,000 needs D. Wong's approval",
-            source=SourceRef(doc=company, quote="Approves anything above HK$50,000."),
+    person, limit, line = company.approver()
+    if limit:
+        items.append(
+            Expectation(
+                id="E-company-approval",
+                subject="company",
+                kind="approval_limit",
+                key=company.short(person),
+                value=limit,
+                note=f"Anything above HK${limit:,.0f} needs {company.short(person)}'s approval",
+                source=SourceRef(doc=doc, quote=line),
+            )
         )
-    )
-    items.append(
-        Expectation(
-            id="E-company-rent-2027",
-            subject="company",
-            kind="forecast_assumption",
-            key="rent_monthly",
-            value=80000.0,
-            valid_from=date(2027, 1, 1),
-            note="Rent flat at HK$80,000 in 2027-28 pending lease renewal (D. Wong, Aug 2026)",
-            source=SourceRef(
-                doc=company,
-                quote="Rent assumed flat at HK$80,000 in 2027 pending lease renewal (D. Wong, Aug 2026).",
-            ),
-        )
-    )
+    for kind, label in (("capital_call", "capital calls"), ("fee_notice", "fund management fee notices")):
+        if m := re.search(rf"{label} -> (\d{{3}})", flat, re.I):
+            items.append(
+                Expectation(
+                    id=f"E-company-account-{kind}",
+                    subject="company",
+                    kind="account_code",
+                    key=kind,
+                    value=m.group(1),
+                    note=f"{label.capitalize()} are booked to account {m.group(1)}",
+                    source=SourceRef(doc=doc, quote=m.group(0)),
+                )
+            )
+    for line in text.splitlines():
+        m = re.search(r"assumed flat at HK\$([\d,]+)", line)
+        if m and "rent" in line.lower():
+            items.append(
+                Expectation(
+                    id="E-company-rent-2027",
+                    subject="company",
+                    kind="forecast_assumption",
+                    key="rent_monthly",
+                    value=float(m.group(1).replace(",", "")),
+                    valid_from=date(2027, 1, 1),
+                    note=line.lstrip("- ").strip(),
+                    source=SourceRef(doc=doc, quote=line.lstrip("- ").strip()),
+                )
+            )
+            break
+    return items
+
+
+def seed() -> list[Expectation]:
+    items = _company()
     register = sheets.register()
     for s in sheets.suppliers():
         sid = s["id"]
@@ -189,6 +253,7 @@ def seed() -> list[Expectation]:
         doc = s["contract_file"]
         if doc and reader.can_read(doc):
             items += _price_schedule(doc, sid, s["currency"])
+            items += _fee_rate(doc, sid)
             items += _contract_terms(doc, sid)
     save(items)
     return items

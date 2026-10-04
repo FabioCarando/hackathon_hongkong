@@ -1,4 +1,4 @@
-"""Generate the fake finance workspace for the Trace demo (Harbour Lane Trading Ltd).
+"""Generate the fake finance workspace for the Trace demo (Lantau Peak Family Office Ltd).
 
 Run:
     uv run --with openpyxl --with fpdf2 --with pymupdf python scripts/generate_workspace.py
@@ -6,8 +6,9 @@ Run:
 Deterministic (fixed seed, fixed timestamps). Wipes and rebuilds workspace/, including its own git
 history with backdated commits. That history lives in workspace/.trace/git (not workspace/.git) so the
 outer repo can track the workspace files and its history as plain files. Use it with:
-    git --git-dir=workspace/.trace/git log      (core.worktree points back at workspace/) Inbox invoices, the 2027 lease and the two newest emails stay
-untracked (they are the demo). ground_truth/ is git-ignored inside the workspace.
+    git --git-dir=workspace/.trace/git log      (core.worktree points back at workspace/)
+Inbox documents, the 2027 lease and the two newest emails stay untracked (they are the demo).
+ground_truth/ is git-ignored inside the workspace.
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ import csv
 import hashlib
 import io
 import json
+import math
 import os
 import random
 import re
@@ -28,12 +30,12 @@ from email.policy import SMTPUTF8
 from pathlib import Path
 
 import pymupdf as fitz
-from faker import Faker
 from fontTools.ttLib import TTCollection
 from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
 from openpyxl.workbook.defined_name import DefinedName
 from PIL import Image, ImageFilter
 
@@ -42,112 +44,115 @@ WS = ROOT / "workspace"
 GIT_DIR = WS / ".trace" / "git"
 SEED = 20261005
 rng = random.Random(SEED)
-fake = Faker("en_GB")
-fake.seed_instance(SEED)
 TODAY = date(2026, 10, 5)
 CLOSE = date(2026, 9, 30)
 D = date
 
 # ----------------------------------------------------------------------------- master data
 CO = dict(
-    name_en="Harbour Lane Trading Ltd", name_zh="海港貿易有限公司", br="63817254",
-    addr_en="Room 1203, 12/F, Wing Tat Commercial Centre, 88 Hoi Bun Road, Kwun Tong, Kowloon, Hong Kong",
-    addr_zh="香港九龍觀塘海濱道88號永達商業中心12樓1203室",
-    warehouse="Unit 9A, 9/F, Oceanic Godown Centre, 21 Sheung Yuet Road, Kowloon Bay, Kowloon",
-    bank="Victoria Harbour Bank Limited", bank_acct="088-412-09375-1", domain="harbourlane.com.hk",
+    name_en="Lantau Peak Family Office Ltd", name_zh="大嶼峰家族辦公室有限公司", br="74120583",
+    addr_en="Suite 3802, 38/F, Harbour Crest Tower, 1 Harbour View Street, Central, Hong Kong",
+    addr_zh="香港中環海景街1號海冠大廈38樓3802室",
+    bank="Victoria Harbour Bank Limited", bank_acct="088-517-22046-8", domain="lantaupeak.com.hk",
+    family="Cheung family", trust="Cheung Family Trust", trust_zh="張氏家族信託",
 )
-PEOPLE = {"anna": ("Anna Chan", "anna.chan@harbourlane.com.hk", "Finance Manager"),
-          "ken": ("Ken Lau", "ken.lau@harbourlane.com.hk", "Accounts Clerk"),
-          "david": ("David Wong", "david.wong@harbourlane.com.hk", "Director / Owner")}
+PEOPLE = {"victoria": ("Victoria Cheung", "victoria.cheung@lantaupeak.com.hk", "Principal (family member)"),
+          "raymond": ("Raymond Ho", "raymond.ho@lantaupeak.com.hk", "Chief Financial Officer"),
+          "grace": ("Grace Lam", "grace.lam@lantaupeak.com.hk", "Fund Accountant"),
+          "jason": ("Jason Yip", "jason.yip@lantaupeak.com.hk", "Accounts Clerk")}
+APPROVAL_LIMIT = 500_000
 
 SUP = {
-    "S01": dict(name_en="Shenzhen Parts Co., Ltd.", name_zh="深圳市零件有限公司", currency="RMB", terms=60,
-                domain="shenzhenparts.com", email="accounts@shenzhenparts.com", account="310",
+    "S01": dict(name_en="Pearl River Growth Fund II LP", name_zh="珠江成长基金二期", currency="RMB", terms=14,
+                domain="prgfund.com", email="investor.services@prgfund.com", account="150",
                 bank="Pearl River Commercial Bank, Shenzhen Futian Branch (珠江商贸银行深圳福田支行)",
-                bank_acct="6214 8320 0019 2049", reg="USCC 91440300MA5G7K2X3R", tel="+86 755 2861 4402",
-                addr_zh="深圳市宝安区福永街道永福路128号3栋5楼", addr_en="5/F, Bldg 3, 128 Yongfu Road, Fuyong, Bao'an, Shenzhen",
-                contract="docs/contracts/S01_supply_agreement_2026.pdf", contract_no="HL-SP-2026-01"),
-    "S02": dict(name_en="Dongguan Precision Electronics Co., Ltd.", name_zh="东莞精密电子有限公司", currency="USD",
-                terms=30, domain="dg-precision.cn", email="ar@dg-precision.cn", account="310",
-                bank="Greater Bay Trust Bank, Dongguan Branch (SWIFT GBTBCNDGXXX)", bank_acct="7800 1123 4588 0062",
-                reg="USCC 91441900MA4WQ8L52C", tel="+86 769 8533 7120",
-                addr_zh="东莞市长安镇振安中路66号", addr_en="66 Zhen'an Middle Road, Chang'an Town, Dongguan, Guangdong",
-                contract="docs/contracts/S02_supply_agreement_2026.pdf", contract_no="HL-DPE-2026-01"),
-    "S03": dict(name_en="Pacific Freight Logistics Ltd", name_zh="", currency="HKD", terms=30,
-                domain="pacfreight.com.hk", email="billing@pacfreight.com.hk", account="425",
+                bank_acct="6214 8320 0019 2049", reg="GP: Pearl River Capital Management (Shenzhen) Co., Ltd.",
+                tel="+86 755 2861 4402", addr_zh="深圳市福田区益田路6001号太平金融大厦18楼",
+                addr_en="18/F, Taiping Finance Tower, 6001 Yitian Road, Futian, Shenzhen",
+                contract="docs/contracts/S01_subscription_agreement_2024.pdf", contract_no="PRG2-SUB-0042",
+                commitment=50_000_000.0, called_before=14_000_000.0, kind="RMB private equity fund (Greater Bay Area growth)"),
+    "S02": dict(name_en="Harbourview Capital Partners III LP", name_zh="", currency="USD", terms=10,
+                domain="harbourviewcap.com", email="fundadmin@harbourviewcap.com", account="150",
+                bank="Atlantic Mercantile Bank, New York (SWIFT ATMBUS33)", bank_acct="8841-2207-5530",
+                reg="Cayman Islands exempted limited partnership, reg. no. MC-338172", tel="+852 3958 2100",
+                addr_en="Level 21, 8 Finance Street West, Central, Hong Kong (Manager: Harbourview Capital Management Ltd)",
+                contract="docs/contracts/S02_side_letter_2024.pdf", contract_no="HCP3-SL-017",
+                commitment=10_000_000.0, called_before=3_800_000.0, kind="USD buyout fund (Asia mid-market)"),
+    "S03": dict(name_en="Peak Estates Property Management Ltd", name_zh="峰譽物業管理有限公司", currency="HKD", terms=30,
+                domain="peakestates.com.hk", email="accounts@peakestates.com.hk", account="471",
                 bank="Victoria Harbour Bank Limited", bank_acct="088-221-55190-3", reg="BR No. 50993312",
-                tel="+852 2418 6630", addr_en="Unit 1608, Kwai Fong Logistics Tower, 38 Kwai Hei Street, Kwai Chung, N.T.",
-                contract="docs/contracts/S03_freight_rate_card_2026.pdf"),
-    "S04": dict(name_en="Kowloon Bay Properties Ltd", name_zh="九龍灣置業有限公司", currency="HKD", terms=7,
-                domain="kbproperties.com.hk", email="leasing@kbproperties.com.hk", account="469",
-                bank="Lion Rock Bank Limited", bank_acct="512-339-80417-0", reg="BR No. 21874460", tel="+852 2795 3100",
-                addr_en="28/F, KBP Tower, 9 Wang Chiu Road, Kowloon Bay, Kowloon",
+                tel="+852 2418 6630", addr_en="Unit 1608, Wanchai Commercial Centre, 194 Johnston Road, Wan Chai, Hong Kong",
+                contract="docs/contracts/S03_property_management_agreement_2026.pdf"),
+    "S04": dict(name_en="Halcyon Re Asia Ltd", name_zh="", currency="HKD", terms=0, domain="halcyonre.com.hk",
+                email="facilities@halcyonre.com.hk", account="260", bank="Lion Rock Bank Limited",
+                bank_acct="512-339-80417-0", reg="BR No. 21874460", tel="+852 2795 3100",
+                addr_en="27/F, Quarry Bay Exchange, 979 King's Road, Quarry Bay, Hong Kong",
                 contract="docs/contracts/S04_lease_2024_2026.pdf"),
-    "S05": dict(name_en="CloudDesk Inc.", name_zh="", currency="USD", terms=15, domain="clouddesk.io",
-                email="billing@clouddesk.io", account="485", bank="Sierra Mesa Bank (SWIFT SMBKUS6L)",
-                bank_acct="4410-0928-1173", reg="EIN 84-3920117", tel="+1 408 555 0142",
-                addr_en="1200 Larkin Avenue, Suite 300, Sunnyvale, CA 94086, USA",
-                contract="docs/contracts/S05_clouddesk_order_form.pdf"),
+    "S05": dict(name_en="Meridian Fine Art Insurance Ltd", name_zh="", currency="USD", terms=15,
+                domain="meridianfineart.com", email="billing@meridianfineart.com", account="433",
+                bank="Sierra Mesa Bank (SWIFT SMBKUS6L)", bank_acct="4410-0928-1173", reg="Bermuda reg. no. 58821",
+                tel="+1 441 555 0142", addr_en="Clarendon House, 2 Church Street, Hamilton HM 11, Bermuda",
+                contract="docs/contracts/S05_art_insurance_policy_2025.pdf"),
 }
-FAKE_DOMAIN, NEW_BANK = "shenzhen-parts.co", ("Nanhai Union Bank, Shenzhen Bao'an Branch (南海联合银行深圳宝安支行)", "6230 5821 4407 7731")
+FAKE_DOMAIN = "prg-fund.co"
+NEW_BANK = ("Nanhai Union Bank, Shenzhen Bao'an Branch (南海联合银行深圳宝安支行)", "6230 5821 4407 7731")
+FEE_RATE, FEE_RATE_WRONG = 1.50, 2.00
 
-PRICES = {  # contract price schedules (S01 §4.2 / S02 §4.2)
-    "S01": {"SP-4410": ("Power management IC module", "电源管理模块", "pc", 109.00),
-            "SP-2208": ("USB-C connector assembly", "USB-C连接器组件", "pc", 23.50),
-            "SP-3315": ("Relay module 12V", "继电器模块 12V", "pc", 46.80),
-            "SP-1102": ("MLCC capacitor reel (5,000 pcs)", "陶瓷电容卷盘（5000只）", "reel", 312.00)},
-    "S02": {"DPE-PCB6": ("6-layer PCB assembly", "六层PCB组装", "pc", 14.20),
-            "DPE-ENC1": ("Aluminium enclosure", "铝合金外壳", "pc", 6.85),
-            "DPE-CBL12": ("Wire harness 12-pin", "12针线束", "pc", 2.40)},
+PM_RATES = {  # Peak Estates property management agreement, schedule 1
+    "PM-RB12": ("Property management - Flat 12A, Seaview Court, Repulse Bay", "month", 8800),
+    "PM-CR21": ("Property management - Flat 21B, Pinecrest Tower, Mid-Levels", "month", 7600),
+    "KEY-HLD": ("Key holding & contractor access (per flat)", "month", 450),
+    "LS-INSP": ("Tenancy inspection with photo report", "visit", 1200),
+    "CLN-DP": ("Deep cleaning, vacant areas & balcony", "visit", 3500),
 }
-FREIGHT = {"TRK-20": ("Cross-border trucking Shenzhen - Kowloon Bay, 20ft", "container", 3850),
-           "TRK-40": ("Cross-border trucking Shenzhen - Kowloon Bay, 40ft", "container", 5200),
-           "CUS": ("Import declaration & customs clearance", "shipment", 680),
-           "WH": ("Warehouse handling (in/out)", "pallet", 45),
-           "PSS": ("Peak season surcharge (1 Aug - 31 Oct)", "container", 900)}
+PROPS = {"12A": "Flat 12A, 12/F, Seaview Court, 38 Repulse Bay Road, Repulse Bay, Hong Kong",
+         "21B": "Flat 21B, 21/F, Pinecrest Tower, 9 Conduit Road, Mid-Levels, Hong Kong"}
 
-FX = {"2025-11": (7.79, 1.074), "2025-12": (7.78, 1.071), "2026-01": (7.79, 1.072), "2026-02": (7.81, 1.077),
-      "2026-03": (7.82, 1.079), "2026-04": (7.80, 1.076), "2026-05": (7.79, 1.073), "2026-06": (7.81, 1.078),
-      "2026-07": (7.82, 1.083), "2026-08": (7.81, 1.082), "2026-09": (7.80, 1.080), "2026-10": (7.80, 1.080)}
+FX = {"2025-09": (7.79, 1.093), "2025-10": (7.78, 1.090), "2025-11": (7.79, 1.074), "2025-12": (7.78, 1.071),
+      "2026-01": (7.79, 1.072), "2026-02": (7.81, 1.077), "2026-03": (7.82, 1.079), "2026-04": (7.80, 1.076),
+      "2026-05": (7.79, 1.073), "2026-06": (7.81, 1.078), "2026-07": (7.82, 1.083), "2026-08": (7.81, 1.082),
+      "2026-09": (7.80, 1.080), "2026-10": (7.80, 1.080)}
 
 ACCOUNTS = [  # code, name, type, group
     ("090", "Victoria Harbour Bank - HKD Current", "Bank", "Balance sheet"),
-    ("610", "Accounts Receivable", "Current Asset", "Balance sheet"),
+    ("150", "Investments - Private Funds (at cost)", "Non-current Asset", "Balance sheet"),
+    ("151", "Investments - Listed Portfolio (custodian)", "Non-current Asset", "Balance sheet"),
+    ("160", "Investment Property", "Non-current Asset", "Balance sheet"),
     ("620", "Prepayments", "Current Asset", "Balance sheet"),
-    ("630", "Inventory", "Inventory", "Balance sheet"),
-    ("710", "Office & Warehouse Equipment", "Fixed Asset", "Balance sheet"),
-    ("711", "Less Accumulated Depreciation", "Fixed Asset", "Balance sheet"),
     ("800", "Accounts Payable", "Current Liability", "Balance sheet"),
     ("820", "Accrued Liabilities", "Current Liability", "Balance sheet"),
     ("825", "MPF Payable", "Current Liability", "Balance sheet"),
-    ("960", "Retained Earnings", "Equity", "Balance sheet"),
+    ("830", "Tenant Deposits Held", "Current Liability", "Balance sheet"),
+    ("960", "Family Capital & Retained Earnings", "Equity", "Balance sheet"),
     ("970", "Share Capital", "Equity", "Balance sheet"),
-    ("200", "Sales", "Revenue", "Revenue"),
-    ("260", "Other Revenue", "Revenue", "Revenue"),
-    ("270", "Interest Income", "Revenue", "Revenue"),
-    ("310", "Cost of Goods Sold", "Direct Costs", "Cost of sales"),
-    ("425", "Freight & Courier", "Expense", "Freight & logistics"),
-    ("445", "Utilities - Electricity", "Expense", "Facilities"),
-    ("469", "Rent", "Expense", "Facilities"),
-    ("471", "Building Management Fees", "Expense", "Facilities"),
-    ("473", "Repairs & Maintenance", "Expense", "Facilities"),
-    ("477", "Salaries", "Expense", "Staff"),
+    ("260", "Rental Income", "Revenue", "Income"),
+    ("270", "Interest Income", "Revenue", "Income"),
+    ("275", "Dividend & Portfolio Income", "Revenue", "Income"),
+    ("477", "Salaries - Office & Household Staff", "Expense", "Staff"),
     ("478", "MPF Contributions", "Expense", "Staff"),
+    ("471", "Property Management Fees", "Expense", "Property"),
+    ("473", "Property Repairs & Maintenance", "Expense", "Property"),
+    ("475", "Building Management & Government Rates", "Expense", "Property"),
+    ("481", "School & Tuition Fees", "Expense", "Education"),
+    ("493", "Travel & Aviation Charter", "Expense", "Travel & aviation"),
+    ("433", "Insurance", "Expense", "Insurance"),
+    ("412", "Legal, Tax & Audit Fees", "Expense", "Professional fees"),
+    ("455", "Fund Management Fees", "Expense", "Fund fees"),
     ("404", "Bank Fees", "Expense", "Admin"),
-    ("412", "Consulting & Accounting", "Expense", "Admin"),
-    ("429", "General Expenses", "Expense", "Admin"),
-    ("433", "Insurance", "Expense", "Admin"),
+    ("429", "General Office Expenses", "Expense", "Admin"),
     ("485", "Software Subscriptions", "Expense", "Admin"),
     ("489", "Telephone & Internet", "Expense", "Admin"),
-    ("493", "Travel - Local & Cross-border", "Expense", "Admin"),
     ("497", "Foreign Exchange Gain/Loss", "Expense", "Admin"),
 ]
 ACC = {a[0]: a for a in ACCOUNTS}
 PL_CODES = [a[0] for a in ACCOUNTS if a[3] != "Balance sheet"]
-BUDGET = {"200": 1_350_000, "260": 0, "270": 1_500, "310": 600_000, "425": 18_000, "445": 4_800, "469": 80_000,
-          "471": 6_800, "473": 2_000, "477": 432_000, "478": 26_400, "404": 450, "429": 2_500, "485": 12_700,
-          "489": 1_900, "493": 4_000, "497": 0}
-BUDGET_ONE_OFF = {("433", 1): 28_800, ("412", 3): 45_000}
+GROUPS = ["Income", "Staff", "Property", "Education", "Travel & aviation", "Insurance", "Professional fees",
+          "Fund fees", "Admin"]
+BUDGET = {"260": 157_000, "270": 85_000, "275": 3_800_000, "477": 420_000, "478": 15_000, "471": 18_000,
+          "473": 3_000, "475": 11_600, "481": 0, "493": 125_000, "433": 19_000, "412": 28_000, "455": 0,
+          "404": 900, "429": 9_000, "485": 3_200, "489": 2_400, "497": 0}
+BUDGET_ONE_OFF = {("481", 1): 286_000, ("481", 8): 312_000, ("433", 1): 48_000, ("412", 3): 120_000,
+                  ("455", 1): 292_500, ("455", 4): 292_500, ("455", 7): 292_500, ("455", 10): 292_500}
 
 
 def budget(code, m):
@@ -185,7 +190,7 @@ def months(a, b):
 
 
 def month_end(y, m):
-    return (D(y + (m == 12), m % 12 + 1, 1) - timedelta(1))
+    return D(y + (m == 12), m % 12 + 1, 1) - timedelta(1)
 
 
 def last_bday(y, m):
@@ -213,17 +218,17 @@ def en_date(d):
     return f"{d.day} {d:%b %Y}"
 
 
-# ----------------------------------------------------------------------------- supplier invoices
+# ----------------------------------------------------------------------------- payable documents
 INVOICES: list[dict] = []
 
 
-def mk_inv(sid, no, d, lines, file, folder, bank=None, email=None):
+def mk_inv(sid, no, d, lines, file, folder, kind="invoice", bank=None, email=None, account=None, terms=None, **extra):
     s = SUP[sid]
     sub = r2(sum(r2(q * u) for _, _, q, u in lines))
-    inv = dict(sid=sid, no=no, date=d, due=d + timedelta(s["terms"]), currency=s["currency"], lines=lines,
-               subtotal=sub, tax=0.0, total=sub, account=s["account"], bank=bank or s["bank_acct"],
-               bank_name=s["bank"] if bank is None else NEW_BANK[0], email=email or s["email"],
-               file=file, folder=folder)
+    inv = dict(sid=sid, no=no, date=d, due=d + timedelta(s["terms"] if terms is None else terms), currency=s["currency"],
+               lines=lines, subtotal=sub, tax=0.0, total=sub, account=account or s["account"], kind=kind,
+               bank=bank or s["bank_acct"], bank_name=s["bank"] if bank is None else NEW_BANK[0],
+               email=email or s["email"], file=file, folder=folder, **extra)
     inv["pay_date"] = bday(inv["due"])
     INVOICES.append(inv)
     return inv
@@ -233,104 +238,95 @@ def folder_of(d):
     return f"docs/invoices/{ym(d)}" if d >= D(2026, 7, 1) else None
 
 
-def s01_lines(qa, qb, extra=()):
-    p = PRICES["S01"]
-    out = [("SP-4410", p["SP-4410"][1], qa, p["SP-4410"][3]), ("SP-2208", p["SP-2208"][1], qb, p["SP-2208"][3])]
-    return out + [(c, p[c][1], q, p[c][3]) for c, q in extra]
+# S01: Pearl River Growth Fund II drawdowns (every two months), RMB
+S01_CALLS = [(D(2025, 9, 8), 12, 2_500_000), (D(2025, 11, 10), 13, 3_000_000), (D(2026, 1, 8), 14, 2_000_000),
+             (D(2026, 3, 9), 15, 3_500_000), (D(2026, 5, 8), 16, 2_500_000), (D(2026, 7, 8), 17, 3_000_000)]
+called = SUP["S01"]["called_before"]
+for d, n, amt in S01_CALLS:
+    no = f"PRG2-DN-{n:03d}"
+    mk_inv("S01", no, d, [(f"DD-{n:03d}", f"第{n}次缴款 Drawdown No. {n}", 1, float(amt))], f"Pearl River call {no}.pdf",
+           folder_of(d), kind="capital_call", called_before=called)
+    called += amt
+
+# S02: Harbourview Capital Partners III: quarterly management fee notices + capital calls, USD
+S02_FEES = [(D(2025, 10, 1), "2025Q4"), (D(2026, 1, 2), "2026Q1"), (D(2026, 4, 1), "2026Q2"), (D(2026, 7, 1), "2026Q3")]
+QTR = {"Q1": ("1 Jan", "31 Mar"), "Q2": ("1 Apr", "30 Jun"), "Q3": ("1 Jul", "30 Sep"), "Q4": ("1 Oct", "31 Dec")}
 
 
-def s02_lines(a, b, c):
-    p = PRICES["S02"]
-    return [(k, f"{p[k][0]} / {p[k][1]}", q, p[k][3]) for k, q in zip(p, (a, b, c))]
+def fee_line(period, rate):
+    y, q = period[:4], period[4:]
+    amt = r2(SUP["S02"]["commitment"] * rate / 100 / 4)
+    return [("MGMT-FEE", f"Management fee {QTR[q][0]} - {QTR[q][1]} {y}: {rate:.2f}% p.a. x commitment USD 10,000,000 x 1/4", 1, amt)]
 
 
-def s03_lines(n20, n40, pallets, peak):
-    q = {"TRK-20": n20, "TRK-40": n40, "CUS": n20 + n40, "WH": pallets, "PSS": (n20 + n40) if peak else 0}
-    return [(k, FREIGHT[k][0], q[k], FREIGHT[k][2]) for k in FREIGHT if q[k]]
+for d, period in S02_FEES:
+    no = f"HCP3-MF-{period}"
+    mk_inv("S02", no, d, fee_line(period, FEE_RATE), f"Harbourview fee {no}.pdf", folder_of(d), kind="fee_notice",
+           account="455", terms=30, rate=FEE_RATE, period=period)
+S02_CALLS = [(D(2026, 2, 16), 1, 400_000), (D(2026, 5, 15), 2, 500_000), (D(2026, 8, 14), 3, 500_000)]
+called = SUP["S02"]["called_before"]
+for d, n, amt in S02_CALLS:
+    no = f"HCP3-CN-2026-{n:02d}"
+    mk_inv("S02", no, d, [(f"CALL-{n:02d}", f"Capital call {n}/2026: {amt / 1e5:.0f}% of commitment (investments and fund expenses)", 1, float(amt))],
+           f"Harbourview call {no}.pdf", folder_of(d), kind="capital_call", called_before=called)
+    called += amt
 
 
-S03_NO = {7: 2204, 8: 2247, 9: 2291}
-for y, m in months((2025, 11), (2026, 9)):
-    k = (y - 2026) * 12 + m - 7  # months relative to Jul 2026
-    # S01 monthly, ~8th
-    d = bday(D(y, m, 8))
-    no = f"SP-{y}-{640 + 25 * m + m % 3:04d}" if y == 2026 else f"SP-2025-{1010 + 25 * m:04d}"
-    extra = [("SP-3315", rng.choice([600, 800, 1000]))] + ([("SP-1102", rng.choice([10, 15, 20]))] if m % 2 else [])
-    mk_inv("S01", no, d, s01_lines(rng.choice([1600, 1800, 2000, 2200]), rng.choice([2500, 3000, 3500]), extra),
-           f"INV-{no}.pdf", folder_of(d))
-    # S02 monthly, ~15th
-    d = bday(D(y, m, 15))
-    no = f"DPE/INV/{361 + 9 * k:04d}"
-    mk_inv("S02", no, d, s02_lines(rng.choice([1200, 1500, 1800]), rng.choice([800, 1000, 1200]),
-                                   rng.choice([2000, 3000, 4000])), no.replace("/", "-") + ".pdf", folder_of(d))
-    # S03 monthly freight
+# S03: Peak Estates monthly property management invoices, HKD
+def pm_lines(insp, clean):
+    q = {"PM-RB12": 1, "PM-CR21": 1, "KEY-HLD": 2, "LS-INSP": insp, "CLN-DP": clean}
+    return [(k, PM_RATES[k][0], q[k], float(PM_RATES[k][2])) for k in PM_RATES if q[k]]
+
+
+S03_NO = {(2026, 7): 2204, (2026, 8): 2247, (2026, 9): 2291}
+for k, (y, m) in enumerate(months((2025, 11), (2026, 9))):
     d = bday(D(y, m, 1 if (y, m) == (2026, 9) else 3))
-    no = f"INV-{S03_NO.get(m) if y == 2026 and m >= 7 else 2204 + 44 * k}"
-    busy = y == 2026 and m >= 7
-    mk_inv("S03", no, d, s03_lines(rng.randint(2, 3) if busy else rng.randint(1, 2),
-                                   rng.randint(2, 3) if busy else rng.randint(1, 2),
-                                   rng.randint(55, 75) if busy else rng.randint(30, 45), busy and m >= 8),
-           f"Pacific Freight {no}.pdf", folder_of(d))
-    # S04 rent (+ temporary storage licence Aug/Sep 2026)
+    no = f"INV-PM-{S03_NO.get((y, m), 1984 + 22 * k)}"
+    insp, clean = ((2, 1) if (y, m) == (2026, 9) else (rng.randint(0, 2), rng.randint(0, 1)))
+    mk_inv("S03", no, d, pm_lines(insp, clean), f"Peak Estates {no}.pdf", folder_of(d))
+
+# S05: Meridian Fine Art Insurance monthly premium instalments, USD
+for k, (y, m) in enumerate(months((2025, 11), (2026, 9))):
     d = bday(D(y, m, 1))
-    no = f"KBP/R/{y % 100}{m:02d}"
-    mk_inv("S04", no, d, [("RENT", f"Monthly rent - Unit 9A, 9/F, Oceanic Godown Centre ({d:%b %Y})", 1, 80000.0)],
-           f"KBP rent {d:%b%y}.pdf", folder_of(d))
-    if y == 2026 and m in (8, 9):
-        no = f"KBP/L/26{m:02d}"
-        mk_inv("S04", no, bday(D(y, m, 3)), [("LIC", f"Licence fee - temporary storage Unit 3C, G/F, month-to-month ({d:%b %Y})", 1, 12000.0)],
-               f"KBP storage {d:%b%y}.pdf", folder_of(d))
-    # S05 SaaS
-    no = f"CD-{10011 + 11 * k}"
-    mk_inv("S05", no, d, [("CD-BIZ", f"CloudDesk Business - 25 seats, monthly subscription ({d:%b %Y})", 1, 1450.0)],
-           f"invoice_{no}.pdf", folder_of(d))
+    no = f"MAI-{10011 + 11 * k}"
+    mk_inv("S05", no, d, [("ART-PREM", f"Fine art collection policy MAI-FA-2025-0716, premium instalment ({d:%b %Y})", 1, 2450.0)],
+           f"Meridian {no}.pdf", folder_of(d))
 
 HIST = [i for i in INVOICES if i["folder"]]  # Jul-Sep 2026, in the register
 by_no = {i["no"]: i for i in INVOICES}
-INV2291 = by_no["INV-2291"]
+INV2291 = by_no["INV-PM-2291"]
 INV2291["entered"] = D(2026, 9, 3)
 
 INBOX = [
-    mk_inv("S01", "SP-2026-0917", D(2026, 9, 30),
-           [("SP-4410", "电源管理模块", 2000, 118.00), ("SP-2208", "USB-C连接器组件", 3000, 23.50)],
-           "scan_1002.pdf", "docs/invoices/inbox", bank=NEW_BANK[1], email=f"accounts@{FAKE_DOMAIN}"),
-    mk_inv("S02", "DPE/INV/0388", D(2026, 9, 30), s02_lines(1500, 1000, 3000), "DPE-INV-0388.pdf", "docs/invoices/inbox"),
-    mk_inv("S03", "INV-2291-R", D(2026, 9, 25), INV2291["lines"], "Invoice (3).pdf", "docs/invoices/inbox"),
-    mk_inv("S03", "INV-2318", D(2026, 9, 30), s03_lines(2, 3, 60, True), "scan_0930_2.pdf", "docs/invoices/inbox"),
-    mk_inv("S05", "CD-10044", D(2026, 10, 1), [("CD-BIZ", "CloudDesk Business - 25 seats, monthly subscription (Oct 2026)", 1, 1450.0)],
-           "Invoice_CD-10044.pdf", "docs/invoices/inbox"),
+    mk_inv("S01", "PRG2-DN-018", D(2026, 9, 30), [("DD-018", "第18次缴款 Drawdown No. 18", 1, 3_500_000.0)],
+           "scan_1002.pdf", "docs/invoices/inbox", kind="capital_call", bank=NEW_BANK[1], email=f"accounts@{FAKE_DOMAIN}",
+           called_before=SUP["S01"]["called_before"] + sum(a for *_, a in S01_CALLS)),
+    mk_inv("S02", "HCP3-CN-2026-04", D(2026, 9, 30),
+           [("CALL-04", "Capital call 4/2026: 6% of commitment (investments and fund expenses)", 1, 600_000.0)],
+           "HCP3_Capital_Call_Notice_04.pdf", "docs/invoices/inbox", kind="capital_call",
+           called_before=SUP["S02"]["called_before"] + sum(a for *_, a in S02_CALLS)),
+    mk_inv("S02", "HCP3-MF-2026Q4", D(2026, 10, 1), fee_line("2026Q4", FEE_RATE_WRONG), "HCP3_Q4_2026_Management_Fee.pdf",
+           "docs/invoices/inbox", kind="fee_notice", account="455", terms=30, rate=FEE_RATE_WRONG, period="2026Q4"),
+    mk_inv("S03", "INV-PM-2291-R", D(2026, 9, 25), INV2291["lines"], "Invoice (3).pdf", "docs/invoices/inbox"),
+    mk_inv("S03", "INV-PM-2318", D(2026, 9, 30), pm_lines(1, 0), "scan_0930_2.pdf", "docs/invoices/inbox"),
+    mk_inv("S05", "MAI-10044", D(2026, 10, 1),
+           [("ART-PREM", "Fine art collection policy MAI-FA-2025-0716, premium instalment (Oct 2026)", 1, 2450.0)],
+           "Invoice_MAI-10044.pdf", "docs/invoices/inbox"),
 ]
 for i in INBOX:
     INVOICES.remove(i)  # not entered anywhere yet
 SCANNED = {"scan_1002.pdf", "scan_0930_2.pdf"}
 
-# ----------------------------------------------------------------------------- customers & sales
-SUFFIX = [("Ltd", "HK"), ("Ltd", "HK"), ("Pte. Ltd.", "SG"), ("Sdn. Bhd.", "MY"), ("Co., Ltd.", "TH"), ("Ltd", "HK"),
-          ("Pte. Ltd.", "SG"), ("JSC", "VN"), ("Ltd", "HK")]
-CUSTOMERS = [(f"{fake.last_name()} {rng.choice(['Electronics', 'Technology', 'Industrial', 'Components', 'Systems'])} {s}",
-              c, rng.choice([30, 45])) for s, c in SUFFIX]
-SALES = []
-seq = 2511001
-for y, m in months((2025, 11), (2026, 9)):
-    target = 1_350_000 * rng.uniform(0.94, 1.12)
-    w = [rng.uniform(0.5, 1.5) for _ in range(5)]
-    for j, wt in enumerate(w):
-        cust = rng.choice(CUSTOMERS)
-        d = bday(D(y, m, 3 + j * 5))
-        amt = round(target * wt / sum(w), -1)
-        SALES.append(dict(no=f"HL-INV-{seq}", date=d, cust=cust[0], amount=float(amt),
-                          recv=bday(d + timedelta(cust[2] + rng.randint(0, 12)))))
-        seq += 1
-
 # ----------------------------------------------------------------------------- general ledger
 JOURNALS: list[dict] = []
 
 
-def jnl(d, source, ref, contact, desc, lines, bank_desc=None):
-    JOURNALS.append(dict(date=d, source=source, ref=ref, contact=contact, desc=desc, bank_desc=bank_desc,
+def jnl(d, source, ref, contact, desc, lines, bank_desc=None, cat=None):
+    JOURNALS.append(dict(date=d, source=source, ref=ref, contact=contact, desc=desc, bank_desc=bank_desc, cat=cat,
                          lines=[(a, r2(dr), r2(cr)) for a, dr, cr in lines if dr or cr]))
 
 
+CF_CAT = {"150": "Fund capital calls", "455": "Fund management fees", "471": "Property", "433": "Insurance"}
 PAYMENTS = []
 Y0 = D(2026, 1, 1)
 open_ap = 0.0
@@ -341,80 +337,92 @@ for inv in INVOICES:
     if inv["date"] >= Y0:
         jnl(inv["date"], "Payable Invoice", inv["no"], s["name_en"], f"{s['name_en']} {inv['no']}",
             [(inv["account"], booked, 0), ("800", 0, booked)])
-    if inv["pay_date"] < Y0:
-        continue
-    if inv["date"] < Y0:
-        open_ap += booked
     if inv["pay_date"] > CLOSE:
+        if inv["date"] < Y0:
+            open_ap += booked
         continue
     paid = r2(inv["total"] * fx(inv["currency"], inv["pay_date"]))
-    diff = r2(paid - booked)
-    method = "TT OUT" if inv["currency"] != "HKD" else "FPS OUT"
-    jnl(inv["pay_date"], "Payable Payment", inv["no"], s["name_en"], f"Payment {inv['no']}",
-        [("800", booked, 0), ("497", max(diff, 0), max(-diff, 0)), ("090", 0, paid)],
-        f"{method} {s['name_en'].upper().rstrip('.')} {inv['no']}")
-    if inv["currency"] != "HKD":  # TT charge: own bank line, same journal
-        JOURNALS[-1]["lines"] += [("404", 150.0, 0.0), ("090", 0.0, 150.0)]
-        JOURNALS[-1]["bank_desc2"] = "TT CHARGE"
     PAYMENTS.append(dict(payment_date=inv["pay_date"], supplier_id=inv["sid"], supplier=s["name_en"],
                          invoice_no=inv["no"], amount=inv["total"], currency=inv["currency"], amount_hkd=paid,
                          bank_name=s["bank"].split(" (")[0], bank_account_paid=s["bank_acct"],
                          payment_ref=f"PAY-{inv['pay_date']:%y%m%d}-{inv['sid']}"))
-open_ar = 0.0
-for sl in SALES:
-    if sl["date"] >= Y0:
-        jnl(sl["date"], "Receivable Invoice", sl["no"], sl["cust"], f"Sales - {sl['cust']}",
-            [("610", sl["amount"], 0), ("200", 0, sl["amount"])])
-    elif sl["recv"] >= Y0:
-        open_ar += sl["amount"]
-    if Y0 <= sl["recv"] <= CLOSE:
-        jnl(sl["recv"], "Receivable Payment", sl["no"], sl["cust"], f"Receipt {sl['no']}",
-            [("090", sl["amount"], 0), ("610", 0, sl["amount"])], f"CR TRF {sl['cust'].upper()} {sl['no']}")
+    if inv["pay_date"] < Y0:
+        continue
+    if inv["date"] < Y0:
+        open_ap += booked
+    diff = r2(paid - booked)
+    method = "TT OUT" if inv["currency"] != "HKD" else "FPS OUT"
+    jnl(inv["pay_date"], "Payable Payment", inv["no"], s["name_en"], f"Payment {inv['no']}",
+        [("800", booked, 0), ("497", max(diff, 0), max(-diff, 0)), ("090", 0, paid)],
+        f"{method} {s['name_en'].upper().rstrip('.')} {inv['no']}", CF_CAT[inv["account"]])
+    if inv["currency"] != "HKD":  # TT charge: own bank line, same journal
+        JOURNALS[-1]["lines"] += [("404", 150.0, 0.0), ("090", 0.0, 150.0)]
+        JOURNALS[-1]["bank_desc2"] = "TT CHARGE"
 
-OPEN_CASH = 2_150_000.00
-ob = [("090", OPEN_CASH, 0), ("610", open_ar, 0), ("630", 1_180_000, 0), ("710", 265_000, 0), ("711", 0, 96_000),
-      ("800", 0, open_ap), ("970", 0, 1_000_000)]
+OPEN_CASH = 18_500_000.00
+DEPOSITS = 285_000 + 186_000
+ob = [("090", OPEN_CASH, 0), ("150", 152_400_000, 0), ("151", 2_350_000_000, 0), ("160", 186_000_000, 0),
+      ("620", 96_000, 0), ("800", 0, open_ap), ("830", 0, DEPOSITS), ("970", 0, 10_000)]
 plug = r2(sum(l[1] - l[2] for l in ob))
 assert plug > 0
 jnl(Y0, "Manual Journal", "OB-2026", "", "Opening balances b/f 31 Dec 2025", ob + [("960", 0, plug)])
 
-# recurring spend money (vendor, account, amount fn, day, bank desc)
+# income: rent, portfolio income sweep, interest
+for y, m in months((2026, 1), (2026, 9)):
+    d = bday(D(y, m, 1))
+    jnl(d, "Receive Money", f"RNT-{m:02d}-12A", SUP["S04"]["name_en"], f"Rent Flat 12A Seaview Court ({d:%b %Y})",
+        [("090", 95000, 0), ("260", 0, 95000)], f"CR TRF HALCYON RE ASIA LTD RENT {d:%b%y}".upper(), "Rental income")
+    d2 = bday(D(y, m, 2))
+    jnl(d2, "Receive Money", f"RNT-{m:02d}-21B", "Brightwater Consulting Ltd", f"Rent Flat 21B Pinecrest Tower ({d:%b %Y})",
+        [("090", 62000, 0), ("260", 0, 62000)], f"CR TRF BRIGHTWATER CONSULTING RENT {d:%b%y}".upper(), "Rental income")
+    sweep = float(rng.randint(3400, 4300) * 1000)
+    jnl(bday(D(y, m, 25)), "Receive Money", f"SWP-{m:02d}", "Lion Rock Private Bank (custodian)",
+        "Portfolio income sweep (dividends and coupons)", [("090", sweep, 0), ("275", 0, sweep)],
+        "CR TRF LION ROCK PB INCOME SWEEP", "Portfolio income")
+
+# recurring spend money (vendor, account, amount fn, day, bank desc, cash flow category)
 SPEND = [
-    ("City Power Ltd", "445", lambda m: 4200 + (1650 if 6 <= m <= 9 else 0) + rng.randint(-250, 250), 12, "DD CITY POWER LTD"),
-    ("Harbourtel Broadband", "489", lambda m: 1880, 5, "DD HARBOURTEL"),
-    ("Oceanic Godown Centre Management Office", "471", lambda m: 6800 if m < 6 else 8000, 2, "AUTOPAY OCEANIC GODOWN MGMT"),
-    (f"{fake.last_name()} Kee Hardware", "473", lambda m: rng.randint(10, 26) * 100, 18, "EPS HARDWARE"),
-    ("Cross-border coach & hotel (staff claims)", "493", lambda m: rng.randint(15, 55) * 100, 20, "STAFF CLAIMS TRAVEL"),
-    (f"{fake.last_name()} Stationery Co", "429", lambda m: rng.randint(12, 32) * 100, 22, "EPS STATIONERY"),
-    ("OfficeSuite licences (card)", "485", lambda m: 1320, 3, "CARD OFFICESUITE"),
+    ("Seaview Court & Pinecrest Tower management offices", "475", lambda m: 11600 if m < 6 else 12800, 2,
+     "AUTOPAY BLDG MGMT SEAVIEW/PINECREST", "Property"),
+    ("Harbourtel Broadband & Mobile", "489", lambda m: 2380, 5, "DD HARBOURTEL", "Office & admin"),
+    ("Island Wide Handyman Services", "473", lambda m: rng.randint(10, 28) * 100, 18, "FPS OUT ISLAND WIDE HANDYMAN", "Property"),
+    ("SkyJet Charter Asia (travel desk)", "493", lambda m: rng.randint(80, 170) * 1000, 20, "FPS OUT SKYJET CHARTER ASIA", "Family travel"),
+    ("Central Office Supplies Co", "429", lambda m: rng.randint(60, 110) * 100, 22, "EPS CENTRAL OFFICE SUPPLIES", "Office & admin"),
+    ("Wealth platform & software licences (card)", "485", lambda m: 3150, 3, "CARD SOFTWARE LICENCES", "Office & admin"),
+    ("Kwan & Partners Tax Advisory", "412", lambda m: 28000, 25, "FPS OUT KWAN & PARTNERS", "Professional fees"),
 ]
 ONE_OFF = [
-    (D(2026, 1, 12), "Peak Assurance Ltd", "433", 28800, "Annual business package policy 2026", "CHQ PEAK ASSURANCE"),
-    (D(2026, 3, 20), "Lam & Partners CPA", "412", 45000, "2025 statutory audit fee", "FPS OUT LAM & PARTNERS CPA"),
-    (D(2026, 7, 14), "Arctic Breeze Engineering Co", "473", 38500,
-     "Emergency air-con compressor replacement - warehouse Unit 9A", "FPS OUT ARCTIC BREEZE ENG"),
-    (D(2026, 9, 16), "Steelform Racking Ltd", "473", 9800, "Pallet racking repair after safety inspection",
-     "FPS OUT STEELFORM RACKING"),
+    (D(2026, 1, 12), "Peak Assurance Ltd", "433", 48000, "Household & contents policy 2026 - family residence",
+     "CHQ PEAK ASSURANCE", "Insurance"),
+    (D(2026, 1, 15), "Island International School", "481", 286000, "Spring term 2026 tuition - 2 children",
+     "FPS OUT ISLAND INTL SCHOOL", "Education"),
+    (D(2026, 3, 20), "Lam & Partners CPA", "412", 120000, "2025 audit and tax compliance", "FPS OUT LAM & PARTNERS CPA",
+     "Professional fees"),
+    (D(2026, 7, 14), "Swiftfix Building Services", "473", 38500,
+     "Emergency water-pipe repair after typhoon - Flat 12A Seaview Court", "FPS OUT SWIFTFIX BLDG SERVICES", "Property"),
+    (D(2026, 8, 17), "Island International School", "481", 318000, "Autumn term 2026 tuition - 2 children (fees +2%)",
+     "FPS OUT ISLAND INTL SCHOOL", "Education"),
+    (D(2026, 9, 16), "Arctic Breeze Engineering Co", "473", 9800, "Air-con replacement - Flat 21B Pinecrest Tower",
+     "FPS OUT ARCTIC BREEZE ENG", "Property"),
 ]
 for y, m in months((2026, 1), (2026, 9)):
-    for vendor, acct, fn, day, bd in SPEND:
+    for vendor, acct, fn, day, bd, cat in SPEND:
         amt = float(fn(m))
-        if not amt:
-            continue
-        desc = vendor + (" (revised fee from Jun 2026)" if acct == "471" and m >= 6 else "")
-        jnl(bday(D(y, m, day)), "Spend Money", f"SM-{m:02d}-{acct}", vendor, desc, [(acct, amt, 0), ("090", 0, amt)], bd)
+        desc = vendor + (" (revised fee from Jun 2026)" if acct == "475" and m >= 6 else "")
+        jnl(bday(D(y, m, day)), "Spend Money", f"SM-{m:02d}-{acct}", vendor, desc, [(acct, amt, 0), ("090", 0, amt)], bd, cat)
     pd = last_bday(y, m)
-    jnl(pd, "Spend Money", f"PAY-{m:02d}", "Payroll", f"Payroll {pd:%b %Y} (18 staff)",
-        [("477", 432000, 0), ("478", 26400, 0), ("090", 0, 405600), ("825", 0, 52800)], f"PAYROLL AUTOPAY {pd:%b%y}".upper())
+    jnl(pd, "Spend Money", f"PAY-{m:02d}", "Payroll", f"Payroll {pd:%b %Y} (4 office + 6 household staff)",
+        [("477", 420000, 0), ("478", 15000, 0), ("090", 0, 405000), ("825", 0, 30000)], f"PAYROLL AUTOPAY {pd:%b%y}".upper(),
+        "Staff & MPF")
     jnl(pd, "Spend Money", f"MPF-{m:02d}", "Orchid Trust MPF Scheme", "MPF contributions (ER + EE)",
-        [("825", 52800, 0), ("090", 0, 52800)], "MPF ORCHID TRUST")
-    interest = float(rng.randint(1100, 1900))
+        [("825", 30000, 0), ("090", 0, 30000)], "MPF ORCHID TRUST", "Staff & MPF")
+    interest = float(rng.randint(70, 100) * 1000 + rng.randint(0, 999))
     jnl(pd, "Receive Money", f"INT-{m:02d}", CO["bank"], "Credit interest", [("090", interest, 0), ("270", 0, interest)],
-        "CREDIT INTEREST")
+        "CREDIT INTEREST", "Interest income")
     jnl(pd, "Spend Money", f"FEE-{m:02d}", CO["bank"], "Account maintenance fee", [("404", 120, 0), ("090", 0, 120)],
-        "ACCOUNT MAINTENANCE FEE")
-for d, vendor, acct, amt, desc, bd in ONE_OFF:
-    jnl(d, "Spend Money", f"SM-{d:%m%d}", vendor, desc, [(acct, float(amt), 0), ("090", 0, float(amt))], bd)
+        "ACCOUNT MAINTENANCE FEE", "Bank charges")
+for d, vendor, acct, amt, desc, bd, cat in ONE_OFF:
+    jnl(d, "Spend Money", f"SM-{d:%m%d}", vendor, desc, [(acct, float(amt), 0), ("090", 0, float(amt))], bd, cat)
 
 JOURNALS.sort(key=lambda j: (j["date"], j["source"] != "Manual Journal", j["ref"]))
 for n, j in enumerate(JOURNALS, 1):
@@ -430,7 +438,7 @@ def balance(code, until):
 
 def actual(code, m):  # P&L sign: revenue positive as credit
     v = sum(r["dr"] - r["cr"] for r in GL if r["code"] == code and r["date"].month == m and r["date"].year == 2026)
-    return r2(-v if ACC[code][3] == "Revenue" else v)
+    return r2(-v if ACC[code][2] == "Revenue" else v)
 
 
 # ----------------------------------------------------------------------------- PDF engine
@@ -535,7 +543,7 @@ def squiggle(p, x, y, seed, w=48):
     pts = []
     for i in range(40):
         t = i / 39
-        pts.append((x + t * w, y + 3.2 * __import__("math").sin(t * rr.uniform(9, 14)) * (1 - t * 0.5) + rr.uniform(-0.6, 0.6)))
+        pts.append((x + t * w, y + 3.2 * math.sin(t * rr.uniform(9, 14)) * (1 - t * 0.5) + rr.uniform(-0.6, 0.6)))
     p.set_draw_color(20, 30, 110)
     p.set_line_width(0.45)
     p.polyline(pts)
@@ -555,171 +563,6 @@ def rule(p, color=(0, 0, 0), wdt=0.4, gap=3):
 
 def out(p):
     return bytes(p.output())
-
-
-# ----------------------------------------------------------------------------- invoice layouts
-def inv_s01(inv):
-    s, red = SUP["S01"], (170, 25, 25)
-    p = Doc(when=inv["date"])
-    p.add_page()
-    txt(p, s["name_zh"], 20, "B", "C", red)
-    txt(p, s["name_en"].upper(), 10, "", "C", red)
-    txt(p, f"{s['addr_zh']}   电话 {s['tel']}   {s['reg'].replace('USCC', '统一社会信用代码')}", 7.5, "", "C", (90, 90, 90))
-    rule(p, red, 0.7, 4)
-    txt(p, "销 售 发 票", 16, "B", "C")
-    txt(p, "COMMERCIAL INVOICE（出口）", 8, "", "C", (90, 90, 90), gap=4)
-    y = p.get_y()
-    kv(p, 18, y, [("购货单位：", CO["name_zh"]), ("", CO["name_en"]), ("地址：", CO["addr_zh"][:12]), ("", CO["addr_zh"][12:])], 18, 90)
-    kv(p, 128, y, [("发票号码：", inv["no"]), ("开票日期：", zh_date(inv["date"])), ("付款期限：", zh_date(inv["due"])),
-                   ("合同编号：", s["contract_no"])], 18, 46, bold_v=True)
-    p.set_y(y + 26)
-    rows = [(i + 1, c, d, f"{q:,}", money(u), money(q * u)) for i, (c, d, q, u) in enumerate(inv["lines"])]
-    table(p, ["序号", "货号", "品名及规格", "数量", "单价（元）", "金额（元）"], rows, [12, 24, 60, 22, 28, 28], "CCLRRR",
-          fill=(250, 228, 228))
-    p.ln(2)
-    totals(p, [("小计（RMB）", money(inv["subtotal"])), ("税率 0%（出口免税）", "0.00"), ("价税合计 人民币（RMB）", money(inv["total"]))])
-    p.ln(6)
-    txt(p, "收款账户信息", 9.5, "B", color=red)
-    y = p.get_y() + 1
-    kv(p, 18, y, [("收款银行：", inv["bank_name"].split(" (")[1].rstrip(")")), ("账户名称：", s["name_zh"]),
-                  ("银行账号：", inv["bank"])], 20, 100, bold_v=True)
-    p.set_y(y + 20)
-    txt(p, f"付款条件：发票日起{s['terms']}天内电汇。如有疑问，请联系 {inv['email']}", 8, color=(90, 90, 90), gap=8)
-    y = p.get_y()
-    kv(p, 18, y, [("开票人：", "张丽"), ("复核：", "陈国华")], 14, 30)
-    stamp(p, 160, y + 6, "深圳市零件有限公司", "财务专用章")
-    return out(p)
-
-
-def inv_s02(inv):
-    s, blue = SUP["S02"], (20, 60, 120)
-    p = Doc(when=inv["date"])
-    p.add_page()
-    p.set_fill_color(*blue)
-    p.rect(0, 0, 210, 30, "F")
-    p.set_xy(18, 7)
-    p.set_text_color(255)
-    p.set_font("sans", "B", 12)
-    p.cell(110, 7, s["name_en"].upper())
-    p.set_xy(18, 15)
-    p.set_font("sans", "", 11)
-    p.cell(120, 6, s["name_zh"])
-    p.set_xy(140, 8)
-    p.set_font("sans", "B", 13)
-    p.cell(52, 8, "COMMERCIAL INVOICE", align="R")
-    p.set_xy(140, 16)
-    p.set_font("sans", "", 10)
-    p.cell(52, 6, "商业发票", align="R")
-    p.set_y(34)
-    txt(p, f"{s['addr_en']}  |  {s['addr_zh']}  |  Tel {s['tel']}  |  {s['reg']}", 7.5, color=(80, 80, 80), gap=5)
-    y = p.get_y()
-    kv(p, 18, y, [("Bill to 买方:", CO["name_en"]), ("", CO["name_zh"]), *[("", x) for x in split2(CO["addr_en"], 44)]], 26, 80)
-    kv(p, 122, y, [("Invoice No. 发票号:", inv["no"]), ("Date 日期:", inv["date"].isoformat()),
-                   ("Due 到期日:", inv["due"].isoformat()), ("Terms 付款条件:", "Net 30 days"),
-                   ("Contract 合同:", s["contract_no"])], 34, 36, bold_v=True)
-    p.set_y(y + 34)
-    rows = [(c, d, f"{q:,}", money(u), money(q * u)) for c, d, q, u in inv["lines"]]
-    table(p, ["Item 货号", "Description 描述", "Qty 数量", "Unit USD 单价", "Amount USD 金额"], rows,
-          [24, 70, 22, 28, 30], "LLRRR", fill=(215, 225, 240))
-    p.ln(2)
-    totals(p, [("Subtotal 小计", money(inv["subtotal"])), ("VAT 0% (export) 增值税", "0.00"),
-               ("TOTAL USD 合计", money(inv["total"]))])
-    p.ln(6)
-    txt(p, "Remittance / 汇款信息", 9.5, "B", color=blue)
-    txt(p, f"Beneficiary: {s['name_en']}\nBank: {s['bank']}\nAccount No.: {inv['bank']}", 8.5, h=4.6, gap=4)
-    txt(p, "Goods shipped FCA Dongguan per contract. 货物按合同FCA东莞交付。", 8, color=(80, 80, 80))
-    return out(p)
-
-
-def inv_s03(inv):
-    s, green = SUP["S03"], (16, 110, 70)
-    p = Doc(when=inv["date"])
-    p.add_page()
-    p.set_fill_color(*green)
-    p.rect(18, 14, 22, 22, "F")
-    p.set_xy(18, 20)
-    p.set_text_color(255)
-    p.set_font("sans", "B", 13)
-    p.cell(22, 10, "PFL", align="C")
-    p.set_xy(90, 14)
-    p.set_text_color(*green)
-    p.set_font("sans", "B", 14)
-    p.cell(102, 7, s["name_en"].upper(), align="R")
-    p.set_text_color(80)
-    p.set_font("sans", "", 8)
-    for i, line in enumerate([s["addr_en"], f"Tel {s['tel']}  |  {s['email']}", s["reg"]]):
-        p.set_xy(60, 22 + i * 4.5)
-        p.cell(132, 4.5, line, align="R")
-    p.set_y(44)
-    txt(p, "INVOICE", 22, "B", color=green, gap=3)
-    y = p.get_y()
-    kv(p, 18, y, [("Bill to", CO["name_en"]), *[("", x) for x in split2(CO["warehouse"], 50)]], 16, 90)
-    kv(p, 130, y, [("Invoice no.", inv["no"]), ("Date", en_date(inv["date"])), ("Due date", en_date(inv["due"])),
-                   ("Account", "HLT-0042")], 22, 40, bold_v=True)
-    p.set_y(y + 25)
-    rows = [(c, d, q, f"{FREIGHT[c][1]}", money(u), money(q * u)) for c, d, q, u in inv["lines"]]
-    table(p, ["Code", "Description", "Qty", "Unit", "Rate HKD", "Amount HKD"], rows, [16, 80, 12, 20, 22, 24],
-          "LLRCRR", fill=(210, 235, 222), border="B")
-    p.ln(2)
-    totals(p, [("Subtotal", money(inv["subtotal"])), ("TOTAL HKD", money(inv["total"]))])
-    p.ln(8)
-    txt(p, f"Payment within {s['terms']} days to {s['bank']}, account {inv['bank']} ({s['name_en']}).", 8.5)
-    txt(p, "Rates per Pacific Freight 2026 rate card. E. & O. E.", 8, color=(100, 100, 100))
-    return out(p)
-
-
-def inv_s04(inv):
-    s = SUP["S04"]
-    p = Doc(when=inv["date"])
-    p.add_page()
-    txt(p, s["name_en"].upper(), 15, "B", "C", (60, 60, 60))
-    txt(p, s["name_zh"], 11, "", "C", (60, 60, 60))
-    txt(p, f"{s['addr_en']}  ·  Tel {s['tel']}  ·  {s['reg']}", 7.5, "", "C", (110, 110, 110))
-    rule(p, (120, 120, 120), 0.3, 6)
-    txt(p, "DEBIT NOTE", 14, "B", "C", gap=4)
-    y = p.get_y()
-    kv(p, 18, y, [("To:", CO["name_en"]), *[("", x) for x in split2(CO["addr_en"], 56)]], 12, 100)
-    kv(p, 130, y, [("Debit note:", inv["no"]), ("Date:", en_date(inv["date"])), ("Due:", en_date(inv["due"])),
-                   ("Lease ref:", "KBP/L/2024/09A")], 22, 40, bold_v=True)
-    p.set_y(y + 26)
-    rows = [(d, money(u * q)) for _, d, q, u in inv["lines"]]
-    table(p, ["Particulars", "Amount (HK$)"], rows, [140, 34], "LR", border=1, fill=(238, 238, 238))
-    p.ln(2)
-    totals(p, [("Total due HK$", money(inv["total"]))])
-    p.ln(8)
-    txt(p, f"Please pay by autopay or transfer to {s['bank']} a/c {inv['bank']}. Rent is payable in advance.", 8.5)
-    txt(p, "This is a computer-generated debit note. No signature is required.", 7.5, color=(120, 120, 120))
-    return out(p)
-
-
-def inv_s05(inv):
-    s, purple = SUP["S05"], (92, 50, 180)
-    p = Doc(when=inv["date"])
-    p.add_page()
-    p.set_text_color(*purple)
-    p.set_font("sans", "B", 20)
-    p.cell(100, 10, "CloudDesk")
-    p.set_font("sans", "", 20)
-    p.set_text_color(150)
-    p.cell(74, 10, "Invoice", align="R")
-    p.ln(14)
-    txt(p, f"{s['name_en']} · {s['addr_en']} · {s['reg']}", 7.5, color=(120, 120, 120), gap=5)
-    y = p.get_y()
-    kv(p, 18, y, [("Billed to", CO["name_en"]), ("", "Attn: Anna Chan"), ("", PEOPLE["anna"][1])], 20, 80)
-    kv(p, 128, y, [("Invoice #", inv["no"]), ("Issued", inv["date"].strftime("%B %d, %Y")),
-                   ("Due", inv["due"].strftime("%B %d, %Y")), ("Order form", "OF-2025-3381")], 24, 40, bold_v=True)
-    p.set_y(y + 26)
-    rows = [(d, q, money(u), money(q * u)) for _, d, q, u in inv["lines"]]
-    table(p, ["Description", "Qty", "Unit price", "Amount (USD)"], rows, [104, 14, 26, 30], "LRRR", border="B",
-          fill=(236, 230, 250))
-    p.ln(2)
-    totals(p, [("Subtotal", money(inv["subtotal"])), ("Tax", "0.00"), ("Amount due (USD)", money(inv["total"]))])
-    p.ln(8)
-    txt(p, f"Pay by wire: {s['bank']}, account {inv['bank']}. Questions: {s['email']}", 8.5)
-    return out(p)
-
-
-RENDER = {"S01": inv_s01, "S02": inv_s02, "S03": inv_s03, "S04": inv_s04, "S05": inv_s05}
 
 
 def scan(pdf_bytes, seed):
@@ -742,28 +585,6 @@ def scan(pdf_bytes, seed):
     return out(p)
 
 
-# ----------------------------------------------------------------------------- contracts
-BOILER_SUPPLY = [
-    ("Goods shall conform to the agreed specifications and pass the Buyer's incoming inspection.", "货物须符合约定规格并通过买方来料检验。"),
-    ("Delivery FCA {city}; risk passes on handover to the Buyer's nominated carrier.", "交货条件：FCA {city_zh}；货物交付买方指定承运人时风险转移。"),
-    ("Defective goods reported within 90 days shall be replaced or credited free of charge.", "90日内报告的不良品应免费更换或退款。"),
-    ("Neither party is liable for delay caused by force majeure.", "因不可抗力导致的延误，双方均不承担责任。"),
-    ("Each party shall keep the terms of this Agreement confidential.", "双方应对本协议条款保密。"),
-    ("Amendments are valid only in writing signed by both parties' authorised signatories.", "本协议的任何修改须经双方授权代表书面签署方为有效。"),
-    ("This Agreement is governed by Hong Kong law; disputes go to arbitration in Hong Kong.", "本协议适用香港法律，争议提交香港仲裁解决。"),
-    ("In case of conflict, the English version prevails.", "中英文版本如有冲突，以英文版本为准。"),
-]
-BOILER_LEASE = [
-    "The Tenant shall keep the interior of the Premises in good and tenantable repair.",
-    "The Tenant shall not assign, sublet or part with possession of the Premises.",
-    "The Tenant shall comply with the Deed of Mutual Covenant and the building rules.",
-    "The Landlord shall keep the main structure, roof and exterior walls in proper repair.",
-    "The Tenant shall insure its stock and maintain public liability cover of at least HK$10,000,000.",
-    "No alterations shall be made to the Premises without the Landlord's prior written consent.",
-    "Notices may be served at the addresses stated above by hand or by registered post.",
-    "Time shall be of the essence in respect of all payments under this Agreement.",
-]
-
 
 def clause(p, num, title, body, fam="sans", size=9.5, align=None):
     align = align or ("J" if fam == "serif" else "L")
@@ -777,74 +598,286 @@ def clause(p, num, title, body, fam="sans", size=9.5, align=None):
     p.ln(2)
 
 
-def supply_agreement(sid):
-    s, city = SUP[sid], ("Shenzhen", "深圳") if sid == "S01" else ("Dongguan", "东莞")
-    cur, sym = ("RMB", "人民币") if sid == "S01" else ("USD", "美元")
-    p = Doc(footer=f"{s['contract_no']}  ·  Page {{p}} / {{nb}}  ·  第{{p}}页", when=D(2025, 12, 12))
+
+# ----------------------------------------------------------------------------- document layouts
+def inv_s01(inv):
+    """Pearl River Growth Fund II drawdown notice (Chinese, mainland GP)."""
+    s, red = SUP["S01"], (150, 25, 25)
+    p = Doc(when=inv["date"])
     p.add_page()
-    txt(p, "SUPPLY AGREEMENT  供货协议", 16, "B", "C")
-    txt(p, f"Agreement No. 协议编号: {s['contract_no']}   ·   Effective 生效日期: 1 January 2026", 9, "", "C", gap=5)
-    txt(p, f"Buyer 买方: {CO['name_en']} {CO['name_zh']}, BR No. {CO['br']}, {CO['addr_en']}", 9, gap=1)
-    txt(p, f"Seller 卖方: {s['name_en']} {s['name_zh']}, {s['reg']}, {s['addr_en']}", 9, gap=4)
-    clause(p, "1", "Scope 供货范围", [("1.1", f"The Seller supplies the electronic components listed in clause 4.2 to the Buyer on purchase order. 卖方按买方订单供应第4.2条所列电子元器件。")])
-    clause(p, "2", "Term 期限", [("2.1", "1 January 2026 to 31 December 2026, renewable by written agreement. 2026年1月1日至2026年12月31日，经书面同意可续期。")])
-    clause(p, "3", "Orders 订单", [("3.1", "Each purchase order states item code, quantity and delivery date. 每份订单须列明货号、数量及交货日期。")])
-    p.set_font("sans", "B", 10)
-    clause(p, "4", "Prices 价格", [
-        ("4.1", f"Prices are fixed in {cur} for the Term, FCA {city[0]}, export VAT 0%. 价格于协议期内以{sym}固定，FCA{city[1]}，出口增值税0%。"),
-        ("4.2", "Price schedule 价格表:")])
-    rows = [(c, f"{en} / {zh}", u, f"{cur} {pr:,.2f}") for c, (en, zh, u, pr) in PRICES[sid].items()]
-    table(p, ["Item code 货号", "Description 品名", "Unit 单位", "Unit price 单价"], rows, [28, 96, 20, 30], "LLCR", size=8.5)
+    txt(p, s["name_zh"], 19, "B", "C", red)
+    txt(p, s["name_en"].upper(), 10, "", "C", red)
+    txt(p, f"普通合伙人：珠江资本管理（深圳）有限公司   {s['addr_zh']}   电话 {s['tel']}", 7.5, "", "C", (90, 90, 90))
+    rule(p, red, 0.7, 4)
+    txt(p, "缴 款 通 知 书", 16, "B", "C")
+    txt(p, "CAPITAL CALL / DRAWDOWN NOTICE", 8, "", "C", (90, 90, 90), gap=4)
+    y = p.get_y()
+    kv(p, 18, y, [("有限合伙人：", CO["name_zh"]), ("", CO["name_en"]), ("", f"代表{CO['trust_zh']}"),
+                  ("认购协议：", s["contract_no"])], 22, 86)
+    kv(p, 126, y, [("通知编号：", inv["no"]), ("通知日期：", zh_date(inv["date"])), ("缴款截止日：", zh_date(inv["due"])),
+                   ("币种：", "人民币 RMB")], 22, 44, bold_v=True)
+    p.set_y(y + 26)
+    commit_, before = s["commitment"], inv["called_before"]
+    amt = inv["total"]
+    rows = [("认缴出资额 Commitment", money(commit_)),
+            ("此前累计实缴 Called before this notice", money(before)),
+            (f"本次缴款比例 This call ({amt / commit_ * 100:.2f}% of commitment)", money(amt)),
+            ("本次缴款后累计实缴 Called to date incl. this call", money(before + amt)),
+            ("剩余未缴出资 Unfunded commitment after this call", money(commit_ - before - amt))]
+    table(p, ["项目 Item", "金额（人民币元）"], rows, [124, 50], "LR", fill=(250, 228, 228))
+    p.ln(3)
+    txt(p, "资金用途：新项目投资及基金费用（详见附件一）。Use of proceeds: new portfolio investment and fund expenses.", 8.5, gap=2)
+    totals(p, [("本次应缴金额 合计 人民币（RMB）", money(amt))], x=92, wk=70, wv=30)
+    p.ln(6)
+    txt(p, "收款账户信息 Wire instructions", 9.5, "B", color=red)
+    y = p.get_y() + 1
+    kv(p, 18, y, [("收款银行：", inv["bank_name"].split(" (")[1].rstrip(")")), ("账户名称：", s["name_zh"]),
+                  ("银行账号：", inv["bank"])], 20, 100, bold_v=True)
+    p.set_y(y + 20)
+    txt(p, f"请于缴款截止日前电汇，并注明通知编号。如有疑问，请联系 {inv['email']}", 8, color=(90, 90, 90), gap=8)
+    y = p.get_y()
+    kv(p, 18, y, [("经办：", "张丽"), ("复核：", "陈国华")], 14, 30)
+    stamp(p, 160, y + 6, "珠江资本管理有限公司", "基金专用章")
+    return out(p)
+
+
+def inv_s02(inv):
+    """Harbourview Capital Partners III: capital call notice or quarterly management fee notice."""
+    s, navy = SUP["S02"], (25, 45, 85)
+    p = Doc(when=inv["date"])
+    p.add_page()
+    p.set_fill_color(*navy)
+    p.rect(0, 0, 210, 28, "F")
+    p.set_xy(18, 8)
+    p.set_text_color(255)
+    p.set_font("sans", "B", 13)
+    p.cell(120, 7, "HARBOURVIEW CAPITAL PARTNERS III, L.P.")
+    p.set_xy(18, 16)
+    p.set_font("sans", "", 8.5)
+    p.cell(120, 5, "Managed by Harbourview Capital Management Ltd")
+    p.set_xy(130, 10)
+    p.set_font("sans", "B", 11)
+    p.cell(62, 7, "CAPITAL CALL NOTICE" if inv["kind"] == "capital_call" else "MANAGEMENT FEE NOTICE", align="R")
+    p.set_y(33)
+    txt(p, f"{s['addr_en']}  |  Tel {s['tel']}  |  {s['email']}", 7.5, color=(80, 80, 80), gap=1)
+    txt(p, s["reg"], 7.5, color=(80, 80, 80), gap=5)
+    y = p.get_y()
+    kv(p, 18, y, [("Limited Partner", CO["name_en"]), ("", f"for the {CO['trust']}"),
+                  *[("", a) for a in split2(CO["addr_en"], 44)]], 28, 76)
+    kv(p, 120, y, [("Notice no.", inv["no"]), ("Notice date", en_date(inv["date"])), ("Payment due", en_date(inv["due"])),
+                   ("LP account", "LP-0117"), ("Side letter", s["contract_no"])], 28, 44, bold_v=True)
+    p.set_y(y + 32)
+    if inv["kind"] == "capital_call":
+        before, amt, c = inv["called_before"], inv["total"], s["commitment"]
+        txt(p, f"Pursuant to clause 5.1 of the Limited Partnership Agreement, the General Partner calls capital from the "
+               f"Limited Partner as follows:", 9, gap=2)
+        rows = [("Commitment", money(c)), ("Contributed before this notice", money(before)),
+                (f"This capital call ({amt / c * 100:.0f}% of commitment)", money(amt)),
+                ("Contributed to date incl. this notice", money(before + amt)),
+                ("Unfunded commitment after this notice", money(c - before - amt))]
+        table(p, ["Capital account (USD)", "Amount"], rows, [124, 50], "LR", fill=(215, 225, 240))
+    else:
+        r = inv["rate"]
+        txt(p, f"Management fee for the quarter {QTR[inv['period'][4:]][0]} - {QTR[inv['period'][4:]][1]} {inv['period'][:4]}, "
+               f"payable quarterly in advance.", 9, gap=1)
+        txt(p, f"Fee rate: {r:.2f}% p.a. on commitment of USD 10,000,000", 9, "B", gap=2)
+        rows = [(c, d, f"{q:,}", money(u)) for c, d, q, u in inv["lines"]]
+        table(p, ["Code", "Description", "Qty", "Amount USD"], rows, [24, 108, 12, 30], "LLRR", fill=(215, 225, 240), size=7.8)
+    p.ln(3)
+    totals(p, [("AMOUNT DUE (USD)", money(inv["total"]))])
+    p.ln(6)
+    txt(p, "Wire instructions", 9.5, "B", color=navy)
+    txt(p, f"Beneficiary: {s['name_en']}\nBank: {s['bank']}\nAccount No.: {inv['bank']}\nReference: {inv['no']} / LP-0117",
+        8.5, h=4.6, gap=4)
+    txt(p, "Any change to these wire instructions will only ever be confirmed by a signed letter from the General Partner. "
+           "Please call your investor relations contact on a known number before acting on any change.", 7.5, color=(90, 90, 90))
+    return out(p)
+
+
+def inv_s03(inv):
+    s, green = SUP["S03"], (16, 110, 70)
+    p = Doc(when=inv["date"])
+    p.add_page()
+    p.set_fill_color(*green)
+    p.rect(18, 14, 22, 22, "F")
+    p.set_xy(18, 20)
+    p.set_text_color(255)
+    p.set_font("sans", "B", 13)
+    p.cell(22, 10, "PE", align="C")
+    p.set_xy(60, 14)
+    p.set_text_color(*green)
+    p.set_font("sans", "B", 13)
+    p.cell(132, 7, s["name_en"].upper(), align="R")
+    p.set_text_color(80)
+    p.set_font("sans", "", 8)
+    for i, line in enumerate([f"{s['name_zh']}  ·  {s['addr_en']}", f"Tel {s['tel']}  |  {s['email']}", s["reg"]]):
+        p.set_xy(44, 22 + i * 4.5)
+        p.cell(148, 4.5, line, align="R")
+    p.set_y(44)
+    txt(p, "INVOICE", 22, "B", color=green, gap=3)
+    y = p.get_y()
+    kv(p, 18, y, [("Bill to", CO["name_en"]), *[("", x) for x in split2(CO["addr_en"], 50)]], 16, 90)
+    kv(p, 130, y, [("Invoice no.", inv["no"]), ("Date", en_date(inv["date"])), ("Due date", en_date(inv["due"])),
+                   ("Client", "LPFO-0042")], 22, 40, bold_v=True)
+    p.set_y(y + 25)
+    rows = [(c, d, q, PM_RATES[c][1], money(u), money(q * u)) for c, d, q, u in inv["lines"]]
+    table(p, ["Code", "Description", "Qty", "Unit", "Rate HKD", "Amount HKD"], rows, [18, 86, 10, 14, 22, 24],
+          "LLRCRR", fill=(210, 235, 222), border="B", size=7.8)
     p.ln(2)
-    txt(p, "4.3  Any price change requires a written amendment signed by both parties before invoicing. 任何价格调整须在开票前经双方书面签署修订。", 9.5, gap=3)
-    clause(p, "5", "Payment 付款", [
-        ("5.1", f"Payment within {s['terms']} days of invoice date by telegraphic transfer. 发票日起{s['terms']}天内电汇付款。"),
-        ("5.2", f"Seller's designated account 卖方指定账户: {s['bank']}, account name {s['name_en']}, account no. {s['bank_acct']}."),
-        ("5.3", "Any change of bank account must be confirmed in writing by both parties' authorised signatories; email notice alone is not valid. 银行账户变更须经双方授权代表书面确认，仅凭电子邮件通知无效。")])
-    clause(p, "6", "General 一般条款", [(f"6.{i}", en.format(city=city[0]) + "\n" + zh.format(city_zh=city[1]))
-                                        for i, (en, zh) in enumerate(BOILER_SUPPLY, 1)])
-    p.ln(4)
+    totals(p, [("Subtotal", money(inv["subtotal"])), ("TOTAL HKD", money(inv["total"]))])
+    p.ln(8)
+    txt(p, f"Payment within {s['terms']} days to {s['bank']}, account {inv['bank']} ({s['name_en']}).", 8.5)
+    txt(p, "Rates per property management agreement 2026, schedule 1. E. & O. E.", 8, color=(100, 100, 100))
+    return out(p)
+
+
+def inv_s05(inv):
+    s, purple = SUP["S05"], (92, 50, 140)
+    p = Doc(when=inv["date"])
+    p.add_page()
+    p.set_text_color(*purple)
+    p.set_font("sans", "B", 18)
+    p.cell(110, 10, "Meridian Fine Art")
+    p.set_font("sans", "", 18)
+    p.set_text_color(150)
+    p.cell(64, 10, "Invoice", align="R")
+    p.ln(12)
+    txt(p, f"{s['name_en']} · {s['addr_en']} · {s['reg']}", 7.5, color=(120, 120, 120), gap=5)
+    y = p.get_y()
+    kv(p, 18, y, [("Insured", CO["name_en"]), ("", f"Attn: {PEOPLE['grace'][0]}"), ("", PEOPLE["grace"][1])], 20, 80)
+    kv(p, 128, y, [("Invoice #", inv["no"]), ("Issued", inv["date"].strftime("%B %d, %Y")),
+                   ("Due", inv["due"].strftime("%B %d, %Y")), ("Policy", "MAI-FA-2025-0716")], 24, 40, bold_v=True)
+    p.set_y(y + 26)
+    rows = [(d, q, money(u), money(q * u)) for _, d, q, u in inv["lines"]]
+    table(p, ["Description", "Qty", "Unit price", "Amount (USD)"], rows, [110, 10, 24, 30], "LRRR", border="B",
+          fill=(236, 230, 250), size=7.8)
+    p.ln(2)
+    totals(p, [("Subtotal", money(inv["subtotal"])), ("Tax", "0.00"), ("Amount due (USD)", money(inv["total"]))])
+    p.ln(8)
+    txt(p, f"Pay by wire: {s['bank']}, account {inv['bank']}. Questions: {s['email']}", 8.5)
+    return out(p)
+
+
+RENDER = {"S01": inv_s01, "S02": inv_s02, "S03": inv_s03, "S05": inv_s05}
+
+
+# ----------------------------------------------------------------------------- contracts
+def signatures(p, left, right, when, stamp_zh=None):
     y = p.get_y()
     if y > 240:
         p.add_page()
         y = p.get_y()
-    for x, who, name in [(18, "For the Buyer 买方", "David Wong, Director"), (112, "For the Seller 卖方",
-                                                                            "Zhang Wei, General Manager" if sid == "S01" else "Li Ming, Sales Director")]:
-        kv(p, x, y, [(who, ""), ("", ""), ("", ""), ("Name:", name), ("Date:", "12 Dec 2025")], 14, 60)
+    for x, (who, name) in [(18, left), (112, right)]:
+        kv(p, x, y, [(who, ""), ("", ""), ("", ""), ("Name:", name), ("Date:", en_date(when))], 14, 60)
         squiggle(p, x + 4, y + 11, len(name) * 7 + x)
-    stamp(p, 178, y - 2, s["name_zh"], "合同专用章", r=14)
+    if stamp_zh:
+        stamp(p, 178, y - 2, stamp_zh, "合同专用章", r=14)
+
+
+def subscription_agreement():
+    """S01: subscription agreement excerpt (bilingual) with the designated account clause."""
+    s = SUP["S01"]
+    p = Doc(footer=f"{s['contract_no']}  ·  Page {{p}} / {{nb}}  ·  第{{p}}页", when=D(2024, 3, 18))
+    p.add_page()
+    txt(p, "SUBSCRIPTION AGREEMENT  认购协议", 16, "B", "C")
+    txt(p, f"{s['name_en']}  {s['name_zh']}", 10, "", "C")
+    txt(p, f"Agreement No. 协议编号: {s['contract_no']}   ·   Dated 签署日期: 18 March 2024", 9, "", "C", gap=5)
+    txt(p, f"Limited Partner 有限合伙人: {CO['name_en']} {CO['name_zh']}, for the {CO['trust']}, BR No. {CO['br']}, {CO['addr_en']}", 9, gap=1)
+    txt(p, f"Fund 基金: {s['name_en']} {s['name_zh']}, {s['reg']}, {s['addr_en']}", 9, gap=4)
+    clause(p, "1", "Commitment 认缴出资", [
+        ("1.1", f"The Limited Partner commits RMB {s['commitment']:,.0f} to the Fund. 有限合伙人认缴出资人民币{s['commitment'] / 1e4:,.0f}万元。"),
+        ("1.2", "Commitments are drawn down by written drawdown notice from the General Partner. 出资按普通合伙人书面缴款通知分期实缴。")])
+    clause(p, "2", "Term 期限", [("2.1", "Investment period 5 years from first close; fund term 8 years, extendable twice by one year. 投资期自首次交割起5年；基金存续期8年，可延长两次，每次一年。")])
+    clause(p, "3", "Drawdowns 缴款", [
+        ("3.1", "Each drawdown notice states the amount, the purpose and the due date, at least 10 business days after the notice. 每份缴款通知须列明金额、用途及缴款截止日，截止日不得早于通知日后10个工作日。"),
+        ("3.2", "Late payment bears default interest at 8% per annum. 逾期缴款按年利率8%计收违约利息。")])
+    clause(p, "4", "Fees 费用", [("4.1", "Management fee 2.0% per annum of commitment during the investment period, included in drawdowns. 投资期内管理费为认缴出资额的年2.0%，计入缴款。")])
+    clause(p, "5", "Payment 付款", [
+        ("5.1", "Drawdowns are paid by telegraphic transfer in RMB. 缴款以人民币电汇支付。"),
+        ("5.2", f"The Fund's designated account 基金指定账户: {s['bank']}, account name {s['name_en']}, account no. {s['bank_acct']}."),
+        ("5.3", "Any change of the designated account must be confirmed in writing by the General Partner's authorised signatories; "
+                "email notice alone is not valid. 指定账户如有变更，须经普通合伙人授权代表书面确认，仅凭电子邮件通知无效。")])
+    clause(p, "6", "General 一般条款", [
+        ("6.1", "This Agreement is governed by the laws of the PRC; disputes go to the Shenzhen Court of International Arbitration.\n本协议适用中国法律，争议提交深圳国际仲裁院仲裁。"),
+        ("6.2", "In case of conflict, the Chinese version prevails.\n中英文版本如有冲突，以中文版本为准。")])
+    p.ln(4)
+    signatures(p, ("For the Limited Partner 有限合伙人", "Victoria Cheung, Director"),
+               ("For the General Partner 普通合伙人", "Zhang Wei, Managing Partner"), D(2024, 3, 18), "珠江资本管理有限公司")
     return out(p)
 
 
-def rate_card():
+def side_letter():
+    """S02: side letter granting the reduced management fee."""
+    s = SUP["S02"]
+    p = Doc(footer=f"Side letter {s['contract_no']}  ·  Page {{p}} of {{nb}}", serif=True, when=D(2024, 6, 3))
+    p.add_page()
+    txt(p, "HARBOURVIEW CAPITAL PARTNERS III, L.P.", 14, "B", "C", fam="serif")
+    txt(p, "SIDE LETTER", 13, "B", "C", fam="serif")
+    txt(p, f"Ref: {s['contract_no']}   ·   3 June 2024", 9, "", "C", (90, 90, 90), gap=6)
+    txt(p, f"To: {CO['name_en']} (for the {CO['trust']}), {CO['addr_en']} (the \"Investor\")", 10, fam="serif", gap=4)
+    txt(p, "Dear Investor,", 10, fam="serif", gap=2)
+    txt(p, "In consideration of the Investor's commitment of USD 10,000,000 to Harbourview Capital Partners III, L.P. (the "
+           "\"Fund\"), the General Partner agrees the following terms, which prevail over the Limited Partnership Agreement "
+           "dated 15 May 2024 (the \"LPA\").", 10, fam="serif", gap=4)
+    clause(p, "1.", "COMMITMENT", [("1.1", "The Investor's commitment is USD 10,000,000 (the \"Commitment\").")], "serif", 10)
+    clause(p, "2.", "MOST FAVOURED NATION", [("2.1", "The Investor may elect the benefit of any more favourable fee terms granted to another investor with an equal or smaller commitment.")], "serif", 10)
+    clause(p, "3.", "MANAGEMENT FEE", [
+        ("3.1", f"Notwithstanding clause 8.1 of the LPA, the management fee payable by the Investor shall be calculated at the rate of "
+                f"{FEE_RATE:.2f}% per annum of the Commitment (instead of 2.00% per annum) for the whole term of the Fund."),
+        ("3.2", "The management fee is payable quarterly in advance on the first business day of each calendar quarter."),
+        ("3.3", "No other fee rate applies to the Investor unless agreed in a further side letter signed by both parties.")], "serif", 10)
+    clause(p, "4.", "REPORTING", [("4.1", "Quarterly capital account statements within 60 days of each quarter end.")], "serif", 10)
+    clause(p, "5.", "WIRE INSTRUCTIONS", [("5.1", f"Capital calls and fees are paid to {s['bank']}, account {s['bank_acct']}. "
+                                                  "Changes are valid only by signed letter from the General Partner.")], "serif", 10)
+    p.ln(4)
+    signatures(p, ("For the General Partner", "Michael Tan, Managing Partner"), ("Agreed by the Investor", "Victoria Cheung, Director"),
+               D(2024, 6, 3))
+    return out(p)
+
+
+def pm_agreement():
     s, green = SUP["S03"], (16, 110, 70)
     p = Doc(when=D(2025, 12, 1))
     p.add_page()
     txt(p, s["name_en"].upper(), 15, "B", color=green)
     txt(p, f"{s['addr_en']} · {s['reg']}", 8, color=(90, 90, 90), gap=4)
-    txt(p, "CUSTOMER RATE CARD 2026", 14, "B", gap=1)
-    txt(p, f"Customer: {CO['name_en']} (account HLT-0042)   ·   Valid 1 Jan - 31 Dec 2026", 9, gap=4)
-    table(p, ["Code", "Service", "Unit", "Rate (HKD)"], [(c, d, u, money(r)) for c, (d, u, r) in FREIGHT.items()],
-          [20, 102, 26, 26], "LLCR", fill=(210, 235, 222))
+    txt(p, "PROPERTY MANAGEMENT AGREEMENT 2026", 14, "B", gap=1)
+    txt(p, f"Client: {CO['name_en']} for the {CO['trust']} (client LPFO-0042)   ·   Term 1 Jan - 31 Dec 2026", 9, gap=1)
+    txt(p, f"Properties: {PROPS['12A']}; {PROPS['21B']}", 8.5, gap=4)
+    txt(p, "Schedule 1 - Fees", 10, "B", gap=1)
+    table(p, ["Code", "Service", "Unit", "Rate (HKD)"], [(c, d, u, money(r)) for c, (d, u, r) in PM_RATES.items()],
+          [20, 110, 18, 26], "LLCR", fill=(210, 235, 222), size=8)
     p.ln(4)
-    for n in ["Rates exclude government fees, tunnel tolls and storage beyond 3 free days.",
-              "Peak season surcharge applies to all containers moved 1 Aug - 31 Oct.",
-              f"Invoices are issued per month of service; payment terms {s['terms']} days."]:
+    for n in ["Repairs above HK$5,000 need the client's prior written approval; contractors are paid by the client directly.",
+              "Leasing commission on new tenancies or renewals: half of one month's rent, payable on signing.",
+              f"Invoices are issued monthly; payment terms {s['terms']} days."]:
         txt(p, "•  " + n, 9, gap=1)
     p.ln(6)
-    txt(p, "Accepted for the customer: Anna Chan, Finance Manager, 3 Dec 2025", 9)
+    txt(p, f"Accepted for the client: {PEOPLE['grace'][0]}, Fund Accountant, 3 Dec 2025", 9)
     squiggle(p, 30, p.get_y() + 6, 77)
     return out(p)
 
 
-LEASE_NEW = dict(ref="KBP/L/2027/09A", signed=D(2026, 9, 29), start=D(2027, 1, 1), end=D(2029, 12, 31), rent=82400.0,
-                 esc=0.03, deposit=247200)
-LEASE_OLD = dict(ref="KBP/L/2024/09A", signed=D(2023, 11, 20), start=D(2024, 1, 1), end=D(2026, 12, 31), rent=80000.0,
-                 esc=0.0, deposit=240000)
+LEASE_NEW = dict(ref="LPFO/L/2027/12A", signed=D(2026, 9, 29), start=D(2027, 1, 1), end=D(2029, 12, 31), rent=98800.0,
+                 esc=0.03, deposit=296400, words="Ninety-Eight Thousand Eight Hundred")
+LEASE_OLD = dict(ref="LPFO/L/2024/12A", signed=D(2023, 11, 20), start=D(2024, 1, 1), end=D(2026, 12, 31), rent=95000.0,
+                 esc=0.0, deposit=285000, words="Ninety-Five Thousand")
 
 
 def rent_schedule(L):
     return [(L["start"].year + i, r2(L["rent"] * (1 + L["esc"]) ** i)) for i in range(L["end"].year - L["start"].year + 1)]
+
+
+BOILER_LEASE = [
+    "The Tenant shall keep the interior of the Premises and the Landlord's fixtures and fittings in good and tenantable repair.",
+    "The Tenant shall not assign, sublet or part with possession of the Premises.",
+    "The Tenant shall use the Premises as a private residence for its nominated executive and family only.",
+    "The Landlord shall keep the main structure, roof and exterior walls in proper repair.",
+    "The Tenant shall maintain contents and public liability insurance of at least HK$5,000,000.",
+    "No alterations shall be made to the Premises without the Landlord's prior written consent.",
+    "Notices may be served at the addresses stated above by hand or by registered post.",
+    "Time shall be of the essence in respect of all payments under this Agreement.",
+]
 
 
 def lease(L):
@@ -857,11 +890,12 @@ def lease(L):
     txt(p, f"Ref: {L['ref']}", 9, "", "C", (90, 90, 90), gap=6)
     txt(p, f"THIS AGREEMENT is made on {en_date(L['signed'])}", 10.5, fam="serif", gap=3)
     txt(p, "BETWEEN", 10.5, "B", fam="serif", gap=2)
-    txt(p, f"(1)  {s['name_en'].upper()} ({s['name_zh']}), {s['reg']}, whose registered office is at {s['addr_en']} (the \"Landlord\"); and", 10.5, fam="serif", gap=2)
-    txt(p, f"(2)  {CO['name_en'].upper()} ({CO['name_zh']}), BR No. {CO['br']}, whose registered office is at {CO['addr_en']} (the \"Tenant\").", 10.5, fam="serif", gap=5)
+    txt(p, f"(1)  {CO['name_en'].upper()} ({CO['name_zh']}), BR No. {CO['br']}, for and on behalf of the trustee of the "
+           f"{CO['trust']}, whose registered office is at {CO['addr_en']} (the \"Landlord\"); and", 10.5, fam="serif", gap=2)
+    txt(p, f"(2)  {s['name_en'].upper()}, {s['reg']}, whose registered office is at {s['addr_en']} (the \"Tenant\").", 10.5, fam="serif", gap=5)
     txt(p, "IT IS AGREED as follows:", 10.5, fam="serif", gap=4)
-    clause(p, "1.", "PREMISES", [("1.1", f"The Landlord lets and the Tenant takes {CO['warehouse']} with a gross floor area of approximately 6,200 sq. ft. (the \"Premises\")."),
-                                 ("1.2", "The Premises shall be used as a warehouse with ancillary office only.")], "serif", 10.5)
+    clause(p, "1.", "PREMISES", [("1.1", f"The Landlord lets and the Tenant takes {PROPS['12A']} with a saleable area of approximately 2,150 sq. ft. and one car parking space (the \"Premises\")."),
+                                 ("1.2", "The Premises shall be used as a private residence only.")], "serif", 10.5)
     if new:
         p.add_page()
     clause(p, "2.", "TERM", [("2.1", f"The term is {L['end'].year - L['start'].year + 1} years from {en_date(L['start'])} to {en_date(L['end'])}, both days inclusive (the \"Term\").")], "serif", 10.5)
@@ -870,26 +904,27 @@ def lease(L):
            [(f"3.{i}", t) for i, t in enumerate(BOILER_LEASE if new else BOILER_LEASE[:4], 2)], "serif", 10.5)
     p.add_page()
     if new:
-        body = [("4.1", f"The monthly rent shall be HK${L['rent']:,.0f} (Hong Kong Dollars Eighty-Two Thousand Four Hundred) "
-                        f"exclusive of rates and management fees, payable from {en_date(L['start'])}."),
+        body = [("4.1", f"The monthly rent shall be HK${L['rent']:,.0f} (Hong Kong Dollars {L['words']}) "
+                        f"inclusive of management fees and exclusive of rates, payable from {en_date(L['start'])}."),
                 ("4.2", "On each 1 January during the Term the monthly rent shall increase by three per cent (3%) over the monthly rent payable in the preceding year."),
                 ("4.3", "For the avoidance of doubt, the monthly rent for each year of the Term is:")]
     else:
-        body = [("4.1", f"The monthly rent shall be HK${L['rent']:,.0f} (Hong Kong Dollars Eighty Thousand) exclusive of rates and management fees, fixed for the whole Term."),
+        body = [("4.1", f"The monthly rent shall be HK${L['rent']:,.0f} (Hong Kong Dollars {L['words']}) inclusive of management fees and exclusive of rates, fixed for the whole Term."),
                 ("4.2", "No rent review shall take place during the Term.")]
     clause(p, "4.", "RENT" + (" AND RENT REVIEW" if new else ""), body, "serif", 10.5)
     if new:
         table(p, ["Period", "Monthly rent (HK$)"], [(f"1 Jan {y} - 31 Dec {y}", money(r)) for y, r in rent_schedule(L)],
               [70, 45], "LR", size=9.5)
         p.ln(3)
-    clause(p, "5.", "PAYMENT, RATES AND MANAGEMENT FEES",
-           [("5.1", f"Rent is payable monthly in advance on the first day of each month by autopay to the Landlord's account with {s['bank']}, a/c {s['bank_acct']}."),
-            ("5.2", "Rates and management fees are payable by the Tenant separately to the Government and the building manager.")], "serif", 10.5)
+    clause(p, "5.", "PAYMENT AND RATES",
+           [("5.1", f"Rent is payable monthly in advance on the first day of each month by transfer to the Landlord's account with {CO['bank']}, a/c {CO['bank_acct']}."),
+            ("5.2", "Government rates are payable by the Tenant.")], "serif", 10.5)
     clause(p, "6.", "GOVERNING LAW", [("6.1", "This Agreement is governed by the laws of the Hong Kong Special Administrative Region.")], "serif", 10.5)
     p.ln(4)
     txt(p, "IN WITNESS whereof the parties have signed this Agreement on the date first written above.", 10, fam="serif", gap=8)
     y = p.get_y()
-    for x, who, name in [(18, "SIGNED by the Landlord", "Raymond Ho, Director"), (112, "SIGNED by the Tenant", "David Wong, Director")]:
+    for x, who, name, org in [(18, "SIGNED by the Landlord", "Victoria Cheung, Director", CO["name_en"]),
+                              (112, "SIGNED by the Tenant", "Daniel Fong, Managing Director", s["name_en"])]:
         p.set_xy(x, y)
         p.set_font("serif", "B", 9.5)
         p.cell(80, 5, who)
@@ -899,40 +934,40 @@ def lease(L):
         p.set_font("serif", "", 9)
         p.cell(80, 5, f"{name}, for and on behalf of")
         p.set_xy(x, y + 27)
-        p.cell(80, 5, s["name_en"] if x == 18 else CO["name_en"])
+        p.cell(80, 5, org)
         squiggle(p, x + 6, y + 15, x * 3 + L["signed"].year)
-    stamp(p, 98, y + 9, s["name_zh"], "LANDLORD", (40, 60, 160), 12)
-    stamp(p, 188, y + 9, CO["name_zh"], "TENANT", (190, 30, 30), 12)
+    stamp(p, 98, y + 9, CO["name_zh"], "LANDLORD", (190, 30, 30), 12)
     p.set_y(y + 40)
-    txt(p, "Witness: Anna Chan, Finance Manager, Harbour Lane Trading Ltd", 9, fam="serif")
+    txt(p, f"Witness: {PEOPLE['grace'][0]}, Fund Accountant, {CO['name_en']}", 9, fam="serif")
     return out(p)
 
 
-def order_form():
-    s, purple = SUP["S05"], (92, 50, 180)
+def insurance_policy():
+    s, purple = SUP["S05"], (92, 50, 140)
     p = Doc(when=D(2025, 11, 10))
     p.add_page()
-    txt(p, "CloudDesk", 20, "B", color=purple)
-    txt(p, "ORDER FORM  OF-2025-3381", 12, "B", gap=1)
+    txt(p, "Meridian Fine Art", 20, "B", color=purple)
+    txt(p, "FINE ART COLLECTION POLICY - SCHEDULE   MAI-FA-2025-0716", 12, "B", gap=1)
     txt(p, f"{s['name_en']}, {s['addr_en']}", 8, color=(110, 110, 110), gap=5)
     y = p.get_y()
-    kv(p, 18, y, [("Customer", f"{CO['name_en']}, {CO['addr_en'][:60]}"), ("Billing contact", PEOPLE["anna"][1]),
-                          ("Subscription start", "November 16, 2025"), ("Initial term", "12 months (Nov 16, 2025 - Nov 15, 2026)"),
-                          ("Renewal date", "November 16, 2026"), ("Billing", "Monthly in advance, net 15, USD")], 34, 130)
+    kv(p, 18, y, [("Insured", f"{CO['name_en']} for the {CO['trust']}"), ("Billing contact", PEOPLE["grace"][1]),
+                  ("Policy start", "November 16, 2025"), ("Policy period", "12 months (Nov 16, 2025 - Nov 15, 2026)"),
+                  ("Renewal date", "November 16, 2026"), ("Premium", "USD 29,400 a year, 12 monthly instalments, net 15")], 34, 130)
     p.set_y(y + 36)
-    table(p, ["Product", "Seats", "Price / seat / month", "Monthly fee"], [("CloudDesk Business (helpdesk + shared inbox)", 25, "USD 58.00", "USD 1,450.00")],
-          [84, 16, 40, 34], "LRRR", fill=(236, 230, 250))
+    table(p, ["Cover", "Sum insured", "Basis", "Monthly instalment"],
+          [("Paintings, ceramics and sculpture (schedule of 64 works)", "USD 42,000,000", "Agreed value", "USD 2,450.00")],
+          [84, 32, 26, 32], "LRCR", fill=(236, 230, 250), size=8)
     p.ln(5)
-    terms = [("1. Auto-renewal.", "This Order Form renews automatically on the Renewal Date for successive 12-month terms at the then-current list price "
-                                  "unless either party gives written notice of non-renewal at least 30 days before the Renewal Date."),
-             ("2. Notice.", "Non-renewal notices must be sent to legal@clouddesk.io. Notices sent via in-app chat are not valid."),
-             ("3. Fees.", "Fees are non-refundable. Seats may be added at any time and are co-terminous with this Order Form."),
-             ("4. Terms.", "This Order Form is governed by the CloudDesk Master Subscription Agreement (v4.1).")]
+    terms = [("1. Auto-renewal.", "This policy renews automatically on the Renewal Date for a further 12 months at the insurer's then-current "
+                                  "rates unless the Insured gives written notice of non-renewal at least 30 days before the Renewal Date."),
+             ("2. Notice.", "Non-renewal notices must be sent in writing to underwriting@meridianfineart.com. Notices via the broker portal chat are not valid."),
+             ("3. Premium.", "Instalments are non-refundable once the policy renews. Works may be added by endorsement at any time."),
+             ("4. Conditions.", "Works must be kept at the declared locations: the family residence and the Lantau Peak art store, Kwai Chung.")]
     for h, t in terms:
         txt(p, h, 9.5, "B")
         txt(p, t, 9, gap=2)
     p.ln(6)
-    txt(p, "Signed for the Customer: Anna Chan, Finance Manager — November 10, 2025", 9)
+    txt(p, f"Signed for the Insured: {PEOPLE['grace'][0]}, Fund Accountant — November 10, 2025", 9)
     squiggle(p, 30, p.get_y() + 6, 31)
     return out(p)
 
@@ -949,19 +984,19 @@ def bank_statement(lines, opening):
     p.cell(120, 8, "VICTORIA HARBOUR BANK")
     p.set_font("sans", "", 9)
     p.set_xy(120, 8)
-    p.cell(72, 6, "維港銀行  ·  Business Integrated Account", align="R")
+    p.cell(72, 6, "維港銀行  ·  Private Client Current Account", align="R")
     p.set_y(30)
     kv(p, 18, 30, [("Account name", CO["name_en"]), ("Account no.", CO["bank_acct"] + " (HKD Current)"),
-                   ("Statement period", "01 Sep 2026 - 30 Sep 2026"), ("Branch", "Kwun Tong Business Centre")], 30, 100)
+                   ("Statement period", "01 Sep 2026 - 30 Sep 2026"), ("Branch", "Central Private Client Centre")], 30, 100)
     p.set_y(54)
     rows, bal = [], opening
     rows.append(("01 Sep", "BALANCE BROUGHT FORWARD", "", "", money(opening)))
     for d, desc, amt in lines:
         bal = r2(bal + amt)
-        rows.append((d.strftime("%d %b"), desc[:62], money(-amt) if amt < 0 else "", money(amt) if amt > 0 else "", money(bal)))
+        rows.append((d.strftime("%d %b"), desc[:60], money(-amt) if amt < 0 else "", money(amt) if amt > 0 else "", money(bal)))
     rows.append(("30 Sep", "CLOSING BALANCE", "", "", money(bal)))
-    table(p, ["Date", "Transaction details", "Withdrawal", "Deposit", "Balance"], rows, [16, 88, 24, 24, 26],
-          "LLRRR", size=7.5, h=5.2, border="B", fill=(220, 226, 240))
+    table(p, ["Date", "Transaction details", "Withdrawal", "Deposit", "Balance"], rows, [14, 86, 24, 24, 28],
+          "LLRRR", size=7.2, h=5.2, border="B", fill=(220, 226, 240))
     p.ln(4)
     dep, wd = sum(a for _, _, a in lines if a > 0), -sum(a for _, _, a in lines if a < 0)
     totals(p, [("Opening balance", money(opening)), ("Total deposits", money(dep)), ("Total withdrawals", money(wd)),
@@ -984,8 +1019,8 @@ def header(ws, cols, widths, row=1):
 
 
 def save_wb(wb, rel, when):
-    wb.properties.creator = "Anna Chan"
-    wb.properties.lastModifiedBy = "Ken Lau"
+    wb.properties.creator = "Grace Lam"
+    wb.properties.lastModifiedBy = "Jason Yip"
     stamp_ = when.strftime("%Y-%m-%dT%H:%M:%SZ").encode()
     buf = io.BytesIO()
     wb.save(buf)
@@ -1020,7 +1055,7 @@ def write_register(until, as_of, when):
     wb = Workbook()
     ws = wb.active
     ws.title = "Register"
-    header(ws, REG_COLS, [11, 10, 34, 16, 9, 14, 8, 14, 12, 11, 10, 52])
+    header(ws, REG_COLS, [11, 10, 36, 18, 9, 16, 8, 16, 12, 11, 10, 56])
     for r, row in enumerate(reg_rows(until, as_of), 2):
         for c, v in enumerate(row, 1):
             ws.cell(row=r, column=c, value=v)
@@ -1039,11 +1074,49 @@ def write_master(when):
     ws = wb.active
     ws.title = "Suppliers"
     cols = ["id", "name_en", "name_zh", "email_domain", "bank_name", "bank_account", "currency", "payment_terms", "contract_file"]
-    header(ws, cols, [6, 38, 20, 20, 60, 22, 9, 14, 44])
+    header(ws, cols, [6, 38, 20, 22, 60, 22, 9, 14, 50])
     for sid, s in SUP.items():
         ws.append([sid, s["name_en"], s["name_zh"], s["domain"], s["bank"], s["bank_acct"], s["currency"],
                    f"{s['terms']} days", s["contract"]])
     save_wb(wb, "sheets/supplier_master.xlsx", when)
+
+
+OTHER_FUNDS = [  # paid from the custodian account, not this bank account: no documents in the demo
+    ("Kowloon Ventures Fund I LP", "", "USD", 3_000_000.0, 2_850_000.0, D(2025, 6, 12), "Custodian statement Jun 2025"),
+    ("Asia Credit Opportunities Fund LP", "", "USD", 5_000_000.0, 3_250_000.0, D(2026, 4, 20), "Custodian statement Apr 2026"),
+]
+
+
+def commitments(until):
+    rows = []
+    for sid in ("S01", "S02"):
+        s = SUP[sid]
+        calls = [i for i in INVOICES if i["sid"] == sid and i["kind"] == "capital_call" and i["date"] <= until]
+        last = max(calls, key=lambda i: i["date"]) if calls else None
+        src = (f"{last['folder']}/{last['file']}" if last["folder"] else f"Notice {last['no']}") if last else "LP capital statement Dec 2025"
+        rows.append([s["name_en"], sid, s["currency"], s["commitment"], s["called_before"] + sum(i["total"] for i in calls),
+                     None, last["date"] if last else None, src])
+    for name, sid, ccy, c, called, last, src in OTHER_FUNDS:
+        rows.append([name, sid, ccy, c, called, None, last, src])
+    return rows
+
+
+def write_commitments(until, when):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Commitments"
+    header(ws, ["fund", "counterparty_id", "currency", "commitment", "called_to_date", "unfunded", "last_call_date", "source"],
+           [38, 14, 9, 16, 16, 16, 14, 58])
+    for r, row in enumerate(commitments(until), 2):
+        for c, v in enumerate(row, 1):
+            ws.cell(row=r, column=c, value=v)
+        ws.cell(row=r, column=6, value=f"=D{r}-E{r}")
+        for c in (4, 5, 6):
+            ws.cell(row=r, column=c).number_format = NUM
+        ws.cell(row=r, column=7).number_format = "yyyy-mm-dd"
+    n = ws.max_row
+    ws.cell(row=n + 2, column=1, value=f"Called to date as of {en_date(until)}. Funds without a counterparty_id are paid from the custodian account.")
+    save_wb(wb, "sheets/commitments.xlsx", when)
 
 
 def write_fx(until_month, when):
@@ -1061,10 +1134,10 @@ def write_bva(until_m, when):
     wb = Workbook()
     ws = wb.active
     ws.title = "YTD"
-    ws["A1"] = f"Harbour Lane Trading Ltd - Budget vs Actual 2026, YTD {'Jan-' + D(2026, until_m, 1).strftime('%b') if until_m else '(no actuals yet)'}"
+    ws["A1"] = f"{CO['name_en']} - Budget vs Actual 2026, YTD {'Jan-' + D(2026, until_m, 1).strftime('%b') if until_m else '(no actuals yet)'}"
     ws["A1"].font = Font(bold=True, size=13)
-    ws["A2"] = "Budget approved by D. Wong 20 Jan 2026. Actuals from GL export. Variance = Actual - Budget (expenses: positive = over budget)."
-    header(ws, ["code", "account", "group", "budget_ytd", "actual_ytd", "variance", "variance_pct"], [7, 34, 20, 14, 14, 14, 12], row=4)
+    ws["A2"] = "Budget approved by V. Cheung 20 Jan 2026. Actuals from GL export. Variance = Actual - Budget (expenses: positive = over budget)."
+    header(ws, ["code", "account", "group", "budget_ytd", "actual_ytd", "variance", "variance_pct"], [7, 38, 20, 14, 14, 14, 12], row=4)
     r = 5
     for code in PL_CODES:
         b = sum(budget(code, m) for m in range(1, until_m + 1)) if until_m else sum(budget(code, m) for m in range(1, 13))
@@ -1075,7 +1148,7 @@ def write_bva(until_m, when):
     ws.append([])
     r += 1
     ws.cell(row=r, column=2, value="By group").font = Font(bold=True)
-    for g in ["Revenue", "Cost of sales", "Freight & logistics", "Facilities", "Staff", "Admin"]:
+    for g in GROUPS:
         r += 1
         ws.append(["", g, "group total", f'=SUMIF($C$5:$C${last},B{r},D$5:D${last})', f'=SUMIF($C$5:$C${last},B{r},E$5:E${last})',
                    f"=E{r}-D{r}", f'=IF(D{r}=0,"",F{r}/D{r})'])
@@ -1085,62 +1158,70 @@ def write_bva(until_m, when):
     if not until_m:
         ws.cell(row=4, column=4, value="budget_fy")
     m_ws = wb.create_sheet("Budget monthly")
-    header(m_ws, ["code", "account"] + [D(2026, m, 1).strftime("%b") for m in range(1, 13)], [7, 34] + [11] * 12)
+    header(m_ws, ["code", "account"] + [D(2026, m, 1).strftime("%b") for m in range(1, 13)], [7, 38] + [11] * 12)
     for code in PL_CODES:
         m_ws.append([code, ACC[code][1]] + [budget(code, m) for m in range(1, 13)])
     a_ws = wb.create_sheet("Actual monthly")
-    header(a_ws, ["code", "account"] + [D(2026, m, 1).strftime("%b") for m in range(1, until_m + 1)], [7, 34] + [12] * 9)
+    header(a_ws, ["code", "account"] + [D(2026, m, 1).strftime("%b") for m in range(1, until_m + 1)], [7, 38] + [12] * 9)
     for code in PL_CODES:
         a_ws.append([code, ACC[code][1]] + [actual(code, m) for m in range(1, until_m + 1)])
     save_wb(wb, "sheets/budget_vs_actual_2026.xlsx", when)
 
 
 FC_ROWS = [  # label, account(s), 2027 monthly, 2028 growth
-    ("Revenue", "200", 1_420_000, 0.04), ("Cost of goods sold", "310", 625_000, 0.04), ("Gross profit", "", None, None),
-    ("Salaries & MPF", "477/478", 470_000, 0.04), ("Rent", "469", 80_000, 0.0), ("Freight", "425", 24_000, 0.03),
-    ("Software", "485", 12_700, 0.0), ("Utilities & building mgmt", "445/471", 13_500, 0.03),
-    ("Other opex", "4xx", 40_000, 0.03), ("Total opex", "", None, None), ("EBITDA", "", None, None),
+    ("Rental income - Flat 12A Repulse Bay", "260", 95_000, 0.0),
+    ("Rental income - Flat 21B Mid-Levels", "260", 62_000, 0.0),
+    ("Portfolio income (dividends & interest)", "270/275", 3_950_000, 0.03),
+    ("Total income", "", None, None),
+    ("Staff (office & household)", "477/478", 455_000, 0.04),
+    ("Property costs", "471/473/475", 34_000, 0.03),
+    ("Education", "481", 52_000, 0.05),
+    ("Travel & aviation", "493", 130_000, 0.03),
+    ("Insurance", "433", 23_500, 0.03),
+    ("Professional fees", "412", 38_000, 0.03),
+    ("Fund management fees", "455", 97_500, 0.0),
+    ("Other office costs", "4xx", 15_500, 0.03),
+    ("Total expenses", "", None, None),
+    ("Net cash from operations", "", None, None),
+    ("Expected fund capital calls", "150", 2_600_000, -0.30),
+    ("Net cash after capital calls", "", None, None),
 ]
-RENT_ROW = 9
+RENT_ROW = 5
+RENT_RANGE = "RENT_INCOME_FORECAST"
 
 
 def write_forecast(when):
     wb = Workbook()
     ws = wb.active
     ws.title = "Forecast"
-    ws["A1"] = "Harbour Lane Trading Ltd - P&L forecast 2027-2028 (HKD)"
+    ws["A1"] = f"{CO['name_en']} - Family office cash forecast 2027-2028 (HKD)"
     ws["A1"].font = Font(bold=True, size=13)
-    ws["A2"] = "v1, 14 Aug 2026, prepared by A. Chan. Rent flat pending lease renewal (D. Wong)."
+    ws["A2"] = "v1, 14 Aug 2026, prepared by G. Lam. Repulse Bay rent flat pending lease renewal (R. Ho)."
     mons = [D(2027 + i // 12, i % 12 + 1, 1) for i in range(24)]
-    header(ws, ["line", "acct"] + [m.strftime("%b-%y") for m in mons], [26, 9] + [11] * 24, row=4)
-    from openpyxl.utils import get_column_letter as L
+    header(ws, ["line", "acct"] + [m.strftime("%b-%y") for m in mons], [38, 11] + [12] * 24, row=4)
     for i, (label, acct, base, g) in enumerate(FC_ROWS):
         r = 5 + i
         ws.cell(row=r, column=1, value=label)
         ws.cell(row=r, column=2, value=acct)
         for j in range(24):
-            col = L(3 + j)
-            if label == "Gross profit":
-                v = f"={col}5-{col}6"
-            elif label == "Total opex":
-                v = f"=SUM({col}8:{col}13)"
-            elif label == "EBITDA":
-                v = f"={col}7-{col}14"
-            else:
-                v = round(base * (1 + g) ** (j // 12) * (1 + (0.02 * ((j % 12) in (9, 10, 11)) if label == "Revenue" else 0)), -2)
-            c = ws.cell(row=r, column=3 + j, value=v)
-            c.number_format = "#,##0"
+            col = get_column_letter(3 + j)
+            formulas = {"Total income": f"=SUM({col}5:{col}7)", "Total expenses": f"=SUM({col}9:{col}16)",
+                        "Net cash from operations": f"={col}8-{col}17", "Net cash after capital calls": f"={col}18-{col}19"}
+            v = formulas.get(label) or round(base * (1 + g) ** (j // 12), -2)
+            ws.cell(row=r, column=3 + j, value=v).number_format = "#,##0"
         if base is None:
             for c in ws[r]:
                 c.font = Font(bold=True)
-    assert ws.cell(row=RENT_ROW, column=1).value == "Rent"
-    wb.defined_names["RENT_FORECAST"] = DefinedName("RENT_FORECAST", attr_text=f"Forecast!$C${RENT_ROW}:$Z${RENT_ROW}")
+    assert ws.cell(row=RENT_ROW, column=1).value.startswith("Rental income - Flat 12A")
+    wb.defined_names[RENT_RANGE] = DefinedName(RENT_RANGE, attr_text=f"Forecast!$C${RENT_ROW}:$Z${RENT_ROW}")
     a = wb.create_sheet("Assumptions")
-    header(a, ["assumption", "value", "source"], [34, 26, 60])
-    for row in [("Revenue growth 2028", "+4%", "D. Wong email 14 Aug 2026"),
-                ("Headcount", "18, flat", "D. Wong email 14 Aug 2026"),
-                ("Rent 2027-2028", "HK$80,000/month flat", "Pending lease renewal; COMPANY.md; D. Wong email 14 Aug 2026"),
-                ("FX", "USD 7.80, RMB 1.08", "fx_rates.xlsx")]:
+    header(a, ["assumption", "value", "source"], [40, 30, 64])
+    for row in [("Portfolio income 2028", "+3%", "R. Ho email 14 Aug 2026"),
+                ("Headcount", "4 office + 6 household, flat", "R. Ho email 14 Aug 2026"),
+                ("Rental income - Flat 12A Repulse Bay 2027-2028", "HK$95,000/month flat",
+                 "Pending lease renewal; COMPANY.md; R. Ho email 14 Aug 2026"),
+                ("FX", "USD 7.80, RMB 1.08", "fx_rates.xlsx"),
+                ("Capital calls", "HK$2.6m/month 2027, -30% 2028", "commitments.xlsx; GP pacing guidance")]:
         a.append(row)
     save_wb(wb, "sheets/forecast_2027_2028.xlsx", when)
 
@@ -1188,41 +1269,53 @@ def eml(rel, frm, to, subject, when, body, cc=None, extra=None):
     write(rel, m.as_bytes())
 
 
+RENT_ASSUMPTION = "Rental income for Flat 12A Repulse Bay (Halcyon Re lease) assumed flat at HK$95,000/month in 2027-2028 pending lease renewal (R. Ho, Aug 2026)."
+
+
 def company_md(with_forecast):
     sup = "\n".join(f"| {k} | {s['name_en']} {s['name_zh']} | {s['currency']} | {s['domain']} | {s['terms']} days | {s['contract']} |"
                     for k, s in SUP.items())
-    fc = ("\n## Forecast assumptions (2027-2028)\n- Rent assumed flat at HK$80,000 in 2027 pending lease renewal (D. Wong, Aug 2026).\n"
-          "- Revenue +4% p.a.; headcount flat at 18; FX USD 7.80, RMB 1.08.\n- Source: docs/emails/2026-08-14_david_forecast_assumptions.eml\n"
+    fc = (f"\n## Forecast assumptions (2027-2028)\n- {RENT_ASSUMPTION}\n"
+          "- Forecast rent cells: named range RENT_INCOME_FORECAST in sheets/forecast_2027_2028.xlsx.\n"
+          "- Portfolio income +3% in 2028; staff flat (4 office + 6 household); FX USD 7.80, RMB 1.08.\n"
+          "- Source: docs/emails/2026-08-14_raymond_forecast_assumptions.eml\n"
           if with_forecast else "")
     return f"""# COMPANY.md - {CO['name_en']} ({CO['name_zh']})
 
-Hong Kong trading company, 18 staff. Imports electronic components from Shenzhen/Dongguan, resells to HK and SE Asia.
-Functional currency HKD (also RMB, USD). FY = calendar year. BR No. {CO['br']}.
-Office: {CO['addr_en']}. Warehouse: {CO['warehouse']}.
-Bank: {CO['bank']} a/c {CO['bank_acct']}.
+Hong Kong single-family office for the {CO['family']}. Manages about US$350M for the {CO['trust']}: a listed
+portfolio at Lion Rock Private Bank (custodian), four private fund commitments, two rental flats in Hong Kong,
+an art collection and the family's expenses (staff, school fees, travel and aviation, insurance).
+Functional currency HKD (also USD, RMB). FY = calendar year. BR No. {CO['br']}.
+Office: {CO['addr_en']}.
+Bank: {CO['bank']} a/c {CO['bank_acct']} (operating account; fund calls, fees and family bills are paid from here).
+Email domain: {CO['domain']}
 
 ## People
-- David Wong - Director / owner. Approves anything above HK$50,000.
-- Anna Chan - Finance Manager. Month-end close, forecast, budget.
-- Ken Lau - Accounts Clerk. Invoice entry, payments run.
+- Victoria Cheung - Principal (family member). Approves anything above HK${APPROVAL_LIMIT:,}.
+- Raymond Ho - CFO. Forecast, budget, investment reporting.
+- Grace Lam - Fund Accountant. Month-end close, fund capital accounts, invoice register.
+- Jason Yip - Accounts Clerk. Document intake, payments run.
 
 ## Conventions
-- Account codes (ledger/chart_of_accounts.csv): 200 Sales, 310 COGS (all stock purchases), 425 Freight,
-  469 Rent, 471 Building mgmt, 473 R&M, 445 Electricity, 485 Software. Facilities = 445 + 469 + 471 + 473.
-- Invoice register: sheets/invoice_register.xlsx, one row per supplier invoice, amount_hkd = amount x month fx rate.
-- Invoice PDFs filed under docs/invoices/YYYY-MM/; new ones arrive in docs/invoices/inbox/.
+- Account codes (ledger/chart_of_accounts.csv): capital calls -> 150 (Investments - Private Funds);
+  fund management fee notices -> 455 (Fund management fees); 260 Rental income; 433 Insurance; 471 Property management;
+  473 Repairs; 475 Building management & rates. Property = 471 + 473 + 475.
+- Invoice register: sheets/invoice_register.xlsx, one row per payable document (capital call, fee notice, invoice),
+  amount_hkd = amount x month fx rate.
+- Fund commitments: sheets/commitments.xlsx (commitment, called to date, unfunded).
+- Payable PDFs filed under docs/invoices/YYYY-MM/; new ones arrive in docs/invoices/inbox/.
 
-## Suppliers
+## Counterparties
 | ID | Name | Ccy | Known domain | Terms | Contract |
 |---|---|---|---|---|---|
 {sup}
 
 ## Policies
-- Price tolerance: invoice unit price may not exceed the contract price by more than 1%. Otherwise hold.
-- Approval: any invoice or payment above HK$50,000 needs D. Wong's approval.
-- Payments only to bank accounts on the supplier master. Bank changes need written confirmation by the
-  supplier's authorised signatory plus a call-back to a known number. Email alone is never enough.
-- Duplicates: never enter an invoice whose number or supplier+amount matches an existing entry.
+- Price tolerance: an invoice unit price or fee rate may not exceed the contract or side-letter rate by more than 1%. Otherwise hold.
+- Approval: any payment above HK${APPROVAL_LIMIT:,} needs V. Cheung's approval.
+- Payments only to bank accounts on the counterparty master. Wire-instruction changes need a signed letter from the
+  counterparty's authorised signatory plus a call-back to a number on file. Email alone is never enough.
+- Duplicates: never enter a document whose number or counterparty+amount matches an existing entry.
 {fc}"""
 
 
@@ -1233,7 +1326,7 @@ def write(rel, data):
     p.write_bytes(data if isinstance(data, bytes) else data.encode())
 
 
-def git(*args, when=None, who="anna"):
+def git(*args, when=None, who="grace"):
     env = dict(os.environ, GIT_CONFIG_GLOBAL="/dev/null", GIT_CONFIG_SYSTEM="/dev/null",
                GIT_DIR=str(GIT_DIR), GIT_WORK_TREE=str(WS))
     if when:
@@ -1275,11 +1368,11 @@ def main():
         b = RENDER[inv["sid"]](inv)
         pdfs[f"{inv['folder']}/{inv['file']}"] = scan(b, inv["no"]) if inv["file"] in SCANNED else b
         inv["clean_pdf"] = b
-    contracts = {"docs/contracts/S01_supply_agreement_2026.pdf": supply_agreement("S01"),
-                 "docs/contracts/S02_supply_agreement_2026.pdf": supply_agreement("S02"),
-                 "docs/contracts/S03_freight_rate_card_2026.pdf": rate_card(),
+    contracts = {"docs/contracts/S01_subscription_agreement_2024.pdf": subscription_agreement(),
+                 "docs/contracts/S02_side_letter_2024.pdf": side_letter(),
+                 "docs/contracts/S03_property_management_agreement_2026.pdf": pm_agreement(),
                  "docs/contracts/S04_lease_2024_2026.pdf": lease(LEASE_OLD),
-                 "docs/contracts/S05_clouddesk_order_form.pdf": order_form()}
+                 "docs/contracts/S05_art_insurance_policy_2025.pdf": insurance_policy()}
     new_lease = lease(LEASE_NEW)
     sep_bank = [r for r in GL if r["code"] == "090" and r["date"].month == 9]
     opening = balance("090", D(2026, 8, 31))
@@ -1308,8 +1401,11 @@ def main():
         assert inv["date"].weekday() < 5
         assert abs(inv["total"] - sum(q * u for _, _, q, u in inv["lines"])) < 0.005
     for inv in INBOX:
-        assert money(inv["total"]) in text_of(inv["clean_pdf"]) and inv["date"].weekday() < 5
-    assert "82,400" in text_of(new_lease, 2) and "4." in text_of(new_lease, 2) and len(fitz.open(stream=new_lease)) == 3
+        assert money(inv["total"]) in text_of(inv["clean_pdf"]) and inv["date"].weekday() < 5, inv["no"]
+    assert "98,800" in text_of(new_lease, 2) and "4." in text_of(new_lease, 2) and len(fitz.open(stream=new_lease)) == 3
+    sl = contracts["docs/contracts/S02_side_letter_2024.pdf"]
+    assert "rate of 1.50% per annum" in text_of(sl).replace("\n", " ")
+    assert "2.00% p.a." in text_of(INBOX[2]["clean_pdf"])
 
     # ---- staged history
     W = lambda s: datetime.fromisoformat(s)  # noqa: E731
@@ -1321,20 +1417,23 @@ def main():
     for k, v in contracts.items():
         write(k, v)
     write_fx("2026-01", W("2026-01-09T10:12:00"))
-    hashes["setup"] = commit("Set up finance workspace: COMPANY.md, chart of accounts, supplier master, 2026 contracts",
-                             "2026-01-09T10:12:00+08:00", "anna")
+    write_commitments(D(2026, 1, 9), W("2026-01-09T10:12:00"))
+    hashes["setup"] = commit("Set up family office workspace: COMPANY.md, chart of accounts, counterparty master, "
+                             "fund commitments, contracts", "2026-01-09T10:12:00+08:00", "grace")
     write_bva(0, W("2026-01-23T16:40:00"))
-    hashes["budget"] = commit("Budget 2026 approved (D. Wong, 20 Jan)", "2026-01-23T16:40:00+08:00", "anna")
+    hashes["budget"] = commit("Budget 2026 approved (V. Cheung, 20 Jan)", "2026-01-23T16:40:00+08:00", "grace")
     write_gl(D(2026, 6, 30))
     write_payments(D(2026, 6, 30))
     write_bva(6, W("2026-07-10T11:05:00"))
     write_fx("2026-07", W("2026-07-10T11:05:00"))
-    hashes["h1"] = commit("H1 close: GL export Jan-Jun, payments history, budget vs actual to June",
-                          "2026-07-10T11:05:00+08:00", "anna")
+    write_commitments(D(2026, 6, 30), W("2026-07-10T11:05:00"))
+    hashes["h1"] = commit("H1 close: GL export Jan-Jun, payments history, budget vs actual and commitments to June",
+                          "2026-07-10T11:05:00+08:00", "grace")
 
     def enter(until, when_s, msg, who, gl_until=None, bva_m=None, fx_m=None):
         when = W(when_s[:19])
         write_register(until, when.date(), when)
+        write_commitments(until, when)
         for inv in HIST:
             if inv["date"] <= until:
                 rel = f"{inv['folder']}/{inv['file']}"
@@ -1346,80 +1445,93 @@ def main():
             write_fx(fx_m, when)
         return commit(msg, when_s, who)
 
-    hashes["jul"] = enter(D(2026, 7, 31), "2026-08-05T15:20:00+08:00", "Enter July invoices; GL export to 31 Jul", "ken",
+    hashes["jul"] = enter(D(2026, 7, 31), "2026-08-05T15:20:00+08:00",
+                          "Enter July documents (Pearl River call 17, Harbourview Q3 fee); GL export to 31 Jul", "jason",
                           D(2026, 7, 31), 7, "2026-08")
-    eml("docs/emails/2026-08-14_david_forecast_assumptions.eml", f"David Wong <{PEOPLE['david'][1]}>",
-        f"Anna Chan <{PEOPLE['anna'][1]}>", "2027-28 forecast assumptions", datetime(2026, 8, 14, 9, 47),
-        "Anna,\n\nFor the 2027-28 forecast please keep rent flat at HK$80,000/month in 2027 until the warehouse lease is renewed.\n"
-        "Landlord hinted at an increase but nothing is agreed yet. Revenue +4% a year, headcount flat at 18.\n\nDavid\n")
+    eml("docs/emails/2026-08-14_raymond_forecast_assumptions.eml", f"Raymond Ho <{PEOPLE['raymond'][1]}>",
+        f"Grace Lam <{PEOPLE['grace'][1]}>", "2027-28 forecast assumptions", datetime(2026, 8, 14, 9, 47),
+        "Grace,\n\nFor the 2027-28 forecast please keep the Repulse Bay rent (Flat 12A, Halcyon Re) flat at HK$95,000/month\n"
+        "until the lease is renewed. Halcyon have said they want to stay but nothing is agreed yet. Victoria is fine with this.\n"
+        "Portfolio income +3% in 2028, staff flat.\n\nRaymond\n", cc=f"Victoria Cheung <{PEOPLE['victoria'][1]}>")
     write("COMPANY.md", company_md(True))
     write_forecast(W("2026-08-14T17:30:00"))
-    hashes["fc"] = commit("Forecast 2027-28 v1: rent flat pending lease renewal", "2026-08-14T17:30:00+08:00", "anna")
-    hashes["aug"] = enter(D(2026, 8, 31), "2026-09-02T14:10:00+08:00", "Enter August invoices; GL export to 31 Aug", "ken",
+    hashes["fc"] = commit("Forecast 2027-28 v1: rental income flat pending lease renewal", "2026-08-14T17:30:00+08:00", "grace")
+    hashes["aug"] = enter(D(2026, 8, 31), "2026-09-02T14:10:00+08:00",
+                          "Enter August documents (Harbourview call 3/2026); GL export to 31 Aug", "jason",
                           D(2026, 8, 31), 8, "2026-09")
     hashes["sep1"] = enter(D(2026, 9, 3), "2026-09-03T11:45:00+08:00",
-                           "Enter early September invoices (incl. Pacific Freight INV-2291)", "ken")
-    hashes["sep2"] = enter(D(2026, 9, 18), "2026-09-18T16:00:00+08:00", "Enter mid-September invoices", "ken")
+                           "Enter early September invoices (incl. Peak Estates INV-PM-2291)", "jason")
+    hashes["sep2"] = enter(D(2026, 9, 18), "2026-09-18T16:00:00+08:00", "Enter mid-September invoices", "jason")
     write_register(CLOSE, CLOSE, W("2026-10-02T10:30:00"))
+    write_commitments(CLOSE, W("2026-10-02T10:30:00"))
     write_gl(CLOSE)
     write_payments(CLOSE)
     write_bva(9, W("2026-10-02T10:30:00"))
     write_fx("2026-10", W("2026-10-02T10:30:00"))
     write("docs/bank/statement_2026-09.pdf", stmt_pdf)
     hashes["close"] = commit("September close (in progress): bank statement, payments run, GL export to 30 Sep",
-                             "2026-10-02T10:30:00+08:00", "anna")
+                             "2026-10-02T10:30:00+08:00", "grace")
 
     # sidecar sources (backfilled for key historical cells)
     regs = reg_rows(CLOSE, CLOSE)
     rowno = {r[3]: i + 2 for i, r in enumerate(regs)}
-    s01_jul = next(i for i in HIST if i["sid"] == "S01" and i["date"].month == 7)
-    old_lease_p = find_page(contracts["docs/contracts/S04_lease_2024_2026.pdf"], "HK$80,000")
-    s01_c = contracts["docs/contracts/S01_supply_agreement_2026.pdf"]
+    s02_q3 = by_no["HCP3-MF-2026Q3"]
+    old_lease_p = find_page(contracts["docs/contracts/S04_lease_2024_2026.pdf"], "HK$95,000")
+    s01_c = contracts["docs/contracts/S01_subscription_agreement_2024.pdf"]
+    sl_p = find_page(sl, "3.1")
     sources = [
-        dict(file="sheets/forecast_2027_2028.xlsx", sheet="Forecast", cell=f"C{RENT_ROW}:Z{RENT_ROW}", value=80000,
-             sources=[dict(doc="COMPANY.md", page=None, quote="Rent assumed flat at HK$80,000 in 2027 pending lease renewal (D. Wong, Aug 2026)."),
-                      dict(doc="docs/emails/2026-08-14_david_forecast_assumptions.eml", page=None,
-                           quote="please keep rent flat at HK$80,000/month in 2027 until the warehouse lease is renewed"),
+        dict(file="sheets/forecast_2027_2028.xlsx", sheet="Forecast", cell=f"C{RENT_ROW}:Z{RENT_ROW}", value=95000,
+             sources=[dict(doc="COMPANY.md", page=None, quote=RENT_ASSUMPTION),
+                      dict(doc="docs/emails/2026-08-14_raymond_forecast_assumptions.eml", page=None,
+                           quote="please keep the Repulse Bay rent (Flat 12A, Halcyon Re) flat at HK$95,000/month"),
                       dict(doc="docs/contracts/S04_lease_2024_2026.pdf", page=old_lease_p,
-                           quote="The monthly rent shall be HK$80,000 (Hong Kong Dollars Eighty Thousand) exclusive of rates and management fees, fixed for the whole Term.")],
-             reason="Rent held flat at current lease rate until the lease expiring 31 Dec 2026 is renewed.", commit=hashes["fc"]),
-        dict(file="sheets/invoice_register.xlsx", sheet="Register", cell=f"F{rowno['INV-2291']}", value=INV2291["total"],
+                           quote="The monthly rent shall be HK$95,000 (Hong Kong Dollars Ninety-Five Thousand) inclusive of management fees and exclusive of rates, fixed for the whole Term.")],
+             reason="Repulse Bay rent held flat at the current lease rate until the lease expiring 31 Dec 2026 is renewed.",
+             commit=hashes["fc"]),
+        dict(file="sheets/invoice_register.xlsx", sheet="Register", cell=f"F{rowno['INV-PM-2291']}", value=INV2291["total"],
              sources=[dict(doc=f"{INV2291['folder']}/{INV2291['file']}", page=1, quote=f"TOTAL HKD {money(INV2291['total'])}")],
-             reason="Entered Pacific Freight INV-2291 (August/September trucking).", commit=hashes["sep1"]),
-        dict(file="sheets/invoice_register.xlsx", sheet="Register", cell=f"F{rowno[s01_jul['no']]}", value=s01_jul["total"],
-             sources=[dict(doc=f"{s01_jul['folder']}/{s01_jul['file']}", page=1, quote=f"价税合计 人民币（RMB） {money(s01_jul['total'])}"),
-                      dict(doc="docs/contracts/S01_supply_agreement_2026.pdf", page=find_page(s01_c, "SP-4410"), quote="SP-4410 ... RMB 109.00")],
-             reason="Entered Shenzhen Parts July invoice; unit prices match contract §4.2.", commit=hashes["jul"]),
+             reason="Entered Peak Estates INV-PM-2291 (September management fees, inspections and cleaning).", commit=hashes["sep1"]),
+        dict(file="sheets/invoice_register.xlsx", sheet="Register", cell=f"F{rowno[s02_q3['no']]}", value=s02_q3["total"],
+             sources=[dict(doc=f"{s02_q3['folder']}/{s02_q3['file']}", page=1, quote=f"Fee rate: {FEE_RATE:.2f}% p.a. on commitment of USD 10,000,000"),
+                      dict(doc="docs/contracts/S02_side_letter_2024.pdf", page=sl_p, clause="3.1",
+                           quote=f"calculated at the rate of {FEE_RATE:.2f}% per annum of the Commitment")],
+             reason="Entered Harbourview Q3 2026 management fee; rate matches side letter clause 3.1.", commit=hashes["jul"]),
         dict(file="sheets/supplier_master.xlsx", sheet="Suppliers", cell="F2", value=SUP["S01"]["bank_acct"],
-             sources=[dict(doc="docs/contracts/S01_supply_agreement_2026.pdf", page=find_page(s01_c, "2049"),
-                           quote=f"Seller's designated account ... account no. {SUP['S01']['bank_acct']}")],
-             reason="Supplier bank account per signed 2026 supply agreement clause 5.2.", commit=hashes["setup"]),
-        dict(file="sheets/budget_vs_actual_2026.xlsx", sheet="Budget monthly", cell="C" + str(PL_CODES.index("469") + 2), value=80000,
-             sources=[dict(doc="docs/contracts/S04_lease_2024_2026.pdf", page=old_lease_p, quote="The monthly rent shall be HK$80,000")],
-             reason="Budget 2026 rent = current lease rent.", commit=hashes["budget"]),
+             sources=[dict(doc="docs/contracts/S01_subscription_agreement_2024.pdf", page=find_page(s01_c, "2049"),
+                           quote=f"The Fund's designated account ... account no. {SUP['S01']['bank_acct']}")],
+             reason="Fund bank account per signed subscription agreement clause 5.2.", commit=hashes["setup"]),
+        dict(file="sheets/budget_vs_actual_2026.xlsx", sheet="Budget monthly", cell="C" + str(PL_CODES.index("260") + 2),
+             value=157000,
+             sources=[dict(doc="docs/contracts/S04_lease_2024_2026.pdf", page=old_lease_p, quote="The monthly rent shall be HK$95,000")],
+             reason="Budget 2026 rental income = Flat 12A lease HK$95,000 + Flat 21B HK$62,000.", commit=hashes["budget"]),
     ]
     write(".trace/sources.json", json.dumps(sources, indent=2, ensure_ascii=False) + "\n")
-    hashes["src"] = commit("Backfill Trace source index for key cells", "2026-10-02T17:40:00+08:00", "anna")
+    hashes["src"] = commit("Backfill Trace source index for key cells", "2026-10-02T17:40:00+08:00", "grace")
 
     # ---- uncommitted demo material
     for inv in INBOX:
         rel = f"{inv['folder']}/{inv['file']}"
         write(rel, pdfs[rel])
     write("docs/contracts/S04_lease_2027_signed.pdf", new_lease)
-    eml("docs/emails/2026-09-29_landlord_lease_signed.eml", "Raymond Ho <raymond.ho@kbproperties.com.hk>",
-        f"Anna Chan <{PEOPLE['anna'][1]}>", "Countersigned tenancy agreement - Unit 9A, 2027-2029", datetime(2026, 9, 29, 16, 12),
-        "Dear Anna,\n\nPlease find attached the countersigned tenancy agreement for Unit 9A for 1 Jan 2027 - 31 Dec 2029.\n"
-        "Rent and the annual review are set out in clause 4. The original will follow by courier.\n\nBest regards,\nRaymond Ho\nKowloon Bay Properties Ltd\n",
-        cc=f"David Wong <{PEOPLE['david'][1]}>", extra={"X-Attachment": "S04_lease_2027_signed.pdf (saved to docs/contracts/)"})
-    eml("docs/emails/2026-10-02_shenzhenparts_bank_change.eml", f"Shenzhen Parts Accounts <accounts@{FAKE_DOMAIN}>",
-        f"Harbour Lane Accounts <{PEOPLE['ken'][1]}>", "Updated bank details / 银行账户变更通知 - URGENT", datetime(2026, 10, 2, 8, 55),
-        "Dear Harbour Lane accounts team,\n\nPlease note our company bank account has changed. Please pay invoice SP-2026-0917\n"
-        f"and all future invoices to the new account: {NEW_BANK[0]}, account no. {NEW_BANK[1]}.\n"
-        "请将款项汇入以上新账户，旧账户已停止使用。Kindly process this week.\n\nLily Zhang 张丽\nAccounts Dept, Shenzhen Parts Co., Ltd.\n",
+    eml("docs/emails/2026-09-29_peakestates_lease_signed.eml", "Sandy Kwok <leasing@peakestates.com.hk>",
+        f"Grace Lam <{PEOPLE['grace'][1]}>", "Countersigned tenancy agreement - Flat 12A Seaview Court, 2027-2029",
+        datetime(2026, 9, 29, 16, 12),
+        "Dear Grace,\n\nHalcyon Re have countersigned the renewal for Flat 12A, Seaview Court, for 1 Jan 2027 - 31 Dec 2029.\n"
+        "Rent and the annual review are set out in clause 4. The signed copy is attached; the original follows by courier.\n"
+        "Our leasing commission invoice will follow separately.\n\nBest regards,\nSandy Kwok\nLeasing, Peak Estates Property Management Ltd\n",
+        cc=f"Raymond Ho <{PEOPLE['raymond'][1]}>", extra={"X-Attachment": "S04_lease_2027_signed.pdf (saved to docs/contracts/)"})
+    eml("docs/emails/2026-10-02_prg_bank_change.eml", f"Pearl River Fund Accounts <accounts@{FAKE_DOMAIN}>",
+        f"Lantau Peak Accounts <{PEOPLE['jason'][1]}>", "Updated wire instructions / 银行账户变更通知 - URGENT",
+        datetime(2026, 10, 2, 8, 55),
+        "Dear Limited Partner,\n\nPlease note the Fund's bank account has changed due to an audit of our custodian arrangements.\n"
+        "Please pay drawdown notice PRG2-DN-018 and all future drawdowns to the new account:\n"
+        f"{NEW_BANK[0]}, account no. {NEW_BANK[1]}.\n"
+        "请将本次缴款汇入以上新账户，旧账户已停止使用。Kindly process before the due date to avoid default interest.\n\n"
+        "Lily Zhang 张丽\nFund Accounting, Pearl River Capital Management\n",
         extra={"X-Attachment": "scan_1002.pdf (saved to docs/invoices/inbox/)"})
 
     # ---- ground truth
-    s01_in, s02_in, dup_in, s03_in, s05_in = INBOX
+    s01_in, s02_call, s02_fee, dup_in, s03_in, s05_in = INBOX
     last6 = s01[-6:]
 
     def reg_row(inv, status, controls=()):
@@ -1427,55 +1539,45 @@ def main():
         return dict(date=inv["date"].isoformat(), supplier_id=inv["sid"], supplier=SUP[inv["sid"]]["name_en"], invoice_no=inv["no"],
                     currency=inv["currency"], amount=inv["total"], fx_rate=f, amount_hkd=r2(inv["total"] * f),
                     account_code=inv["account"], due_date=inv["due"].isoformat(), status=status,
-                    source_file=f"{inv['folder']}/{inv['file']}", needs_director_approval=r2(inv["total"] * f) > 50000,
-                    controls_fired=list(controls))
+                    source_file=f"{inv['folder']}/{inv['file']}", kind=inv["kind"],
+                    needs_principal_approval=r2(inv["total"] * f) > APPROVAL_LIMIT, controls_fired=list(controls))
 
-    p42 = find_page(s01_c, "SP-4410")
-    fac = {c: dict(budget=sum(budget(c, m) for m in range(1, 10)), actual=r2(sum(actual(c, m) for m in range(1, 10)))) for c in ("445", "469", "471", "473")}
-    for v in fac.values():
+    prop = {c: dict(budget=sum(budget(c, m) for m in range(1, 10)), actual=r2(sum(actual(c, m) for m in range(1, 10))))
+            for c in ("471", "473", "475")}
+    for v in prop.values():
         v["variance"] = r2(v["actual"] - v["budget"])
     rm_small = r2(sum(actual("473", m) for m in range(1, 10)) - 38500 - 9800)
+    pm_extra = r2(prop["471"]["actual"] - prop["471"]["budget"])
     drivers = [
-        dict(driver="Temporary storage licence Unit 3C (Kowloon Bay Properties), Aug + Sep 2026", account="469", amount=24000.0,
-             refs=["KBP/L/2608", "KBP/L/2609"]),
-        dict(driver="Emergency air-con compressor replacement, warehouse (Arctic Breeze Engineering), 14 Jul 2026", account="473", amount=38500.0),
-        dict(driver="Pallet racking repair after safety inspection (Steelform Racking), 16 Sep 2026", account="473", amount=9800.0),
-        dict(driver="Building management fee revised HK$6,800 -> HK$8,000/month from Jun 2026", account="471", amount=4800.0),
-        dict(driver="Summer electricity above budget (Jun-Sep), partly offset by lower Jan-May", account="445", amount=fac["445"]["variance"]),
-        dict(driver="Routine small repairs vs HK$2,000/month budget", account="473", amount=r2(rm_small - 18000)),
+        dict(driver="Emergency water-pipe repair after typhoon, Flat 12A Seaview Court (Swiftfix Building Services), 14 Jul 2026",
+             account="473", amount=38500.0),
+        dict(driver="Air-con replacement, Flat 21B Pinecrest Tower (Arctic Breeze Engineering), 16 Sep 2026", account="473", amount=9800.0),
+        dict(driver="Building management fees revised HK$11,600 -> HK$12,800/month from Jun 2026", account="475", amount=4800.0),
+        dict(driver="Routine small repairs (Island Wide Handyman) vs HK$3,000/month budget", account="473", amount=r2(rm_small - 27000)),
+        dict(driver="Peak Estates extra inspections and cleaning vs HK$18,000/month budget", account="471", amount=pm_extra),
     ]
-    # September cash flow, rebuilt from the written GL: every journal that touches the bank account (090) is one
-    # cash movement, grouped by what it settles. Bank charges inside a payment journal (404) are split out.
-    cf_by_supplier = {SUP[s]["name_en"]: cat for s, cat in (("S01", "Suppliers (stock)"), ("S02", "Suppliers (stock)"),
-                                                             ("S03", "Freight"), ("S04", "Rent & facilities"), ("S05", "Software"))}
-    cf_by_account = {"610": "Customer receipts", "270": "Interest income", "425": "Freight", "485": "Software",
-                     "445": "Rent & facilities", "469": "Rent & facilities", "471": "Rent & facilities", "473": "Rent & facilities",
-                     "477": "Payroll & MPF", "478": "Payroll & MPF", "825": "Payroll & MPF"}
-    with open(WS / "ledger/gl_export_2026.csv") as fh:
-        gl_rows = list(csv.DictReader(fh))
-    cf_journals = {}
-    for r in gl_rows:
-        if r["Date"].startswith("2026-09"):
-            cf_journals.setdefault(r["Journal No."], []).append(r)
-    cf_open = r2(sum(float(r["Net"]) for r in gl_rows if r["Account Code"] == "090" and r["Date"] < "2026-09-01"))
+    # September cash flow, from the GL: every journal that touches the bank account (090) is one cash movement, grouped by
+    # what it settles. Bank charges inside a payment journal (404) are split out.
+    cf_open = balance("090", D(2026, 8, 31))
     cf_lines = {}
 
     def cf_add(cat, amount, jno):
         line = cf_lines.setdefault(cat, dict(amount=0.0, journals=[]))
         line["amount"] = r2(line["amount"] + amount)
-        line["journals"].append(int(jno))
+        line["journals"].append(jno)
 
-    for jno, ls in cf_journals.items():
-        cash = r2(sum(float(r["Net"]) for r in ls if r["Account Code"] == "090"))
+    for j in JOURNALS:
+        if j["date"].month != 9 or j["date"].year != 2026:
+            continue
+        cash = r2(sum(dr - cr for a, dr, cr in j["lines"] if a == "090"))
         if not cash:
             continue
-        fees = r2(sum(float(r["Debit"] or 0) for r in ls if r["Account Code"] == "404"))
-        if fees:
-            cf_add("Bank charges", -fees, jno)
-        if r2(cash + fees):
-            codes = [r["Account Code"] for r in ls if r["Account Code"] not in ("090", "404", "497")]
-            cat = cf_by_supplier.get(ls[0]["Contact"]) if "800" in codes else next((cf_by_account[c] for c in codes if c in cf_by_account), "Other")
-            cf_add(cat, r2(cash + fees), jno)
+        fees = r2(sum(dr for a, dr, cr in j["lines"] if a == "404"))
+        if fees and j["cat"] != "Bank charges":
+            cf_add("Bank charges", -fees, j["no"])
+            cash = r2(cash + fees)
+        if cash:
+            cf_add(j["cat"] or "Other", cash, j["no"])
     cf_close = r2(cf_open + sum(v["amount"] for v in cf_lines.values()))
     assert abs(cf_open - opening) < 0.005 and abs(cf_close - stmt_close) < 0.005, "cash flow does not reconcile to bank statement"
     cash_flow = dict(
@@ -1489,63 +1591,73 @@ def main():
                      reconciles_to=dict(doc="docs/bank/statement_2026-09.pdf", opening=opening, closing=stmt_close),
                      output_file="sheets/cash_flow_2026-09.xlsx",
                      notes=["Built from GL account 090 lines; journal numbers are the 'Journal No.' column of ledger/gl_export_2026.csv",
-                            "TT charges (404) inside supplier payment journals are shown under Bank charges, not the supplier line",
-                            "Payroll & MPF = net salaries paid plus MPF remitted (both employer and employee parts)"])
-
+                            "TT charges (404) inside payment journals are shown under Bank charges, not the counterparty line",
+                            "Staff & MPF = net salaries paid plus MPF remitted (both employer and employee parts)"])
+    commit_rows = {r[1]: r for r in commitments(CLOSE) if r[1]}
+    hcp = commit_rows["S02"]
     expected = dict(
         as_of=TODAY.isoformat(),
         planted_problems=[
-            dict(id="P1", control="PRICE-001", invoice_file=f"docs/invoices/inbox/{s01_in['file']}", invoice_no=s01_in["no"], supplier_id="S01",
-                 evidence=dict(item="SP-4410", invoice_unit_price=118.0, contract_unit_price=109.0, currency="RMB",
-                               pct_over=round((118 - 109) / 109 * 100, 2), tolerance_pct=1.0, qty=2000, overcharge_rmb=18000.0,
-                               contract_ref=dict(doc="docs/contracts/S01_supply_agreement_2026.pdf", page=p42, clause="4.2"))),
+            dict(id="P1", control="PRICE-001", invoice_file=f"docs/invoices/inbox/{s02_fee['file']}", invoice_no=s02_fee["no"], supplier_id="S02",
+                 evidence=dict(kind="fee_rate", invoice_fee_rate_pct=FEE_RATE_WRONG, contract_fee_rate_pct=FEE_RATE, currency="USD",
+                               pct_over=round((FEE_RATE_WRONG - FEE_RATE) / FEE_RATE * 100, 2), tolerance_pct=1.0,
+                               invoice_amount=s02_fee["total"], expected_amount=r2(SUP["S02"]["commitment"] * FEE_RATE / 100 / 4),
+                               overcharge_usd=r2(s02_fee["total"] - SUP["S02"]["commitment"] * FEE_RATE / 100 / 4),
+                               contract_ref=dict(doc="docs/contracts/S02_side_letter_2024.pdf", page=sl_p, clause="3.1"))),
             dict(id="P2", control="BANK-001", invoice_file=f"docs/invoices/inbox/{s01_in['file']}", invoice_no=s01_in["no"], supplier_id="S01",
                  evidence=dict(invoice_bank_account=NEW_BANK[1], invoice_last4="7731", master_bank_account=SUP["S01"]["bank_acct"],
                                master_last4="2049", last_6_payments=[dict(date=p["payment_date"].isoformat(), invoice_no=p["invoice_no"],
                                                                           amount=p["amount"], account=p["bank_account_paid"]) for p in last6],
-                               email="docs/emails/2026-10-02_shenzhenparts_bank_change.eml",
-                               contract_clause=dict(doc="docs/contracts/S01_supply_agreement_2026.pdf", page=find_page(s01_c, "5.3"), clause="5.3"))),
+                               email="docs/emails/2026-10-02_prg_bank_change.eml",
+                               contract_clause=dict(doc="docs/contracts/S01_subscription_agreement_2024.pdf", page=find_page(s01_c, "5.3"), clause="5.3"))),
             dict(id="P3", control="DOMAIN-001", invoice_file=f"docs/invoices/inbox/{s01_in['file']}", invoice_no=s01_in["no"], supplier_id="S01",
                  evidence=dict(sender_domain=FAKE_DOMAIN, known_domain=SUP["S01"]["domain"],
-                               email="docs/emails/2026-10-02_shenzhenparts_bank_change.eml", invoice_contact_email=f"accounts@{FAKE_DOMAIN}")),
+                               email="docs/emails/2026-10-02_prg_bank_change.eml", invoice_contact_email=f"accounts@{FAKE_DOMAIN}")),
             dict(id="P4", control="DUP-001", invoice_file=f"docs/invoices/inbox/{dup_in['file']}", invoice_no=dup_in["no"], supplier_id="S03",
-                 evidence=dict(matches_invoice_no="INV-2291", original_date=INV2291["date"].isoformat(), entered="2026-09-03",
-                               amount=INV2291["total"], currency="HKD", register_row=rowno["INV-2291"],
+                 evidence=dict(matches_invoice_no="INV-PM-2291", original_date=INV2291["date"].isoformat(), entered="2026-09-03",
+                               amount=INV2291["total"], currency="HKD", register_row=rowno["INV-PM-2291"],
                                original_status="Approved (due 2026-10-01, unpaid)")),
         ],
-        clean_invoices=[f"docs/invoices/inbox/{i['file']}" for i in (s02_in, s03_in, s05_in)],
+        clean_invoices=[f"docs/invoices/inbox/{i['file']}" for i in (s02_call, s03_in, s05_in)],
+        register_seed_rows=len(regs),
         tasks=[
-            dict(id=1, prompt="We signed the new warehouse lease. Update the forecast.",
-                 expected=dict(file="sheets/forecast_2027_2028.xlsx", named_range="RENT_FORECAST", sheet="Forecast",
-                               cells={f"{__import__('openpyxl').utils.get_column_letter(3 + j)}{RENT_ROW}": (82400.0 if j < 12 else 84872.0) for j in range(24)},
+            dict(id=1, prompt="Halcyon Re signed the Repulse Bay renewal. Update the forecast.",
+                 expected=dict(file="sheets/forecast_2027_2028.xlsx", named_range=RENT_RANGE, sheet="Forecast",
+                               cells={f"{get_column_letter(3 + j)}{RENT_ROW}": (98800.0 if j < 12 else 101764.0) for j in range(24)},
                                changed_cells=24, source=dict(doc="docs/contracts/S04_lease_2027_signed.pdf", page=3, clause="4"),
-                               also=["COMPANY.md rent assumption should be updated (lease renewed, +3%/yr)",
+                               also=["COMPANY.md rental income assumption should be updated (lease renewed, +3%/yr)",
                                      "supplier_master S04 contract_file -> S04_lease_2027_signed.pdf"])),
-            dict(id=2, prompt="Enter this week's supplier invoices.",
-                 expected=dict(rows=[reg_row(s02_in, "Entered"), reg_row(s03_in, "Entered"), reg_row(s05_in, "Entered"),
-                                     reg_row(s01_in, "HELD", ["PRICE-001", "BANK-001", "DOMAIN-001"]), reg_row(dup_in, "HELD", ["DUP-001"])])),
-            dict(id=3, prompt="Why is 2027 rent 82,400?",
-                 expected=dict(facts=["New tenancy agreement KBP/L/2027/09A signed 29 Sep 2026 with Kowloon Bay Properties",
-                                      "Clause 4.1 (page 3): rent HK$82,400/month from 1 Jan 2027",
-                                      "Clause 4.2: +3% every 1 January (HK$84,872 in 2028)",
-                                      "Previously HK$80,000 flat: old lease (expires 31 Dec 2026) and COMPANY.md assumption by D. Wong, Aug 2026",
-                                      "Increase vs prior forecast: +HK$2,400/month (+3.0%)"],
+            dict(id=2, prompt="Enter this week's capital calls, fee notices and invoices.",
+                 expected=dict(rows=[reg_row(s02_call, "Entered"), reg_row(s03_in, "Entered"), reg_row(s05_in, "Entered"),
+                                     reg_row(s01_in, "HELD", ["BANK-001", "DOMAIN-001"]), reg_row(s02_fee, "HELD", ["PRICE-001"]),
+                                     reg_row(dup_in, "HELD", ["DUP-001"])])),
+            dict(id=3, prompt="Why is 2027 rental income for Flat 12A 98,800?",
+                 expected=dict(facts=["Renewal tenancy agreement LPFO/L/2027/12A with Halcyon Re Asia Ltd signed 29 Sep 2026",
+                                      "Clause 4.1 (page 3): rent HK$98,800/month from 1 Jan 2027",
+                                      "Clause 4.2: +3% every 1 January (HK$101,764 in 2028)",
+                                      "Previously HK$95,000 flat: old lease (expires 31 Dec 2026) and COMPANY.md assumption by R. Ho, Aug 2026",
+                                      "Increase vs prior forecast: +HK$3,800/month (+4.0%)"],
                                sources=[dict(doc="docs/contracts/S04_lease_2027_signed.pdf", page=3, clause="4"),
-                                        dict(doc="docs/emails/2026-09-29_landlord_lease_signed.eml"),
-                                        dict(doc="COMPANY.md"), dict(doc="docs/emails/2026-08-14_david_forecast_assumptions.eml"),
-                                        dict(commit=hashes["fc"], note="forecast v1 rent flat")])),
+                                        dict(doc="docs/emails/2026-09-29_peakestates_lease_signed.eml"),
+                                        dict(doc="COMPANY.md"), dict(doc="docs/emails/2026-08-14_raymond_forecast_assumptions.eml"),
+                                        dict(commit=hashes["fc"], note="forecast v1 rental income flat")])),
             dict(id=4, prompt="Which contracts need action in the next 30 days?",
-                 expected=dict(items=[dict(contract="docs/contracts/S05_clouddesk_order_form.pdf", supplier_id="S05",
+                 expected=dict(items=[dict(contract="docs/contracts/S05_art_insurance_policy_2025.pdf", supplier_id="S05",
                                            renewal_date="2026-11-16", notice_days=30, notice_deadline="2026-10-17",
-                                           commitment_if_missed="12 months x USD 1,450 = USD 17,400")],
-                               not_in_window=["S04 old lease expires 2026-12-31 (already replaced by new lease)",
-                                              "S01/S02 supply agreements expire 2026-12-31"])),
-            dict(id=5, prompt="Why is Facilities over budget YTD?",
-                 expected=dict(period="Jan-Sep 2026", accounts=fac,
-                               facilities_budget=sum(v["budget"] for v in fac.values()),
-                               facilities_actual=r2(sum(v["actual"] for v in fac.values())),
-                               facilities_variance=r2(sum(v["variance"] for v in fac.values())), drivers=drivers)),
+                                           commitment_if_missed="12 months x USD 2,450 = USD 29,400")],
+                               not_in_window=["S04 old lease expires 2026-12-31 (already replaced by the renewal)",
+                                              "S03 property management agreement expires 2026-12-31"])),
+            dict(id=5, prompt="Why are property costs over budget YTD?",
+                 expected=dict(period="Jan-Sep 2026", accounts=prop,
+                               property_budget=sum(v["budget"] for v in prop.values()),
+                               property_actual=r2(sum(v["actual"] for v in prop.values())),
+                               property_variance=r2(sum(v["variance"] for v in prop.values())), drivers=drivers)),
             dict(id=6, prompt="Prepare September's cash flow report.", expected=cash_flow),
+            dict(id=7, prompt="How much do we still owe Harbourview Capital Partners III?",
+                 expected=dict(file="sheets/commitments.xlsx", fund=hcp[0], currency="USD", commitment=hcp[3],
+                               called_to_date=hcp[4], unfunded=r2(hcp[3] - hcp[4]), as_of=CLOSE.isoformat(),
+                               pending=dict(doc=f"docs/invoices/inbox/{s02_call['file']}", amount=s02_call["total"],
+                                            unfunded_after=r2(hcp[3] - hcp[4] - s02_call["total"])))),
         ],
     )
     write("ground_truth/expected.json", json.dumps(expected, indent=2, ensure_ascii=False) + "\n")
@@ -1557,7 +1669,7 @@ def main():
         for r in csv.DictReader(f):
             gl_sum[r["Account Code"]] = gl_sum.get(r["Account Code"], 0) + float(r["Net"])
     for row in wb["YTD"].iter_rows(min_row=5, max_row=4 + len(PL_CODES), values_only=True):
-        g = gl_sum.get(row[0], 0) * (-1 if ACC[row[0]][3] == "Revenue" else 1)
+        g = gl_sum.get(row[0], 0) * (-1 if ACC[row[0]][2] == "Revenue" else 1)
         assert abs(g - row[4]) < 0.01, (row, g)
     wbr = load_workbook(WS / "sheets/invoice_register.xlsx")["Register"]
     assert abs(sum(r[5] for r in wbr.iter_rows(min_row=2, values_only=True)) - sum(i["total"] for i in HIST)) < 0.01
@@ -1569,10 +1681,10 @@ def main():
         print(f"  {d.relative_to(WS)}/  ({len(files)} files)")
     print(f"GL rows {len(GL)} ({len(JOURNALS)} journals); register rows {len(HIST)}; payments {len(PAYMENTS)}; "
           f"Sep bank lines {len(stmt_lines)}; opening {money(opening)} closing {money(stmt_close)}")
-    for code in ("425", "445", "469", "471", "473"):
+    for code in ("471", "473", "475", "481", "455"):
         b = sum(budget(code, m) for m in range(1, 10))
         a = sum(actual(code, m) for m in range(1, 10))
-        print(f"  {code} {ACC[code][1]:<28} budget {b:>10,.0f} actual {a:>12,.2f} var {a - b:>+10,.0f}")
+        print(f"  {code} {ACC[code][1]:<38} budget {b:>10,.0f} actual {a:>12,.2f} var {a - b:>+10,.0f}")
     print(git("log", "--format=%h %ad %an  %s", "--date=short"))
     print(git("status", "--short"))
 

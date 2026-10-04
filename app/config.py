@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     # Trace
     trace_workspace: str = "runtime/workspace"  # where the app reads and writes
     trace_seed_workspace: str = "workspace"  # pristine copy, never written by the app
-    trace_user: str = "Anna Chan"
+    trace_user: str = "Jason Yip"  # default "Working as" user (must be in COMPANY.md)
 
 
 @lru_cache
