@@ -55,8 +55,24 @@ def reset() -> None:
     indexer.build()
 
 
+def _seed_head() -> str:
+    src = seed()
+    out = subprocess.run(
+        ["git", f"--git-dir={src / '.trace' / 'git'}", "rev-parse", "HEAD"],
+        capture_output=True,
+        text=True,
+    )
+    return out.stdout.strip()
+
+
 def ensure() -> None:
+    """Create the runtime copy if missing, or replace it when the seed was regenerated (its
+    history no longer contains the seed's HEAD, e.g. after switching demo company)."""
     if not (root() / ".trace" / "git").exists():
+        reset()
+        return
+    head = _seed_head()
+    if head and git("cat-file", "-t", head, check=False).strip() != "commit":
         reset()
 
 
