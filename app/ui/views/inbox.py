@@ -262,11 +262,11 @@ def card(cs: ChangeSet) -> None:
 
     # Status indicator
     if color == "red":
-        status_badge = f'<span class="status-held">HELD</span>'
+        status_badge = ":red[**HELD**]"
     elif color == "green":
-        status_badge = f'<span class="status-ready">READY</span>'
+        status_badge = ":green[**READY**]"
     else:
-        status_badge = f'<span class="status-entered">{label}</span>'
+        status_badge = f":blue[**{label}**]"
 
     with st.expander(
         f"{status_badge} **{cs.title}**{amount}",
@@ -281,7 +281,7 @@ def card(cs: ChangeSet) -> None:
             if pages > 1:
                 default = cs.lease.evidence.page if cs.lease and cs.lease.evidence.page else 1
                 page = st.number_input("Page", 1, pages, default, key=f"pg-{cs.id}")
-            st.image(reader.page_png(cs.trigger, page), use_column_width=True)
+            st.image(reader.page_png(cs.trigger, page), use_container_width=True)
         with right:
             if cs.invoice:
                 extracted(cs)
@@ -318,7 +318,6 @@ if lease_css:
 
     for lease_cs in lease_css:
         with st.container(border=True):
-            st.markdown(f'<div class="contract-section">', unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 1, 1])
             col1.markdown(f"**{lease_cs.title}**")
             col2.metric("Cells", "24")
