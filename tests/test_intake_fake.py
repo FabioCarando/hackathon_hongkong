@@ -163,7 +163,7 @@ def test_full_demo_flow(ws, monkeypatch):
     monkeypatch.setattr(reader, "read", tracking_read)
     css = intake.process_inbox("Jason Yip", print)
     by_doc = {cs.trigger: cs for cs in css}
-    assert len(css) == 6  # 5 inbox documents + lease
+    assert len(css) == 3  # bank-flagged call, overcharged invoice, lease
 
     # planted problems fire (bank = flag, price = hold), clean invoices are not held or flagged
     fired = {(p["invoice_file"], p["control"]) for p in ws["planted_problems"]}
@@ -241,7 +241,7 @@ def test_full_demo_flow(ws, monkeypatch):
 
     # every Trace commit's changed cells have sources with the commit filled in
     assert all(cs.commit for cs in changes.all_changesets() if cs.status != "proposed")
-    assert len(workspace.log()) == 10 + 6
+    assert len(workspace.log()) == 10 + 3
 
     # clearing the flag after a call-back lifts the payment block
     d2, _ = decisions.clear_flag(

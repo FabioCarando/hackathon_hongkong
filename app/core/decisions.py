@@ -37,12 +37,27 @@ def guard(cs: ChangeSet, answer: Answer, reason: str) -> None:
 
 
 def accept(cs_id: str, user: str) -> str:
-    """Accept a clean (proposed) change set as is."""
+    """Accept a proposed change set as is. A bank-flagged one is entered with payment blocked,
+    and that call is logged as a decision."""
     cs = changes.get(cs_id)
     cs.status, cs.decided_by = "accepted", user
-    return changes.apply(
-        cs, user, row_status="Payment blocked" if cs.payment_blocked else "Entered"
+    if not cs.payment_blocked:
+        return changes.apply(cs, user, row_status="Entered")
+    d = Decision(
+        id=changes.next_id("D", [x.id for x in all_decisions()]),
+        at=datetime.now(),
+        by=user,
+        changeset_id=cs.id,
+        answer="enter_blocked",
+        reason="Bank account doesn't match the master: entered, payment blocked until a call-back.",
+        findings=[f.control for f in cs.findings if f.severity == "flag"],
     )
+    store.append_jsonl(FILE, d)
+    cs.decision = d.id
+    h = changes.apply(cs, user, row_status="Payment blocked", decision=d)
+    d.commit = h
+    _rewrite([d if x.id == d.id else x for x in all_decisions()])
+    return h
 
 
 def clear_flag(cs_id: str, reason: str, user: str) -> tuple[Decision, str]:

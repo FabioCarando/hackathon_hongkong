@@ -124,6 +124,8 @@ def request(params: dict[str, Any], stream: bool = False) -> dict[str, Any]:
             kwargs["tool_choice"] = _tool_choice(tool_config["toolChoice"])
         # only route to upstream providers that actually support tools / tool_choice
         extra["provider"] = {"require_parameters": True}
+    # fastest upstream first (e.g. Cerebras/Groq for gpt-oss: ~0.4 s vs 1-3 s on the default route)
+    extra["provider"] = {**extra.get("provider", {}), "sort": "throughput"}
     if extra:
         kwargs["extra_body"] = extra
     if stream:

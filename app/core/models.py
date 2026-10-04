@@ -172,7 +172,7 @@ class NewRow(BaseModel):
     reason: str
 
 
-Answer = Literal["reject", "approve_once", "approve_and_remember"]
+Answer = Literal["reject", "approve_once", "approve_and_remember", "enter_blocked"]
 
 
 class Question(BaseModel):

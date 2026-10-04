@@ -80,11 +80,7 @@
       }
     }
   ],
-  "clean_invoices": [
-    "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
-    "docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf",
-    "docs/invoices/inbox/Invoice_MAI-10044.pdf"
-  ],
+  "clean_invoices": [],
   "register_seed_rows": 9,
   "tasks": [
     {
@@ -137,57 +133,6 @@
       "prompt": "Enter this week's capital calls, fee notices and invoices.",
       "expected": {
         "rows": [
-          {
-            "date": "2026-09-30",
-            "supplier_id": "S02",
-            "supplier": "Harbourview Capital Partners III LP",
-            "invoice_no": "HCP3-CN-2026-04",
-            "currency": "USD",
-            "amount": 600000.0,
-            "fx_rate": 7.8,
-            "amount_hkd": 4680000.0,
-            "account_code": "150",
-            "due_date": "2026-10-10",
-            "status": "Entered",
-            "source_file": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
-            "kind": "capital_call",
-            "needs_principal_approval": true,
-            "controls_fired": []
-          },
-          {
-            "date": "2026-10-01",
-            "supplier_id": "S02",
-            "supplier": "Harbourview Capital Partners III LP",
-            "invoice_no": "HCP3-MF-2026Q4",
-            "currency": "USD",
-            "amount": 37500.0,
-            "fx_rate": 7.8,
-            "amount_hkd": 292500.0,
-            "account_code": "455",
-            "due_date": "2026-10-31",
-            "status": "Entered",
-            "source_file": "docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf",
-            "kind": "fee_notice",
-            "needs_principal_approval": false,
-            "controls_fired": []
-          },
-          {
-            "date": "2026-10-01",
-            "supplier_id": "S05",
-            "supplier": "Meridian Fine Art Insurance Ltd",
-            "invoice_no": "MAI-10044",
-            "currency": "USD",
-            "amount": 2450.0,
-            "fx_rate": 7.8,
-            "amount_hkd": 19110.0,
-            "account_code": "433",
-            "due_date": "2026-10-16",
-            "status": "Entered",
-            "source_file": "docs/invoices/inbox/Invoice_MAI-10044.pdf",
-            "kind": "invoice",
-            "needs_principal_approval": false,
-            "controls_fired": []
-          },
           {
             "date": "2026-09-30",
             "supplier_id": "S01",
@@ -443,12 +388,7 @@
         "commitment": 10000000.0,
         "called_to_date": 5200000.0,
         "unfunded": 4800000.0,
-        "as_of": "2026-09-30",
-        "pending": {
-          "doc": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
-          "amount": 600000.0,
-          "unfunded_after": 4200000.0
-        }
+        "as_of": "2026-09-30"
       }
     }
   ]

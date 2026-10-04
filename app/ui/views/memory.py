@@ -48,6 +48,9 @@ with exp_tab:
                     f"{value}{when}{learned}  {chips([e.source])}"
                 )
 
+# friendlier names for findings shown on decisions
+ABOUT = {"CONTRACT-001": "Harbour Bay Residence"}
+
 with dec_tab:
     ds = decisions.all_decisions()
     if not ds:
@@ -56,6 +59,7 @@ with dec_tab:
         "reject": ":red-badge[rejected]",
         "approve_once": ":orange-badge[approved once]",
         "approve_and_remember": ":violet-badge[approved & remembered]",
+        "enter_blocked": ":red-badge[entered · payment blocked]",
     }
     for d in reversed(ds):
         with st.container(border=True):
@@ -65,6 +69,6 @@ with dec_tab:
             )
             st.markdown(f":material/format_quote: _{d.reason}_")
             if d.findings:
-                st.caption("About: " + ", ".join(d.findings))
+                st.caption("About: " + ", ".join(ABOUT.get(f, f) for f in d.findings))
             if d.memory_updates:
                 st.caption("Memory updated: " + ", ".join(d.memory_updates))
