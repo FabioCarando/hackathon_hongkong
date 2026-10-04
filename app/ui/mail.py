@@ -30,15 +30,9 @@ def _watch() -> None:
 
 
 def mail_watch() -> None:
-    """Mailbox status line + live polling."""
+    """Live mailbox polling (silent; no status line)."""
     if mailbox.configured():
-        st.caption(
-            f":material/mark_email_unread: Watching **{settings.trace_imap_user}** for subjects "
-            f"with `{settings.trace_mail_tag}` (every 10 s)"
-        )
         _watch()
-    else:
-        st.caption(":material/mail: Live mailbox off (set TRACE_IMAP_* in .env)")
 
 
 def email_preview(cs: ChangeSet) -> None:

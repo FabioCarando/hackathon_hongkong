@@ -28,12 +28,7 @@ def setup() -> None:
 
 def sidebar() -> None:
     with st.sidebar:
-        people = list(workspace.users())
-        default = people.index(settings.trace_user) if settings.trace_user in people else 0
-        st.selectbox("Working as", people, key="trace_user", index=default)
-
         # BRAIN STATUS
-        st.divider()
         st.subheader("Brain Status")
 
         files = indexer.load()

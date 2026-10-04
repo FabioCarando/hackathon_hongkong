@@ -116,16 +116,6 @@ st.markdown(
 # ============ MAIN ============
 st.markdown('<div class="hero-title">Ready to Trace</div>', unsafe_allow_html=True)
 
-names = {r["id"]: r["name_en"] for r in sheets.suppliers()}
-for d in ex.contract_deadlines(TODAY):
-    yearly = f" or commit to USD {d['monthly'] * 12:,.0f} for another year" if d["monthly"] else ""
-    st.warning(
-        f"**{names.get(d['supplier_id'], d['supplier_id'])} auto-renews "
-        f"{date.fromisoformat(d['renewal_date']):%d %b}.** Cancel by "
-        f"**{date.fromisoformat(d['notice_deadline']):%d %b %Y}**{yearly}.  {chips([d['source']])}",
-        icon=":material/event:",
-    )
-
 pending = intake.pending_docs()
 c1, c2 = st.columns([3, 1])
 
@@ -281,11 +271,11 @@ def card(cs: ChangeSet) -> None:
 
     # Status indicator
     if color == "red":
-        status_badge = '<span class="status-held">HELD</span>'
+        status_badge = ":red[**HELD**]"
     elif color == "green":
-        status_badge = '<span class="status-ready">READY</span>'
+        status_badge = ":green[**READY**]"
     else:
-        status_badge = f'<span class="status-entered">{label}</span>'
+        status_badge = f":blue[**{label}**]"
 
     with st.expander(
         f"{status_badge} **{cs.title}**{amount}",

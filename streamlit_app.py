@@ -11,9 +11,7 @@ nav = st.navigation(
     {
         "Trace": [
             st.Page(f"{VIEWS}/inbox.py", title="Inbox", icon=":material/inbox:", default=True),
-            st.Page(f"{VIEWS}/files.py", title="Files", icon=":material/folder_open:"),
             st.Page(f"{VIEWS}/memory.py", title="Memory", icon=":material/psychology:"),
-            st.Page(f"{VIEWS}/history.py", title="History", icon=":material/history:"),
             st.Page(f"{VIEWS}/ask.py", title="Ask the brain", icon=":material/forum:"),
         ],
     }
