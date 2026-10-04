@@ -3,8 +3,10 @@
 Run:
     uv run --with openpyxl --with fpdf2 --with pymupdf python scripts/generate_workspace.py
 
-Deterministic (fixed seed, fixed timestamps). Wipes and rebuilds workspace/, including a nested git
-repo with backdated commits. Inbox invoices, the 2027 lease and the two newest emails stay
+Deterministic (fixed seed, fixed timestamps). Wipes and rebuilds workspace/, including its own git
+history with backdated commits. That history lives in workspace/.trace/git (not workspace/.git) so the
+outer repo can track the workspace files and its history as plain files. Use it with:
+    git --git-dir=workspace/.trace/git log      (core.worktree points back at workspace/) Inbox invoices, the 2027 lease and the two newest emails stay
 untracked (they are the demo). ground_truth/ is git-ignored inside the workspace.
 """
 
@@ -37,6 +39,7 @@ from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[1]
 WS = ROOT / "workspace"
+GIT_DIR = WS / ".trace" / "git"
 SEED = 20261005
 rng = random.Random(SEED)
 fake = Faker("en_GB")
@@ -1231,7 +1234,8 @@ def write(rel, data):
 
 
 def git(*args, when=None, who="anna"):
-    env = dict(os.environ, GIT_CONFIG_GLOBAL="/dev/null", GIT_CONFIG_SYSTEM="/dev/null")
+    env = dict(os.environ, GIT_CONFIG_GLOBAL="/dev/null", GIT_CONFIG_SYSTEM="/dev/null",
+               GIT_DIR=str(GIT_DIR), GIT_WORK_TREE=str(WS))
     if when:
         name, mail, _ = PEOPLE[who]
         env.update(GIT_AUTHOR_NAME=name, GIT_AUTHOR_EMAIL=mail, GIT_COMMITTER_NAME=name, GIT_COMMITTER_EMAIL=mail,
@@ -1259,8 +1263,11 @@ def find_page(data, needle):
 def main():
     if WS.exists():
         shutil.rmtree(WS)
-    WS.mkdir()
+    GIT_DIR.mkdir(parents=True)
     git("init", "-q", "-b", "main")
+    git("config", "core.worktree", "../..")
+    (GIT_DIR / "info").mkdir(exist_ok=True)
+    (GIT_DIR / "info" / "exclude").write_text("/.trace/git/\n")
 
     # ---- render documents once
     pdfs = {}
@@ -1508,7 +1515,7 @@ def main():
 
     # ---- summary
     print("workspace/ generated")
-    for d in sorted({p.parent for p in WS.rglob("*") if p.is_file() and ".git" not in p.parts}):
+    for d in sorted({p.parent for p in WS.rglob("*") if p.is_file() and GIT_DIR not in p.parents}):
         files = sorted(f.name for f in d.iterdir() if f.is_file())
         print(f"  {d.relative_to(WS)}/  ({len(files)} files)")
     print(f"GL rows {len(GL)} ({len(JOURNALS)} journals); register rows {len(HIST)}; payments {len(PAYMENTS)}; "

@@ -1,0 +1,48 @@
+payment_date,supplier_id,supplier,invoice_no,amount,currency,amount_hkd,bank_name,bank_account_paid,payment_ref
+2026-01-02,S03,Pacific Freight Logistics Ltd,INV-1896,22485.00,HKD,22485.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260102-S03
+2026-01-08,S04,Kowloon Bay Properties Ltd,KBP/R/2601,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260108-S04
+2026-01-09,S01,"Shenzhen Parts Co., Ltd.",SP-2025-1285,332180.00,RMB,356096.96,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260109-S01
+2026-01-14,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0298,36720.00,USD,286048.80,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260114-S02
+2026-01-16,S05,CloudDesk Inc.,CD-9945,1450.00,USD,11295.50,Sierra Mesa Bank,4410-0928-1173,PAY-260116-S05
+2026-02-04,S03,Pacific Freight Logistics Ltd,INV-1940,22350.00,HKD,22350.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260204-S03
+2026-02-06,S01,"Shenzhen Parts Co., Ltd.",SP-2025-1310,347050.00,RMB,373772.85,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260206-S01
+2026-02-09,S04,Kowloon Bay Properties Ltd,KBP/R/2602,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260209-S04
+2026-02-16,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0307,35350.00,USD,276083.50,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260216-S02
+2026-02-17,S05,CloudDesk Inc.,CD-9956,1450.00,USD,11324.50,Sierra Mesa Bank,4410-0928-1173,PAY-260217-S05
+2026-03-05,S03,Pacific Freight Logistics Ltd,INV-1984,16290.00,HKD,16290.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260305-S03
+2026-03-09,S01,"Shenzhen Parts Co., Ltd.",SP-2026-0666,319700.00,RMB,344956.30,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260309-S01
+2026-03-09,S04,Kowloon Bay Properties Ltd,KBP/R/2603,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260309-S04
+2026-03-17,S05,CloudDesk Inc.,CD-9967,1450.00,USD,11339.00,Sierra Mesa Bank,4410-0928-1173,PAY-260317-S05
+2026-03-18,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0316,37750.00,USD,295205.00,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260318-S02
+2026-04-02,S03,Pacific Freight Logistics Ltd,INV-2028,22485.00,HKD,22485.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260402-S03
+2026-04-08,S04,Kowloon Bay Properties Ltd,KBP/R/2604,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260408-S04
+2026-04-10,S01,"Shenzhen Parts Co., Ltd.",SP-2026-0692,283030.00,RMB,304540.28,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260410-S01
+2026-04-15,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0325,33490.00,USD,261222.00,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260415-S02
+2026-04-16,S05,CloudDesk Inc.,CD-9978,1450.00,USD,11310.00,Sierra Mesa Bank,4410-0928-1173,PAY-260416-S05
+2026-05-04,S03,Pacific Freight Logistics Ltd,INV-2072,16335.00,HKD,16335.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260504-S03
+2026-05-08,S01,"Shenzhen Parts Co., Ltd.",SP-2026-0715,371970.00,RMB,399123.81,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260508-S01
+2026-05-08,S04,Kowloon Bay Properties Ltd,KBP/R/2605,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260508-S04
+2026-05-15,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0334,30060.00,USD,234167.40,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260515-S02
+2026-05-18,S05,CloudDesk Inc.,CD-9989,1450.00,USD,11295.50,Sierra Mesa Bank,4410-0928-1173,PAY-260518-S05
+2026-06-03,S03,Pacific Freight Logistics Ltd,INV-2116,11760.00,HKD,11760.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260603-S03
+2026-06-08,S01,"Shenzhen Parts Co., Ltd.",SP-2026-0741,294090.00,RMB,317029.02,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260608-S01
+2026-06-08,S04,Kowloon Bay Properties Ltd,KBP/R/2606,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260608-S04
+2026-06-15,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0343,32460.00,USD,253512.60,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260615-S02
+2026-06-16,S05,CloudDesk Inc.,CD-10000,1450.00,USD,11324.50,Sierra Mesa Bank,4410-0928-1173,PAY-260616-S05
+2026-07-03,S03,Pacific Freight Logistics Ltd,INV-2160,16290.00,HKD,16290.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260703-S03
+2026-07-07,S01,"Shenzhen Parts Co., Ltd.",SP-2026-0767,308130.00,RMB,333704.79,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260707-S01
+2026-07-08,S04,Kowloon Bay Properties Ltd,KBP/R/2607,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260708-S04
+2026-07-15,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0352,39610.00,USD,309750.20,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260715-S02
+2026-07-16,S05,CloudDesk Inc.,CD-10011,1450.00,USD,11339.00,Sierra Mesa Bank,4410-0928-1173,PAY-260716-S05
+2026-08-03,S03,Pacific Freight Logistics Ltd,INV-2204,23925.00,HKD,23925.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260803-S03
+2026-08-07,S01,"Shenzhen Parts Co., Ltd.",SP-2026-0790,335300.00,RMB,362794.60,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260807-S01
+2026-08-10,S04,Kowloon Bay Properties Ltd,KBP/R/2608,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260810-S04
+2026-08-10,S04,Kowloon Bay Properties Ltd,KBP/L/2608,12000.00,HKD,12000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260810-S04
+2026-08-14,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0361,33980.00,USD,265383.80,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260814-S02
+2026-08-18,S05,CloudDesk Inc.,CD-10022,1450.00,USD,11324.50,Sierra Mesa Bank,4410-0928-1173,PAY-260818-S05
+2026-09-02,S03,Pacific Freight Logistics Ltd,INV-2247,33180.00,HKD,33180.00,Victoria Harbour Bank Limited,088-221-55190-3,PAY-260902-S03
+2026-09-07,S01,"Shenzhen Parts Co., Ltd.",SP-2026-0816,309510.00,RMB,334270.80,"Pearl River Commercial Bank, Shenzhen Futian Branch",6214 8320 0019 2049,PAY-260907-S01
+2026-09-08,S04,Kowloon Bay Properties Ltd,KBP/R/2609,80000.00,HKD,80000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260908-S04
+2026-09-10,S04,Kowloon Bay Properties Ltd,KBP/L/2609,12000.00,HKD,12000.00,Lion Rock Bank Limited,512-339-80417-0,PAY-260910-S04
+2026-09-16,S02,"Dongguan Precision Electronics Co., Ltd.",DPE/INV/0370,37750.00,USD,294450.00,"Greater Bay Trust Bank, Dongguan Branch",7800 1123 4588 0062,PAY-260916-S02
+2026-09-16,S05,CloudDesk Inc.,CD-10033,1450.00,USD,11310.00,Sierra Mesa Bank,4410-0928-1173,PAY-260916-S05
