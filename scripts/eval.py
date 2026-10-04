@@ -14,8 +14,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 os.environ.setdefault("TRACE_WORKSPACE", "runtime/eval_workspace")
 
+from app.config import settings  # noqa: E402
 from app.core import changes, decisions, intake, versioning  # noqa: E402
-from app.data import sheets, store, workspace  # noqa: E402
+from app.data import company, sheets, store, workspace  # noqa: E402
 from app.llm import telemetry  # noqa: E402
 
 GT = json.loads(Path("workspace/ground_truth/expected.json").read_text())
@@ -25,7 +26,10 @@ FIELDS = ["supplier_id", "invoice_no", "date", "currency", "amount", "due_date"]
 def main() -> None:
     t0 = time.perf_counter()
     workspace.reset()
-    css = intake.process_inbox("Ken Lau", on_step=lambda s: print("  ·", s))
+    people = {p["role"].split(".")[0]: p["name"] for p in company.people()}
+    clerk = next((n for r, n in people.items() if "Clerk" in r), settings.trace_user)
+    manager = next((n for r, n in people.items() if "Accountant" in r or "CFO" in r), clerk)
+    css = intake.process_inbox(clerk, on_step=lambda s: print("  ·", s))
     by_doc = {cs.trigger: cs for cs in css}
     results = []
 
@@ -55,14 +59,15 @@ def main() -> None:
                 misses.append(f"{exp['invoice_no']}.{f}: {got[f]!r} != {exp[f]!r}")
     for p in GT["planted_problems"]:
         if p["control"] == "BANK-001":
-            inv = by_doc[p["invoice_file"]].invoice
+            cs = by_doc.get(p["invoice_file"])
+            inv = cs.invoice if cs else None
             total += 1
-            ok = (inv.bank_account or "").replace(" ", "") == p["evidence"][
+            ok = inv is not None and (inv.bank_account or "").replace(" ", "") == p["evidence"][
                 "invoice_bank_account"
             ].replace(" ", "")
             right += ok
             if not ok:
-                misses.append(f"bank_account: {inv.bank_account!r}")
+                misses.append(f"bank_account: {inv and inv.bank_account!r}")
     acc = right / total
     results.append(("Extraction field accuracy", f"{right}/{total} = {acc:.0%}", acc >= 0.95))
 
@@ -80,14 +85,15 @@ def main() -> None:
     # scripted decisions (the demo): accept clean, reject both held, approve the lease
     for cs in css:
         if cs.status == "proposed":
-            decisions.accept(cs.id, "Ken Lau")
+            decisions.accept(cs.id, clerk)
         elif cs.kind == "invoice":
-            decisions.decide(cs.id, "reject", "Not expected (eval)", "Ken Lau")
+            decisions.decide(cs.id, "reject", "Not expected (eval)", clerk)
         else:
-            decisions.decide(cs.id, "approve_and_remember", "Lease signed (eval)", "Anna Chan")
+            decisions.decide(cs.id, "approve_and_remember", "Lease signed (eval)", manager)
 
     # 4. register end state
-    rows = {r["invoice_no"]: r for r in sheets.register() if r["_row"] >= 19}
+    first_new = GT["register_seed_rows"] + 2
+    rows = {r["invoice_no"]: r for r in sheets.register() if r["_row"] >= first_new}
     exp_rows = GT["tasks"][1]["expected"]["rows"]
     ok_rows = 0
     for e in exp_rows:
@@ -116,8 +122,9 @@ def main() -> None:
     results.append(("Register end state", f"{ok_rows}/{len(exp_rows)} rows exact", exact))
 
     # 5. forecast end state
-    cells = sheets.read_range("sheets/forecast_2027_2028.xlsx", "Forecast", "C9:Z9")
-    exp_cells = GT["tasks"][0]["expected"]["cells"]
+    task = GT["tasks"][0]["expected"]
+    exp_cells = task["cells"]
+    cells = {c: sheets.read_range(task["file"], task["sheet"], c)[c] for c in exp_cells}
     ok_cells = sum(abs((cells[c] or 0) - v) < 0.01 for c, v in exp_cells.items())
     results.append(
         ("Forecast end state", f"{ok_cells}/{len(exp_cells)}", ok_cells == len(exp_cells))
@@ -132,9 +139,10 @@ def main() -> None:
         ("Changed cells with a source", f"{sourced}/{len(mine)}", sourced == len(mine) > 0)
     )
 
-    hist = versioning.history("sheets/forecast_2027_2028.xlsx", "Forecast", "C9")
+    first = next(iter(exp_cells))
+    hist = versioning.history(task["file"], task["sheet"], first)
     blame_ok = len(hist) >= 2 and hist[0]["sources"][0].get("page") == 3
-    results.append(("Blame C9: lease p.3 + old commit", f"{len(hist)} entries", blame_ok))
+    results.append((f"Blame {first}: lease p.3 + old commit", f"{len(hist)} entries", blame_ok))
 
     t = telemetry.totals()
     print(f"\n{'Metric':38} {'Result':24} Pass")

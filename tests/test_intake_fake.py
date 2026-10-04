@@ -13,99 +13,112 @@ from app.data import sheets, workspace
 
 GT = Path("workspace/ground_truth/expected.json")
 
-SCAN_1002 = """深圳市零件有限公司 Shenzhen Parts Co., Ltd.
-增值税发票 INVOICE  No. SP-2026-0917  日期 Date: 2026-09-30
-SP-4410 | 电源管理模块 | 2,000 | 118.00 | 236,000.00
-SP-2208 | USB-C连接器组件 | 3,000 | 23.50 | 70,500.00
-价税合计 Total RMB 306,500.00
-收款银行 南海联合银行深圳宝安支行 账号 6230 5821 4407 7731
-联系 accounts@shenzhen-parts.co"""
-SCAN_0930 = """PACIFIC FREIGHT LOGISTICS LTD  billing@pacfreight.com.hk
-INVOICE  INV-2318  Date 30 Sep 2026  Due 30 Oct 2026
-TOTAL HKD 33,900.00"""
+SCAN_1002 = """珠江成长基金二期 PEARL RIVER GROWTH FUND II LP
+缴款通知书 CAPITAL CALL / DRAWDOWN NOTICE
+通知编号：PRG2-DN-018  通知日期：2026年9月30日  缴款截止日：2026年10月14日
+DD-018 | 第18次缴款 Drawdown No. 18 | 1 | 3,500,000.00
+本次应缴金额 合计 人民币（RMB） 3,500,000.00
+收款银行：南海联合银行深圳宝安支行  银行账号：6230 5821 4407 7731
+如有疑问，请联系 accounts@prg-fund.co"""
+SCAN_0930 = """PEAK ESTATES PROPERTY MANAGEMENT LTD  accounts@peakestates.com.hk
+INVOICE  INV-PM-2318  Date 30 Sep 2026  Due date 30 Oct 2026
+TOTAL HKD 18,500.00"""
+
+
+def line(code, desc, amount, qty=1, price=None):
+    return InvoiceLine(
+        item_code=code, description=desc, qty=qty, unit_price=price or amount, amount=amount
+    )
+
 
 RAW = {
     "scan_1002.pdf": dict(
-        supplier_name="深圳市零件有限公司",
-        invoice_no="SP-2026-0917",
+        supplier_name="珠江成长基金二期",
+        kind="capital_call",
+        invoice_no="PRG2-DN-018",
         invoice_date="2026-09-30",
+        due_date="2026-10-14",
         currency="RMB",
-        subtotal=306500,
+        subtotal=3500000,
         tax=0,
-        total=306500,
+        total=3500000,
         bank_account="6230 5821 4407 7731",
-        lines=[
-            InvoiceLine(
-                item_code="SP-4410", description="IC", qty=2000, unit_price=118, amount=236000
-            ),
-            InvoiceLine(
-                item_code="SP-2208", description="USB-C", qty=3000, unit_price=23.5, amount=70500
-            ),
-        ],
+        lines=[line("DD-018", "Drawdown No. 18", 3500000)],
     ),
-    "DPE-INV-0388.pdf": dict(
-        supplier_name="Dongguan Precision Electronics Co., Ltd.",
-        invoice_no="DPE/INV/0388",
+    "HCP3_Capital_Call_Notice_04.pdf": dict(
+        supplier_name="Harbourview Capital Partners III LP",
+        kind="capital_call",
+        invoice_no="HCP3-CN-2026-04",
         invoice_date="2026-09-30",
-        due_date="2026-10-30",
+        due_date="2026-10-10",
         currency="USD",
-        subtotal=35350,
+        subtotal=600000,
         tax=0,
-        total=35350,
-        bank_account="7800 1123 4588 0062",
-        lines=[
-            InvoiceLine(
-                item_code="DPE-PCB6", description="PCB", qty=1500, unit_price=14.2, amount=21300
-            ),
-            InvoiceLine(
-                item_code="DPE-ENC1", description="Enc", qty=1000, unit_price=6.85, amount=6850
-            ),
-            InvoiceLine(
-                item_code="DPE-CBL12", description="Cbl", qty=3000, unit_price=2.4, amount=7200
-            ),
-        ],
+        total=600000,
+        bank_account="8841-2207-5530",
+        lines=[line("CALL-04", "Capital call 4/2026", 600000)],
+    ),
+    "HCP3_Q4_2026_Management_Fee.pdf": dict(
+        supplier_name="Harbourview Capital Partners III LP",
+        kind="fee_notice",
+        invoice_no="HCP3-MF-2026Q4",
+        invoice_date="2026-10-01",
+        due_date="2026-10-31",
+        currency="USD",
+        subtotal=50000,
+        tax=0,
+        total=50000,
+        bank_account="8841-2207-5530",
+        fee_rate_pct=2.0,
+        lines=[line("MGMT-FEE", "Management fee Q4 2026", 50000)],
     ),
     "scan_0930_2.pdf": dict(
-        supplier_name="Pacific Freight Logistics Ltd",
-        invoice_no="INV-2318",
+        supplier_name="Peak Estates Property Management Ltd",
+        invoice_no="INV-PM-2318",
         invoice_date="2026-09-30",
         due_date="2026-10-30",
         currency="HKD",
-        subtotal=33900,
+        subtotal=18500,
         tax=0,
-        total=33900,
-        lines=[],
+        total=18500,
         bank_account="088-221-55190-3",
+        lines=[
+            line("PM-RB12", "Flat 12A", 8800),
+            line("PM-CR21", "Flat 21B", 7600),
+            line("KEY-HLD", "Key holding", 900, qty=2, price=450),
+            line("LS-INSP", "Inspection", 1200),
+        ],
     ),
     "Invoice (3).pdf": dict(
-        supplier_name="Pacific Freight Logistics Ltd",
-        invoice_no="INV-2291-R",
+        supplier_name="Peak Estates Property Management Ltd",
+        invoice_no="INV-PM-2291-R",
         invoice_date="2026-09-25",
         due_date="2026-10-25",
         currency="HKD",
-        subtotal=27660,
+        subtotal=23200,
         tax=0,
-        total=27660,
+        total=23200,
         lines=[],
         bank_account="088-221-55190-3",
     ),
-    "Invoice_CD-10044.pdf": dict(
-        supplier_name="CloudDesk Inc.",
-        invoice_no="CD-10044",
+    "Invoice_MAI-10044.pdf": dict(
+        supplier_name="Meridian Fine Art Insurance Ltd",
+        invoice_no="MAI-10044",
         invoice_date="2026-10-01",
         due_date="2026-10-16",
         currency="USD",
-        subtotal=1450,
+        subtotal=2450,
         tax=0,
-        total=1450,
+        total=2450,
         lines=[],
         bank_account="4410-0928-1173",
     ),
 }
 LEASE = dict(
-    reference="KBP/L/2027/09A",
+    counterparty="Halcyon Re Asia Ltd",
+    reference="LPFO/L/2027/12A",
     signed="2026-09-29",
-    rent_monthly=82400,
+    rent_monthly=98800,
     rent_from="2027-01-01",
     escalation_pct=3.0,
 )
@@ -148,9 +161,9 @@ def test_full_demo_flow(ws, monkeypatch):
         return orig(rel, ocr)
 
     monkeypatch.setattr(reader, "read", tracking_read)
-    css = intake.process_inbox("Ken Lau", print)
+    css = intake.process_inbox("Jason Yip", print)
     by_doc = {cs.trigger: cs for cs in css}
-    assert len(css) == 6  # 5 invoices + lease
+    assert len(css) == 7  # 6 inbox documents + lease
 
     # planted problems fire, clean invoices are not held
     fired = {(p["invoice_file"], p["control"]) for p in ws["planted_problems"]}
@@ -159,28 +172,33 @@ def test_full_demo_flow(ws, monkeypatch):
     for doc in ws["clean_invoices"]:
         assert by_doc[doc].status == "proposed"
     approvals = {cs.trigger for cs in css for f in cs.findings if f.control == "APPROVAL-001"}
-    assert approvals == {
-        "docs/invoices/inbox/DPE-INV-0388.pdf",
-        "docs/invoices/inbox/scan_1002.pdf",
-    }
+    expected_rows = ws["tasks"][1]["expected"]["rows"]
+    assert approvals == {r["source_file"] for r in expected_rows if r["needs_principal_approval"]}
 
     # policy guard
     s01 = by_doc["docs/invoices/inbox/scan_1002.pdf"]
     with pytest.raises(decisions.PolicyError):
-        decisions.decide(s01.id, "approve_and_remember", "looks fine", "Ken Lau")
+        decisions.decide(s01.id, "approve_and_remember", "looks fine", "Jason Yip")
 
     # scripted demo: accept clean, reject both held, approve lease
     for doc in ws["clean_invoices"]:
-        decisions.accept(by_doc[doc].id, "Ken Lau")
-    decisions.decide(s01.id, "reject", "Not expected, calling supplier on known number", "Ken Lau")
+        decisions.accept(by_doc[doc].id, "Jason Yip")
+    decisions.decide(
+        s01.id, "reject", "Not expected, calling the GP on the number on file", "Jason Yip"
+    )
+    fee = by_doc["docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf"]
+    decisions.decide(fee.id, "reject", "Side letter says 1.50%; asked GP to reissue", "Jason Yip")
     dup = by_doc["docs/invoices/inbox/Invoice (3).pdf"]
-    decisions.decide(dup.id, "reject", "Duplicate of INV-2291", "Ken Lau")
+    decisions.decide(dup.id, "reject", "Duplicate of INV-PM-2291", "Jason Yip")
     lease = by_doc["docs/contracts/S04_lease_2027_signed.pdf"]
-    d, h = decisions.decide(lease.id, "approve_and_remember", "Lease signed by David", "Anna Chan")
+    d, h = decisions.decide(
+        lease.id, "approve_and_remember", "Renewal signed by Victoria", "Grace Lam"
+    )
 
     # register end state
-    rows = [r for r in sheets.register() if r["_row"] >= 19]
-    expected = ws["tasks"][1]["expected"]["rows"]
+    first_new = ws["register_seed_rows"] + 2
+    rows = [r for r in sheets.register() if r["_row"] >= first_new]
+    expected = expected_rows
     assert len(rows) == len(expected)
     for exp in expected:
         r = next(r for r in rows if r["invoice_no"] == exp["invoice_no"])
@@ -205,16 +223,20 @@ def test_full_demo_flow(ws, monkeypatch):
                 assert got_s == str(exp_v), (exp["invoice_no"], k, got_v, exp_v)
 
     # forecast end state: 24 cells
-    cells = sheets.read_range("sheets/forecast_2027_2028.xlsx", "Forecast", "C9:Z9")
-    for c, v in ws["tasks"][0]["expected"]["cells"].items():
-        assert abs(cells[c] - v) < 0.01, (c, cells[c], v)
+    task = ws["tasks"][0]["expected"]
+    exp_cells = task["cells"]
+    for c, v in exp_cells.items():
+        got = sheets.read_range(task["file"], task["sheet"], c)[c]
+        assert abs(got - v) < 0.01, (c, got, v)
 
-    # blame on C9: new lease commit and the old rent-flat commit
-    hist = versioning.history("sheets/forecast_2027_2028.xlsx", "Forecast", "C9")
+    # blame on the first rent cell: new lease commit and the old rent-flat commit
+    first = next(iter(exp_cells))
+    hist = versioning.history(task["file"], task["sheet"], first)
     commits = [e["commit"] for e in hist]
-    assert commits[0] == h and any(c.startswith("cbcb6ff") for c in commits)
+    old = ws["tasks"][2]["expected"]["sources"][-1]["commit"]
+    assert commits[0] == h and old in commits
     assert hist[0]["sources"][0]["page"] == 3
 
     # every Trace commit's changed cells have sources with the commit filled in
     assert all(cs.commit for cs in changes.all_changesets() if cs.status != "proposed")
-    assert len(workspace.log()) == 10 + 6
+    assert len(workspace.log()) == 10 + 7
