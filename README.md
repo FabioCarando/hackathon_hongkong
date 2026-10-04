@@ -27,7 +27,7 @@ No credentials yet? `LLM_PROVIDER=fake uv run streamlit run streamlit_app.py`.
 
 1. `cp .env.example .env`, then set `OPENROUTER_API_KEY` and `LLM_MODEL_VISION=google/gemini-2.5-flash` (needed to read the scanned PDFs).
 2. `uv run streamlit run streamlit_app.py`, then click **Reset demo** in the sidebar.
-3. Working as Ken Lau: **Inbox › Process 6 new documents** → **Accept all clean** → open the red Shenzhen Parts card (try *Approve & remember*: it's locked, bank changes need a call-back) → **Reject** with a reason → reject the duplicate → switch to Anna Chan → **Approve & remember** the lease → **Ask the brain** "Why is 2027 rent 82,400?". Full script: [`spec/06-demo-and-eval.md`](spec/06-demo-and-eval.md).
+3. Working as Jason Yip: **Inbox › Process 7 new documents** → **Accept all** → open the red Pearl River capital call (try *Approve & remember*: it's locked, bank changes need a call-back) → **Reject** with a reason → reject the Harbourview fee notice (2.00% vs 1.50%) and the duplicate → switch to Grace Lam → **Update forecast & remember** on the lease → **Ask the brain** "Why is 2027 rental income for Flat 12A 98,800?". Full script: [`spec/06-demo-and-eval.md`](spec/06-demo-and-eval.md).
 
 - The app works on a copy in `runtime/workspace`. `workspace/` is never written; **Reset demo** restores everything in seconds.
 - Set `LLM_CACHE=on` for rehearsals: after one run, every LLM call replays from disk (free, instant, no wifi).

@@ -6,14 +6,14 @@
 
 ## Who it's for
 
-- **User:** the finance manager and accounts clerk at a Hong Kong SME (20–300 staff, 1–5 finance people). In the demo: Anna Chan (finance manager) and Ken Lau (accounts clerk) at Harbour Lane Trading.
-- **Buyer:** finance manager / financial controller, or the owner. In the demo: David Wong, director.
-- **Beachhead:** HK trading companies importing from mainland China. They deal with Chinese and English paperwork, HKD/RMB/USD and lots of routine entry.
-- **Later:** accounting firms running many client workspaces, and brokers/fintechs with the same back-office work.
+- **User:** the fund accountant and accounts clerk at a Hong Kong single-family office (1–5 finance people). In the demo: Grace Lam (fund accountant) and Jason Yip (accounts clerk) at Lantau Peak Family Office.
+- **Buyer:** the family office CFO, or the principal. In the demo: Raymond Ho (CFO); Victoria Cheung (principal, family member) approves large payments.
+- **Beachhead:** HK single-family offices. Small teams handle capital calls, fund fee notices, property and household bills in Chinese and English, HKD/USD/RMB, with large amounts and real fraud risk (fake "new wire instructions" on capital calls).
+- **Later:** multi-family offices, private banks and trust companies, and fund administrators.
 
 ## Today's workflow (what the team does by hand)
 
-1. Collect documents: supplier invoices, receipts, bank statements, contracts, emails.
+1. Collect documents: capital call and fee notices, invoices, bank and custodian statements, contracts, side letters, leases, emails.
 2. Compare them against contracts and past history.
 3. Run sanity checks for wrong or fraudulent entries.
 4. Type the numbers into the spreadsheets the team manages itself.
@@ -32,25 +32,25 @@
 
 ### 1. Knows where everything is (file index and provenance)
 
-- Indexes every file in the finance workspace: what it is, which supplier it belongs to, when it arrived, and what was taken from it.
+- Indexes every file in the finance workspace: what it is, which counterparty it belongs to, when it arrived, and what was taken from it.
 - Every spreadsheet has a full version history. Every important change carries a comment with what changed, why, who approved it and which document it came from.
 - Click any cell → see where the number came from and every change it went through.
 
 ### 2. Reads documents and fills the sheets (intake)
 
 - OCR that works on scanned and digital PDFs, in English and Chinese.
-- Pulls out the useful fields: supplier, invoice number, dates, line items, amounts, currency, bank account, sender.
+- Pulls out the useful fields: counterparty, document type (capital call, fee notice, invoice), number, dates, line items, amounts, fee rate, currency, bank account, sender.
 - Proposes the new rows and cells in the team's CSVs and Excel files, each linked to the page and quote it came from.
 
 ### 3. Knows what to expect and asks when something doesn't fit (expectation memory)
 
-- Keeps a memory of what is *expected*: contract prices, supplier bank accounts and email domains, usual amounts, recurring invoices, approval rules, forecast assumptions.
+- Keeps a memory of what is *expected*: contract prices, side-letter fee rates, counterparty bank accounts and email domains, usual amounts, recurring invoices, approval rules, forecast assumptions.
 - When a document doesn't match, Trace **does not write it in**. It asks the user why.
   - **Not expected** → blocked. Wrong or fraudulent data stays out of the books.
   - **Expected** → the user's answer is saved as a **decision** with its reason. The memory updates so the same case passes next time. Company policy still applies, so for example a bank account change still needs a call-back, not just an email.
 - The decision log becomes the team's memory: every exception, who decided it, and why.
 
-Plus **"Ask the brain"**: questions in plain language ("Why is 2027 rent 82,400?", "Where is the signed lease?", "Which contracts need action this month?"). Answers cite the documents, commits and decisions behind them.
+Plus **"Ask the brain"**: questions in plain language ("Why is 2027 rental income 98,800?", "How much do we still owe Harbourview?", "Which contracts need action this month?"). Answers cite the documents, commits and decisions behind them.
 
 ## The loop that matters
 
@@ -78,13 +78,14 @@ These reuse the same three pieces (index, sources, expectations). Priority is se
 
 | Pain | How the brain helps |
 |---|---|
-| Duplicate invoices / paying twice | Same invoice number, or same supplier + amount + close date → blocked |
+| Duplicate invoices / paying twice | Same document number, or same counterparty + amount + close date → blocked |
+| Fund fee overcharges | Fee rate on the notice vs the side-letter rate ("2.00% charged, side letter says 1.50%") → blocked |
 | Fake "bank details changed" emails | Bank account on the invoice ≠ the one on file, or the sender's domain is a lookalike → stop and ask |
 | Bank reconciliation | Matches bank statement lines to invoices and payments; flags money with no document |
 | Audit prep | Every cell already links to its source, so the support pack is one click |
 | Key person leaves / onboarding | Decisions and reasons are stored; a new hire can ask the brain |
-| Contract deadlines | Reads contracts; warns about renewals and notice periods ("CloudDesk auto-renews; cancel by 17 Oct") |
-| Approval rules | Invoices over HK$50,000 are flagged for the director's approval |
+| Contract deadlines | Reads contracts; warns about renewals and notice periods ("Art insurance auto-renews; cancel by 17 Oct") |
+| Approval rules | Payments over HK$500,000 are flagged for the principal's approval |
 | Bilingual, multi-currency paperwork | Chinese/English OCR; HKD/RMB/USD with the month's FX rate recorded |
 
 ## Value in plain terms

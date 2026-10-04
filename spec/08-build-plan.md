@@ -18,13 +18,13 @@ Ordered so that each step ends with something runnable. Do the steps in order. D
 | 1 | Pydantic models | `app/core/models.py` | Imports cleanly; matches `03` | P0 |
 | 2 | Runtime workspace + git wrapper + JSON store | `app/data/workspace.py`, `app/data/store.py` | `reset()` copies the seed; `git log` on the runtime copy shows 10 commits; `status` lists the untracked demo files | P0 |
 | 3 | Sheet IO | `app/data/sheets.py` | Read Register/Forecast to DataFrames with cell refs; write cells + append rows keeping formulas; round-trip test | P0 |
-| 4 | Indexer | `app/core/indexer.py` | `index.json` lists every file with kind/status; 8 new files flagged (5 invoices, lease, 2 emails) | P0 |
+| 4 | Indexer | `app/core/indexer.py` | `index.json` lists every file with kind/status; 9 new files flagged (6 inbox documents, lease, 2 emails) | P0 |
 | 5 | Image support in LLM wrapper + vision setting; fake OCR | `app/llm/openrouter.py`, `app/llm/fake.py`, `app/config.py` | A test sends an image block through the mocked OpenRouter layer as `image_url`; text-only paths unchanged; existing tests pass | P0 |
 | 6 | Reader (text layer → vision OCR fallback, cache) | `app/core/reader.py` | F3 acceptance passes with the real vision model; the second run makes 0 LLM calls | P0 |
-| 7 | Extractor + code validation + supplier matching | `app/core/extractor.py` | F4 acceptance (≥ 95% fields) on the 5 inbox invoices; S04 lease → rent 82,400, +3%, from 2027-01-01, p.3 | P0 |
+| 7 | Extractor + code validation + supplier matching | `app/core/extractor.py` | F4 acceptance (≥ 95% fields) on the 6 inbox documents; S04 lease → rent 98,800, +3%, from 2027-01-01, p.3 | P0 |
 | 8 | Expectations seeding | `app/core/expectations.py`, `scripts/seed_brain.py` | F5 acceptance | P0 |
 | 9 | Checks | `app/core/checks.py`, `tests/test_checks.py` | F6 acceptance as unit tests on hand-built `InvoiceData` (no LLM) | P0 |
-| 10 | Versioning + change sets | `app/core/versioning.py`, `app/core/changes.py`, `tests/test_versioning.py` | Apply a change set on a temp copy → xlsx updated, `sources.json` appended, commit with reason; `history()` returns old + new entries for C9 | P0 |
+| 10 | Versioning + change sets | `app/core/versioning.py`, `app/core/changes.py`, `tests/test_versioning.py` | Apply a change set on a temp copy → xlsx updated, `sources.json` appended, commit with reason; `history()` returns old + new entries for C5 | P0 |
 | 11 | Intake orchestration + questions + decisions | `app/core/intake.py`, `app/core/decisions.py` | Script run: 3 clean → proposed change sets; 2 held → questions; reject both → HELD rows + decisions + commits; lease → forecast change set (F10) | P0 |
 | 12 | Search | `app/core/search.py` | F9 acceptance | P0 |
 | 13 | Ask agent | `app/core/ask.py` | F11 P0 acceptance | P0 |

@@ -38,7 +38,8 @@ app/
   config.py                 + trace_workspace, trace_seed_workspace, llm_model_vision (see Settings below)
   llm/openrouter.py         + image content blocks → OpenAI image_url (see LLM)
   data/
-    workspace.py            runtime copy: reset(), path helpers, git() wrapper
+    workspace.py            runtime copy: reset(), path helpers, git() wrapper, users()
+    company.py              facts read from COMPANY.md: name, people, email domain, approver, forecast named range
     store.py                JSON/JSONL read/write for .trace/* files (atomic writes)
     sheets.py               read_sheet / write_cells / append_rows with openpyxl (keep formatting, formulas)
   core/
@@ -88,7 +89,7 @@ tests/
 
 `.trace/` metadata files (except `git/`) are committed along with the sheet changes, so history covers memory too.
 
-Git calls: `subprocess.run(["git", f"--git-dir={ws}/.trace/git", f"--work-tree={ws}", ...])`. Commit author = the current user (sidebar selector: Anna Chan / Ken Lau / David Wong, with `@harbourlane.com.hk` emails). Use `GIT_AUTHOR_DATE`/`GIT_COMMITTER_DATE` = real now. No GitPython needed.
+Git calls: `subprocess.run(["git", f"--git-dir={ws}/.trace/git", f"--work-tree={ws}", ...])`. Commit author = the current user (sidebar selector: the people listed in COMPANY.md, emails `first.last@<Email domain>` from COMPANY.md; see `app/data/company.py`). Use `GIT_AUTHOR_DATE`/`GIT_COMMITTER_DATE` = real now. No GitPython needed.
 
 ## Data models (`app/core/models.py`)
 
@@ -116,7 +117,7 @@ class FileEntry(BaseModel):
     size: int
     pages: int | None = None
     supplier_id: str | None = None
-    title: str                       # human label, e.g. "Shenzhen Parts invoice SP-2026-0917"
+    title: str                       # human label, e.g. "Pearl River capital call PRG2-DN-018"
     status: Literal["new", "read", "processed", "held", "tracked"]
     text_method: Literal["text_layer", "vision_ocr", "native", "none"] = "none"
     language: str | None = None      # "en", "zh", "en+zh"
@@ -149,6 +150,7 @@ class InvoiceLine(BaseModel):
 class InvoiceData(BaseModel):
     supplier_name: str
     supplier_id: str | None          # matched by code against supplier_master, not by the LLM
+    kind: Literal["invoice", "capital_call", "fee_notice"] = "invoice"   # LLM classifies
     invoice_no: str
     invoice_date: date
     due_date: date | None
@@ -158,6 +160,7 @@ class InvoiceData(BaseModel):
     tax: float
     total: float
     bank_account: str | None
+    fee_rate_pct: float | None       # yearly fee rate printed on a fee notice, e.g. 2.0
     sender_email: str | None
     evidence: dict[str, SourceRef]   # field name → where it was read ("total", "bank_account", ...)
 
@@ -173,10 +176,11 @@ class ContractData(BaseModel):
     evidence: dict[str, SourceRef]
 
 class Expectation(BaseModel):
-    id: str                          # "E-S01-price-SP-4410"
+    id: str                          # "E-S03-price-PM-RB12", "E-S02-fee-rate"
     subject: str                     # supplier_id or "company"
-    kind: Literal["unit_price", "bank_account", "email_domain", "recurring_amount",
-                  "approval_limit", "price_tolerance", "forecast_assumption", "contract_term"]
+    kind: Literal["unit_price", "fee_rate", "bank_account", "email_domain", "recurring_amount",
+                  "approval_limit", "price_tolerance", "forecast_assumption", "contract_term",
+                  "account_code"]
     key: str | None = None           # item code, account, assumption name
     value: str | float
     tolerance: float | None = None   # fraction, e.g. 0.01
@@ -198,7 +202,7 @@ class Finding(BaseModel):
 class CellChange(BaseModel):
     file: str
     sheet: str
-    cell: str                        # "C9" or a new row cell "F19"
+    cell: str                        # "C5" or a range "C5:N5"
     old: str | float | None
     new: str | float | None
     sources: list[SourceRef]
@@ -268,13 +272,15 @@ Seeded deterministically (`seed_brain.py`) from the workspace. LLM only for read
 
 | Kind | Seeded from | Example |
 |---|---|---|
-| `unit_price` | Contract price schedules (S01, S02 §4.2), S03 rate card | S01 SP-4410 = RMB 109.00 |
+| `unit_price` | Contract price schedules (S03 property management agreement, schedule 1) | S03 PM-RB12 = HKD 8,800.00 |
+| `fee_rate` | Side letter / LPA "rate of X% per annum" (S02 side letter §3.1) | S02 management fee = 1.50% |
 | `price_tolerance` | COMPANY.md policies | 0.01 |
 | `bank_account` | supplier_master + payments_history (last payments) | S01 = 6214 8320 0019 2049 |
-| `email_domain` | supplier_master `email_domain` | S01 = shenzhenparts.com |
-| `approval_limit` | COMPANY.md | HK$50,000 → D. Wong |
-| `recurring_amount` | invoice_register + payments history (rent, SaaS) | S04 rent HK$80,000/month; S05 USD 1,450 |
-| `forecast_assumption` | COMPANY.md + forecast Assumptions sheet | rent_2027 = 80,000 flat |
+| `email_domain` | supplier_master `email_domain` | S01 = prgfund.com |
+| `approval_limit` | COMPANY.md ("Approves anything above HK$...") | HK$500,000 → V. Cheung (approver in `key`) |
+| `account_code` | COMPANY.md conventions (per document kind) + register (per counterparty) | capital_call → 150, fee_notice → 455; S03 → 471 |
+| `recurring_amount` | invoice_register + payments history | S05 USD 2,450; S04 rent learned from the lease decision |
+| `forecast_assumption` | COMPANY.md (the line with "rent" and "assumed flat at HK$") | rent_monthly = 95,000 flat |
 | `contract_term` | Contracts (end dates, renewal, notice) | S05 auto-renews 2026-11-16, 30-day notice |
 
 ### Checks (`checks.py`): deterministic controls
@@ -283,13 +289,13 @@ Each control is a plain function `(doc_data, expectations, register, history) ->
 
 | ID | Fires when | Severity |
 |---|---|---|
-| `PRICE-001` | any line `unit_price > expected × (1 + tolerance)` | hold |
+| `PRICE-001` | any line `unit_price > expected × (1 + tolerance)`, **or** a fee notice's `fee_rate_pct > expected fee_rate × (1 + tolerance)` | hold |
 | `BANK-001` | invoice bank account ≠ expected bank account for the supplier | hold |
 | `DOMAIN-001` | sender/contact email domain ≠ known domain (also catches lookalikes) | hold |
-| `DUP-001` | same supplier + same invoice number after normalising (strip suffixes like `-R`, `/R`, ` (copy)`, spaces, case), or same supplier + same amount + invoice dates ≤ 7 days apart. **Not** a plain "same amount" rule: recurring invoices (CloudDesk USD 1,450, rent) repeat the amount every month and must pass | hold |
+| `DUP-001` | same supplier + same invoice number after normalising (strip suffixes like `-R`, `/R`, ` (copy)`, spaces, case), or same supplier + same amount + invoice dates ≤ 7 days apart. **Not** a plain "same amount" rule: recurring invoices (art insurance USD 2,450, management fees) repeat the amount every month and must pass | hold |
 | `UNKNOWN-001` | supplier not on supplier_master | hold |
 | `AMOUNT-001` | recurring invoice amount differs from expected recurring amount by > tolerance | hold (ask) |
-| `APPROVAL-001` | `amount_hkd > approval_limit` | approval (not a hold; row gets "needs D. Wong approval") |
+| `APPROVAL-001` | `amount_hkd > approval_limit` | approval (not a hold; "Needs V. Cheung approval") |
 | `CONTRACT-001` | a new contract's terms differ from current expectations/forecast (e.g. new lease rent ≠ forecast rent) | info → triggers a proposed forecast update + question |
 
 The emails folder is linked: a bank-change email from a domain that isn't the known domain adds evidence to BANK-001 and DOMAIN-001.
@@ -301,7 +307,7 @@ The emails folder is linked: a bank-change email from a domain that isn't the kn
   - `approve_once`: entered this time only. Expectation unchanged. Reason logged.
   - `approve_and_remember`: entered, and expectations updated (e.g. new unit price valid from this invoice date, new recurring amount).
 - **Policy guard:** for `BANK-001` and `DOMAIN-001`, `approve_and_remember` is blocked unless the reason mentions a call-back verification (COMPANY.md: "Email alone is never enough"). Show `blocked_options_reason`.
-- Each decision is appended to `decisions.jsonl` and committed together with its change set: `"Decision D-0002: reject SP-2026-0917 — price +8.3%, bank change unverified (A. Chan)"`.
+- Each decision is appended to `decisions.jsonl` and committed together with its change set: `"Decision D-0001: reject PRG2-DN-018 — bank change unverified (J. Yip)"`.
 
 ### Change sets and versioning (`changes.py`, `versioning.py`)
 
@@ -341,10 +347,14 @@ TF-IDF (scikit-learn, char n-grams 2–4 so Chinese works) over page texts from 
 | `trace_workspace` | `TRACE_WORKSPACE` | `runtime/workspace` |
 | `trace_seed_workspace` | `TRACE_SEED_WORKSPACE` | `workspace` |
 | `llm_model_vision` | `LLM_MODEL_VISION` | (none; must be set for real OCR) |
-| `trace_user` | `TRACE_USER` | `Anna Chan` (UI selector overrides) |
+| `trace_user` | `TRACE_USER` | `Jason Yip` (UI selector overrides; must be a person in COMPANY.md) |
 
 Add them to `.env.example` with comments.
 
 ## Dependencies
 
 Missing from `pyproject.toml` and needed: **`openpyxl`** (xlsx read/write) and **`pymupdf`** (PDF text + page render). Per repo rules the env owner adds them in a small PR: `uv add openpyxl pymupdf`. Everything else is already installed (pandas, scikit-learn, plotly, pydantic, streamlit). No GitPython (use subprocess). No tesseract.
+
+## Company-specific data lives in the workspace
+
+Changed when the demo moved to the family office: the app has no company constants. `app/data/company.py` reads COMPANY.md (name, people and emails, approval rule, email domain, forecast named range). Expectations for tolerance, approval, account codes per document kind and the rent assumption are parsed from COMPANY.md. The lease flow finds the forecast cells through the workbook's named range and splits them by year using the month headers. The Ask system prompt is built from the same data.

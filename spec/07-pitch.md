@@ -8,9 +8,9 @@ Judging (assumed from the Cyprus edition): **Innovation · Technical execution �
 
 ## 30-second script
 
-> "Every finance team has the same three problems. They retype invoices from PDFs into Excel. They hunt through folders for the one signed contract. And nobody remembers *why* a number changed, until the auditor asks or someone leaves.
+> "Every family office finance team has the same three problems. They retype capital calls, fee notices and invoices from PDFs into Excel. They hunt through folders for the one signed side letter. And nobody remembers *why* a number changed, until the auditor asks or someone leaves.
 >
-> Trace is the finance team's brain. It knows every file and where every number came from. It reads invoices, even scanned ones in Chinese, and fills in the team's own spreadsheets. When something doesn't fit what it expects, like a price above contract or a supplier's bank account suddenly changing, it doesn't write it in. It asks why, and it remembers the answer.
+> Trace is the finance team's brain. It knows every file and where every number came from. It reads capital calls, fee notices and invoices, even scanned ones in Chinese, and fills in the team's own spreadsheets. When something doesn't fit what it expects, like a fee above the side-letter rate or a fund's bank account suddenly changing, it doesn't write it in. It asks why, and it remembers the answer.
 >
 > Every number has a source, every change has a reason, and nothing unexpected enters the books without a human saying yes."
 
@@ -30,9 +30,10 @@ Judging (assumed from the Cyprus edition): **Innovation · Technical execution �
 
 | Segment | Who signs |
 |---|---|
-| HK SMEs with 1–5 finance people (beachhead: trading/import companies with mainland suppliers) | Finance manager, owner |
+| HK single-family offices with 1–5 finance people (beachhead) | CFO, principal |
+| Multi-family offices, trust companies, private banks | COO / Head of Operations |
+| HK SMEs and accounting firms with the same back office | Finance manager, partner |
 | Accounting/bookkeeping firms (many client workspaces) | Partner |
-| Brokers, payment firms, fintechs (the iFX audience): same back office with vendor contracts, LP and SaaS invoices | CFO / Head of Finance |
 
 Business model: SaaS per seat plus document-volume tiers. Accounting-firm plan. Land with invoice intake and controls, expand to reconciliation, audit packs, then **reports** (next step).
 
@@ -43,10 +44,10 @@ Business model: SaaS per seat plus document-volume tiers. Accounting-firm plan. 
 | Innovation | Not another OCR tool: a brain with **memory of expectations and decisions** and per-cell provenance | "Isn't this Dext/Hubdoc?" → show the question + decision + learn moment |
 | Technical execution | Deterministic checks, staged writes, git-backed history, citation validator, OCR cache | "LLM wrapper?" → architecture slide: LLM reads and asks, code decides |
 | Functionality | One continuous live flow on a full fake company | Cached run + backup video |
-| Problem-solving | Named users (Anna, Ken), real workflow, controls finance already requires | Real numbers from eval + timed test |
+| Problem-solving | Named users (Grace, Jason), real family-office workflow, controls finance already requires | Real numbers from eval + timed test |
 | Industry impact | Every company in the room has this back office; fraud angle (bank-change scams) is concrete | Sourced BEC loss figures |
 
-Signal from past events: the iFX Cyprus 2026 overall winner came from the "Keep Money Safe" track. The Shenzhen Parts hold is our moment in that space.
+Signal from past events: the iFX Cyprus 2026 overall winner came from the "Keep Money Safe" track. The Pearl River capital call hold (fake wire instructions on RMB 3.5M) is our moment in that space.
 
 ## Hard questions
 
@@ -63,4 +64,4 @@ Signal from past events: the iFX Cyprus 2026 overall winner came from the "Keep 
 
 ## Ask (Final)
 
-3–5 HK SMEs or accounting firms from the expo floor as pilot partners, plus intros to finance teams willing to share anonymised document sets.
+3–5 HK family offices or multi-family offices from the expo floor as pilot partners, plus intros to finance teams willing to share anonymised document sets.
