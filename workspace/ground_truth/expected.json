@@ -3,30 +3,8 @@
   "planted_problems": [
     {
       "id": "P1",
-      "control": "PRICE-001",
-      "invoice_file": "docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf",
-      "invoice_no": "HCP3-MF-2026Q4",
-      "supplier_id": "S02",
-      "evidence": {
-        "kind": "fee_rate",
-        "invoice_fee_rate_pct": 2.0,
-        "contract_fee_rate_pct": 1.5,
-        "currency": "USD",
-        "pct_over": 33.33,
-        "tolerance_pct": 1.0,
-        "invoice_amount": 50000.0,
-        "expected_amount": 37500.0,
-        "overcharge_usd": 12500.0,
-        "contract_ref": {
-          "doc": "docs/contracts/S02_side_letter_2024.pdf",
-          "page": 1,
-          "clause": "3.1"
-        }
-      }
-    },
-    {
-      "id": "P2",
       "control": "BANK-001",
+      "outcome": "flag",
       "invoice_file": "docs/invoices/inbox/scan_1002.pdf",
       "invoice_no": "PRG2-DN-018",
       "supplier_id": "S01",
@@ -73,7 +51,6 @@
             "account": "6214 8320 0019 2049"
           }
         ],
-        "email": "docs/emails/2026-10-02_prg_bank_change.eml",
         "contract_clause": {
           "doc": "docs/contracts/S01_subscription_agreement_2024.pdf",
           "page": 1,
@@ -82,38 +59,30 @@
       }
     },
     {
-      "id": "P3",
-      "control": "DOMAIN-001",
-      "invoice_file": "docs/invoices/inbox/scan_1002.pdf",
-      "invoice_no": "PRG2-DN-018",
-      "supplier_id": "S01",
-      "evidence": {
-        "sender_domain": "prg-fund.co",
-        "known_domain": "prgfund.com",
-        "email": "docs/emails/2026-10-02_prg_bank_change.eml",
-        "invoice_contact_email": "accounts@prg-fund.co"
-      }
-    },
-    {
-      "id": "P4",
-      "control": "DUP-001",
-      "invoice_file": "docs/invoices/inbox/Invoice (3).pdf",
-      "invoice_no": "INV-PM-2291-R",
+      "id": "P2",
+      "control": "PRICE-001",
+      "outcome": "hold",
+      "invoice_file": "docs/invoices/inbox/scan_0930_2.pdf",
+      "invoice_no": "INV-PM-2318",
       "supplier_id": "S03",
       "evidence": {
-        "matches_invoice_no": "INV-PM-2291",
-        "original_date": "2026-09-01",
-        "entered": "2026-09-03",
-        "amount": 23200.0,
+        "item": "PM-RB12",
+        "invoice_unit_price": 9680.0,
+        "contract_unit_price": 8800.0,
         "currency": "HKD",
-        "register_row": 9,
-        "original_status": "Approved (due 2026-10-01, unpaid)"
+        "pct_over": 10.0,
+        "tolerance_pct": 1.0,
+        "overcharge_hkd": 880.0,
+        "contract_ref": {
+          "doc": "docs/contracts/S03_property_management_agreement_2026.pdf",
+          "clause": "Schedule 1"
+        }
       }
     }
   ],
   "clean_invoices": [
     "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
-    "docs/invoices/inbox/scan_0930_2.pdf",
+    "docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf",
     "docs/invoices/inbox/Invoice_MAI-10044.pdf"
   ],
   "register_seed_rows": 9,
@@ -186,19 +155,19 @@
             "controls_fired": []
           },
           {
-            "date": "2026-09-30",
-            "supplier_id": "S03",
-            "supplier": "Peak Estates Property Management Ltd",
-            "invoice_no": "INV-PM-2318",
-            "currency": "HKD",
-            "amount": 18500.0,
-            "fx_rate": 1.0,
-            "amount_hkd": 18500.0,
-            "account_code": "471",
-            "due_date": "2026-10-30",
+            "date": "2026-10-01",
+            "supplier_id": "S02",
+            "supplier": "Harbourview Capital Partners III LP",
+            "invoice_no": "HCP3-MF-2026Q4",
+            "currency": "USD",
+            "amount": 37500.0,
+            "fx_rate": 7.8,
+            "amount_hkd": 292500.0,
+            "account_code": "455",
+            "due_date": "2026-10-31",
             "status": "Entered",
-            "source_file": "docs/invoices/inbox/scan_0930_2.pdf",
-            "kind": "invoice",
+            "source_file": "docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf",
+            "kind": "fee_notice",
             "needs_principal_approval": false,
             "controls_fired": []
           },
@@ -230,51 +199,31 @@
             "amount_hkd": 3780000.0,
             "account_code": "150",
             "due_date": "2026-10-14",
-            "status": "HELD",
+            "status": "Payment blocked",
             "source_file": "docs/invoices/inbox/scan_1002.pdf",
             "kind": "capital_call",
             "needs_principal_approval": true,
             "controls_fired": [
-              "BANK-001",
-              "DOMAIN-001"
+              "BANK-001"
             ]
           },
           {
-            "date": "2026-10-01",
-            "supplier_id": "S02",
-            "supplier": "Harbourview Capital Partners III LP",
-            "invoice_no": "HCP3-MF-2026Q4",
-            "currency": "USD",
-            "amount": 50000.0,
-            "fx_rate": 7.8,
-            "amount_hkd": 390000.0,
-            "account_code": "455",
-            "due_date": "2026-10-31",
-            "status": "HELD",
-            "source_file": "docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf",
-            "kind": "fee_notice",
-            "needs_principal_approval": false,
-            "controls_fired": [
-              "PRICE-001"
-            ]
-          },
-          {
-            "date": "2026-09-25",
+            "date": "2026-09-30",
             "supplier_id": "S03",
             "supplier": "Peak Estates Property Management Ltd",
-            "invoice_no": "INV-PM-2291-R",
+            "invoice_no": "INV-PM-2318",
             "currency": "HKD",
-            "amount": 23200.0,
+            "amount": 19380.0,
             "fx_rate": 1.0,
-            "amount_hkd": 23200.0,
+            "amount_hkd": 19380.0,
             "account_code": "471",
-            "due_date": "2026-10-25",
+            "due_date": "2026-10-30",
             "status": "HELD",
-            "source_file": "docs/invoices/inbox/Invoice (3).pdf",
+            "source_file": "docs/invoices/inbox/scan_0930_2.pdf",
             "kind": "invoice",
             "needs_principal_approval": false,
             "controls_fired": [
-              "DUP-001"
+              "PRICE-001"
             ]
           }
         ]
@@ -307,7 +256,7 @@
             "doc": "docs/emails/2026-08-14_raymond_forecast_assumptions.eml"
           },
           {
-            "commit": "17b9fd46e3acb1efe5b99a12b7c1a315ba4f5193",
+            "commit": "2072f0cdac1673cf6d4f8ac99dfdb55044c1921b",
             "note": "forecast v1 rental income flat"
           }
         ]

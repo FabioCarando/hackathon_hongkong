@@ -48,3 +48,17 @@ def append_jsonl(rel: str, record: BaseModel | dict) -> None:
     line = record.model_dump_json() if isinstance(record, BaseModel) else json.dumps(record)
     with p.open("a") as f:
         f.write(line + "\n")
+
+
+def cache_get(name: str) -> Any:
+    """Result cached by content hash: runtime .trace/extracted/, then the shipped demo cache."""
+    from app.config import settings
+
+    for p in (_p(f"extracted/{name}"), Path(settings.trace_demo_cache) / name):
+        if p.exists():
+            return json.loads(p.read_text())
+    return None
+
+
+def cache_put(name: str, data: Any) -> None:
+    write_json(f"extracted/{name}", data)

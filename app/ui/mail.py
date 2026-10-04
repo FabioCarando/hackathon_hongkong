@@ -2,7 +2,6 @@
 
 import streamlit as st
 
-from app.config import settings
 from app.core import indexer, intake, reader
 from app.core.models import ChangeSet
 from app.data import mailbox

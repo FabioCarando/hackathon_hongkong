@@ -82,17 +82,30 @@ def simulate() -> str | None:
     """Offline fallback: re-send the workspace's own bank-change email as a new demo email."""
     from email.message import EmailMessage
 
-    src = next(iter(sorted(workspace.path("docs/emails").glob("*bank_change*.eml"))), None)
-    if src is None:
-        return None
-    old = email.message_from_bytes(src.read_bytes(), policy=policy.default)
     now = datetime.now(UTC)
     msg = EmailMessage()
-    msg["From"] = old["From"]
-    msg["To"] = old["To"]
-    msg["Subject"] = f"{settings.trace_mail_tag} - {old['Subject']}"
+    src = next(iter(sorted(workspace.path("docs/emails").glob("*bank_change*.eml"))), None)
+    if src is not None:
+        old = email.message_from_bytes(src.read_bytes(), policy=policy.default)
+        frm, to, subject = old["From"], old["To"], old["Subject"]
+        body = old.get_body(preferencelist=("plain",))
+        text = body.get_content() if body else ""
+    else:  # no fraud email in this workspace: build one from the first counterparty
+        from app.data import company, sheets
+
+        s = sheets.suppliers()[0]
+        fake = s["email_domain"].split(".")[0] + "-payments.co"
+        frm = f"{s['name_en']} Accounts <accounts@{fake}>"
+        to = f"Accounts <accounts@{company.domain()}>"
+        subject = "Updated bank details - URGENT"
+        text = (
+            "Dear client,\n\nPlease note our bank account has changed. Please pay all open "
+            "and future notices to the new account: Nanhai Union Bank, Shenzhen Bao'an Branch, "
+            f"account no. 6230 5821 4407 7731.\nKindly process this week.\n\nAccounts Dept, {s['name_en']}\n"
+        )
+    msg["From"], msg["To"] = frm, to
+    msg["Subject"] = f"{settings.trace_mail_tag} - {subject}"
     msg["Date"] = format_datetime(now)
     msg["Message-ID"] = f"<{now:%H%M%S%f}@trace-demo>"
-    body = old.get_body(preferencelist=("plain",))
-    msg.set_content(body.get_content() if body else "")
+    msg.set_content(text)
     return _save(msg.as_bytes())

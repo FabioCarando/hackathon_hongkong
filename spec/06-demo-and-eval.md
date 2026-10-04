@@ -2,17 +2,16 @@
 
 ## Demo script (3 min + 2 min Q&A)
 
-Setup: reset demo, user = Jason Yip, `LLM_CACHE=on` with a pre-warmed cache, backup video ready.
+Setup: reset demo, user = Jason Yip, demo documents pre-computed in `demo_cache/` (plus `LLM_CACHE=on` for Ask), backup video ready.
 
 | Time | Action | What the jury sees |
 |---|---|---|
 | 0:00 | Problem | "Family offices move millions on PDFs: capital calls, fee notices, bills. The team retypes them into Excel, hunts for side letters, and nobody remembers why a number changed. Fake wire instructions slip in during routine work." One sourced number |
-| 0:20 | **Files** page | "The brain knows every file: 35 contracts, capital calls, invoices, statements, emails and sheets. 9 new since yesterday." |
-| 0:35 | **Inbox** › Process new documents | Steps stream: 6 documents read, 2 of them scanned, 1 in Chinese. 3 green cards, 3 red, plus the lease |
-| 0:55 | Accept all clean | Diff → accepted → toast "Committed 3f2a1c0". Register rows appear, each with a source |
-| 1:10 | Open the red Pearl River capital call ← **wow 1** | A scanned Chinese notice for RMB 3.5M. "Bank account changed: …7731, but the last 6 drawdowns went to …2049. Sent from prg-fund.co, not prgfund.com." Trace asks why. "Approve & remember" is locked: policy needs a call-back. Jason: **Reject**, "Not expected, calling the GP on the number on file" → logged D-0001 |
-| 1:30 | Harbourview fee notice | "Fee rate 2.00% vs 1.50% in your side letter §3.1: USD 12,500 overcharge." Reject → logged |
-| 1:45 | Duplicate card | "Same as INV-PM-2291 entered 3 Sep, still unpaid." Reject → logged |
+| 0:20 | **Files** page | "The brain knows every file: 33 contracts, capital calls, invoices, statements, emails and sheets. 7 new since yesterday." |
+| 0:35 | **Inbox** › Upload documents (drop the PDFs; pre-computed, so it takes seconds) | Steps stream: 5 documents read, 2 of them scanned, 1 in Chinese. 3 green cards, 1 orange, 1 red, plus the lease |
+| 0:55 | Accept all clean | Diff → accepted → toast with the commit. Register rows appear, each with a source |
+| 1:10 | Orange Pearl River capital call ← **wow 1** | Scanned Chinese notice for RMB 3.5M. "Bank account doesn't match our records: …7731, but the last 6 drawdowns went to …2049." Trace doesn't reject it: **Enter, block payment** → the row is in the register as *Payment blocked*. **Clear flag** with "looks fine" is refused (policy: call-back). With "Called the GP on the number on file: …2049 confirmed" → *Entered*, logged as a decision |
+| 1:35 | Red Peak Estates invoice | "Flat 12A management billed HK$9,680 vs HK$8,800 in the agreement's Schedule 1 (+10%)." Trace asks why. Jason: **Reject**, "Not agreed; asked Peak Estates to reissue" → logged |
 | 1:55 | Lease card ← **wow 2** | "Halcyon Re renewed Flat 12A on 29 Sep: HK$98,800 from Jan 2027, +3%/yr. Your forecast assumes HK$95,000 flat (R. Ho, Aug). Update?" Switch user to Grace → Update forecast & remember → diff of 24 rent cells with lease p.3 §4 on each → commit |
 | 2:20 | **Ask** › "Why is 2027 rental income for Flat 12A 98,800?" ← **wow 3** | Answer with chips: lease p.3 §4, Grace's decision today, the old Aug assumption commit. "A month from now, a new hire gets this in 5 seconds." |
 | 2:40 | Close | Value line + ask (see `07`) |
@@ -26,9 +25,9 @@ Fallback: if the live LLM is slow, the cache replays. If wifi dies, play the vid
 | Metric | How | Target | Label |
 |---|---|---|---|
 | **OCR/extraction field accuracy** | Inbox documents: supplier_id, invoice_no, date, currency, amount, due_date, bank_account vs `tasks[1]` + planted evidence | ≥ 95% | **P0** |
-| **Planted problems caught** | P1–P4 in `planted_problems` fire with the right control | 4/4 | **P0** |
+| **Planted problems caught** | P1 BANK-001 (flag) and P2 PRICE-001 (hold) fire with the right control | 2/2 | **P0** |
 | **False holds** | Holds on `clean_invoices` | 0 | **P0** |
-| **Register end state** | Rows appended vs `tasks[1].rows` after the scripted decisions (reject all three held) | exact | **P0** |
+| **Register end state** | Rows appended vs `tasks[1].rows` after the scripted decisions (enter the flagged call with payment blocked, reject the held invoice) | exact | **P0** |
 | **Forecast end state** | RENT_FORECAST vs `tasks[0].cells` | 24/24 | **P0** |
 | **Every changed cell has a source** | `sources.json` coverage of cells changed by Trace commits | 100% | **P0** |
 | "Why?" answer facts | `tasks[2].facts` covered (LLM judge or keyword check) + cites lease p.3 | ≥ 4/5 | P1 |

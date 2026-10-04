@@ -1,0 +1,77 @@
+{
+  "supplier_name": "Meridian Fine Art",
+  "supplier_id": "S05",
+  "kind": "invoice",
+  "invoice_no": "MAI-10044",
+  "invoice_date": "2026-10-01",
+  "due_date": "2026-10-16",
+  "currency": "USD",
+  "lines": [
+    {
+      "item_code": null,
+      "description": "Fine art collection policy MAI-FA-2025-0716, premium instalment (Oct 2026)",
+      "qty": 1.0,
+      "unit_price": 2450.0,
+      "amount": 2450.0
+    }
+  ],
+  "subtotal": 2450.0,
+  "tax": 0.0,
+  "total": 2450.0,
+  "bank_account": "4410-0928-1173",
+  "fee_rate_pct": null,
+  "sender_emails": [
+    "billing@meridianfineart.com"
+  ],
+  "evidence": {
+    "invoice_no": {
+      "doc": "docs/invoices/inbox/Invoice_MAI-10044.pdf",
+      "page": 1,
+      "quote": "MAI-10044",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "total": {
+      "doc": "docs/invoices/inbox/Invoice_MAI-10044.pdf",
+      "page": 1,
+      "quote": "2,450.00",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "supplier": {
+      "doc": "docs/invoices/inbox/Invoice_MAI-10044.pdf",
+      "page": 1,
+      "quote": "Meridian Fine Art Insurance Ltd · Clarendon House, 2 Church Street, Hamilton HM 11, Bermuda · Bermuda reg. no. 58821",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "bank_account": {
+      "doc": "docs/invoices/inbox/Invoice_MAI-10044.pdf",
+      "page": 1,
+      "quote": "Pay by wire: Sierra Mesa Bank (SWIFT SMBKUS6L), account 4410-0928-1173. Questions: billing@meridianfineart.com",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "invoice_date": {
+      "doc": "docs/invoices/inbox/Invoice_MAI-10044.pdf",
+      "page": 1,
+      "quote": "October 01, 2026",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "email:billing@meridianfineart.com": {
+      "doc": "docs/invoices/inbox/Invoice_MAI-10044.pdf",
+      "page": 1,
+      "quote": "Pay by wire: Sierra Mesa Bank (SWIFT SMBKUS6L), account 4410-0928-1173. Questions: billing@meridianfineart.com",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    }
+  },
+  "problems": []
+}

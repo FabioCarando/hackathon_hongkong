@@ -1,0 +1,77 @@
+{
+  "supplier_name": "Harbourview Capital Partners III, L.P.",
+  "supplier_id": "S02",
+  "kind": "capital_call",
+  "invoice_no": "HCP3-CN-2026-04",
+  "invoice_date": "2026-09-30",
+  "due_date": "2026-10-10",
+  "currency": "USD",
+  "lines": [
+    {
+      "item_code": null,
+      "description": "This capital call (6% of commitment)",
+      "qty": 1.0,
+      "unit_price": 600000.0,
+      "amount": 600000.0
+    }
+  ],
+  "subtotal": 600000.0,
+  "tax": 0.0,
+  "total": 600000.0,
+  "bank_account": "8841-2207-5530",
+  "fee_rate_pct": null,
+  "sender_emails": [
+    "fundadmin@harbourviewcap.com"
+  ],
+  "evidence": {
+    "invoice_no": {
+      "doc": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
+      "page": 1,
+      "quote": "HCP3-CN-2026-04",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "total": {
+      "doc": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
+      "page": 1,
+      "quote": "600,000.00",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "supplier": {
+      "doc": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
+      "page": 1,
+      "quote": "Beneficiary: Harbourview Capital Partners III LP",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "bank_account": {
+      "doc": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
+      "page": 1,
+      "quote": "Account No.: 8841-2207-5530",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "invoice_date": {
+      "doc": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
+      "page": 1,
+      "quote": "30 Sep 2026",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "email:fundadmin@harbourviewcap.com": {
+      "doc": "docs/invoices/inbox/HCP3_Capital_Call_Notice_04.pdf",
+      "page": 1,
+      "quote": "fundadmin@harbourviewcap.com",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    }
+  },
+  "problems": []
+}

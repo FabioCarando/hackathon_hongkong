@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     # Trace
     trace_workspace: str = "runtime/workspace"  # where the app reads and writes
     trace_seed_workspace: str = "workspace"  # pristine copy, never written by the app
+    # pre-computed OCR / extraction / question results by file hash (scripts/warm_demo_cache.py);
+    # the demo documents then process instantly, anything else goes to the LLM as usual
+    trace_demo_cache: str = "demo_cache"
     trace_user: str = "Jason Yip"  # default "Working as" user (must be in COMPANY.md)
     # live demo mailbox (IMAP, e.g. Gmail + app password); only subjects containing the tag are read
     trace_imap_host: str = "imap.gmail.com"

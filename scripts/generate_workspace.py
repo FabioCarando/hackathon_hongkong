@@ -160,12 +160,12 @@ SUP = {
         contract="docs/contracts/S05_art_insurance_policy_2025.pdf",
     ),
 }
-FAKE_DOMAIN = "prg-fund.co"
 NEW_BANK = (
     "Nanhai Union Bank, Shenzhen Bao'an Branch (南海联合银行深圳宝安支行)",
     "6230 5821 4407 7731",
 )
-FEE_RATE, FEE_RATE_WRONG = 1.50, 2.00
+FEE_RATE = 1.50
+PM_OVERCHARGE = ("PM-RB12", 9680.0)  # demo: Flat 12A management fee billed above schedule 1 (8,800)
 
 PM_RATES = {  # Peak Estates property management agreement, schedule 1
     "PM-RB12": ("Property management - Flat 12A, Seaview Court, Repulse Bay", "month", 8800),
@@ -525,8 +525,7 @@ INBOX = [
         "scan_1002.pdf",
         "docs/invoices/inbox",
         kind="capital_call",
-        bank=NEW_BANK[1],
-        email=f"accounts@{FAKE_DOMAIN}",
+        bank=NEW_BANK[1],  # demo: account doesn't match the supplier master (sent from the real domain)
         called_before=SUP["S01"]["called_before"] + sum(a for *_, a in S01_CALLS),
     ),
     mk_inv(
@@ -550,28 +549,23 @@ INBOX = [
         "S02",
         "HCP3-MF-2026Q4",
         D(2026, 10, 1),
-        fee_line("2026Q4", FEE_RATE_WRONG),
+        fee_line("2026Q4", FEE_RATE),
         "HCP3_Q4_2026_Management_Fee.pdf",
         "docs/invoices/inbox",
         kind="fee_notice",
         account="455",
         terms=30,
-        rate=FEE_RATE_WRONG,
+        rate=FEE_RATE,
         period="2026Q4",
-    ),
-    mk_inv(
-        "S03",
-        "INV-PM-2291-R",
-        D(2026, 9, 25),
-        INV2291["lines"],
-        "Invoice (3).pdf",
-        "docs/invoices/inbox",
     ),
     mk_inv(
         "S03",
         "INV-PM-2318",
         D(2026, 9, 30),
-        pm_lines(1, 0),
+        [
+            (c, d, q, PM_OVERCHARGE[1] if c == PM_OVERCHARGE[0] else u)
+            for c, d, q, u in pm_lines(1, 0)
+        ],
         "scan_0930_2.pdf",
         "docs/invoices/inbox",
     ),
@@ -942,7 +936,10 @@ def actual(code, m):  # P&L sign: revenue positive as credit
 
 
 # ----------------------------------------------------------------------------- PDF engine
-FONT_DIR = Path("/usr/share/fonts/noto-cjk")
+FONT_DIR = next(
+    (d for d in (Path("/usr/share/fonts/noto-cjk"), Path("/usr/share/fonts/opentype/noto")) if d.exists()),
+    Path("/usr/share/fonts/noto-cjk"),
+)
 
 
 def _idx(path):
@@ -2717,7 +2714,7 @@ def main():
     )
     sl = contracts["docs/contracts/S02_side_letter_2024.pdf"]
     assert "rate of 1.50% per annum" in text_of(sl).replace("\n", " ")
-    assert "2.00% p.a." in text_of(INBOX[2]["clean_pdf"])
+    assert "1.50% p.a." in text_of(INBOX[2]["clean_pdf"])
 
     # ---- staged history
     W = lambda s: datetime.fromisoformat(s)  # noqa: E731
@@ -2942,22 +2939,9 @@ def main():
         cc=f"Raymond Ho <{PEOPLE['raymond'][1]}>",
         extra={"X-Attachment": "S04_lease_2027_signed.pdf (saved to docs/contracts/)"},
     )
-    eml(
-        "docs/emails/2026-10-02_prg_bank_change.eml",
-        f"Pearl River Fund Accounts <accounts@{FAKE_DOMAIN}>",
-        f"Lantau Peak Accounts <{PEOPLE['jason'][1]}>",
-        "Updated wire instructions / 银行账户变更通知 - URGENT",
-        datetime(2026, 10, 2, 8, 55),
-        "Dear Limited Partner,\n\nPlease note the Fund's bank account has changed due to an audit of our custodian arrangements.\n"
-        "Please pay drawdown notice PRG2-DN-018 and all future drawdowns to the new account:\n"
-        f"{NEW_BANK[0]}, account no. {NEW_BANK[1]}.\n"
-        "请将本次缴款汇入以上新账户，旧账户已停止使用。Kindly process before the due date to avoid default interest.\n\n"
-        "Lily Zhang 张丽\nFund Accounting, Pearl River Capital Management\n",
-        extra={"X-Attachment": "scan_1002.pdf (saved to docs/invoices/inbox/)"},
-    )
 
     # ---- ground truth
-    s01_in, s02_call, s02_fee, dup_in, s03_in, s05_in = INBOX
+    s01_in, s02_call, s02_fee, s03_in, s05_in = INBOX
     last6 = s01[-6:]
 
     def reg_row(inv, status, controls=()):
@@ -3080,30 +3064,8 @@ def main():
         planted_problems=[
             dict(
                 id="P1",
-                control="PRICE-001",
-                invoice_file=f"docs/invoices/inbox/{s02_fee['file']}",
-                invoice_no=s02_fee["no"],
-                supplier_id="S02",
-                evidence=dict(
-                    kind="fee_rate",
-                    invoice_fee_rate_pct=FEE_RATE_WRONG,
-                    contract_fee_rate_pct=FEE_RATE,
-                    currency="USD",
-                    pct_over=round((FEE_RATE_WRONG - FEE_RATE) / FEE_RATE * 100, 2),
-                    tolerance_pct=1.0,
-                    invoice_amount=s02_fee["total"],
-                    expected_amount=r2(SUP["S02"]["commitment"] * FEE_RATE / 100 / 4),
-                    overcharge_usd=r2(
-                        s02_fee["total"] - SUP["S02"]["commitment"] * FEE_RATE / 100 / 4
-                    ),
-                    contract_ref=dict(
-                        doc="docs/contracts/S02_side_letter_2024.pdf", page=sl_p, clause="3.1"
-                    ),
-                ),
-            ),
-            dict(
-                id="P2",
                 control="BANK-001",
+                outcome="flag",  # entered, payment blocked until a call-back clears it
                 invoice_file=f"docs/invoices/inbox/{s01_in['file']}",
                 invoice_no=s01_in["no"],
                 supplier_id="S01",
@@ -3121,7 +3083,6 @@ def main():
                         )
                         for p in last6
                     ],
-                    email="docs/emails/2026-10-02_prg_bank_change.eml",
                     contract_clause=dict(
                         doc="docs/contracts/S01_subscription_agreement_2024.pdf",
                         page=find_page(s01_c, "5.3"),
@@ -3130,36 +3091,28 @@ def main():
                 ),
             ),
             dict(
-                id="P3",
-                control="DOMAIN-001",
-                invoice_file=f"docs/invoices/inbox/{s01_in['file']}",
-                invoice_no=s01_in["no"],
-                supplier_id="S01",
-                evidence=dict(
-                    sender_domain=FAKE_DOMAIN,
-                    known_domain=SUP["S01"]["domain"],
-                    email="docs/emails/2026-10-02_prg_bank_change.eml",
-                    invoice_contact_email=f"accounts@{FAKE_DOMAIN}",
-                ),
-            ),
-            dict(
-                id="P4",
-                control="DUP-001",
-                invoice_file=f"docs/invoices/inbox/{dup_in['file']}",
-                invoice_no=dup_in["no"],
+                id="P2",
+                control="PRICE-001",
+                outcome="hold",
+                invoice_file=f"docs/invoices/inbox/{s03_in['file']}",
+                invoice_no=s03_in["no"],
                 supplier_id="S03",
                 evidence=dict(
-                    matches_invoice_no="INV-PM-2291",
-                    original_date=INV2291["date"].isoformat(),
-                    entered="2026-09-03",
-                    amount=INV2291["total"],
+                    item=PM_OVERCHARGE[0],
+                    invoice_unit_price=PM_OVERCHARGE[1],
+                    contract_unit_price=float(PM_RATES[PM_OVERCHARGE[0]][2]),
                     currency="HKD",
-                    register_row=rowno["INV-PM-2291"],
-                    original_status="Approved (due 2026-10-01, unpaid)",
+                    pct_over=round((PM_OVERCHARGE[1] / PM_RATES[PM_OVERCHARGE[0]][2] - 1) * 100, 2),
+                    tolerance_pct=1.0,
+                    overcharge_hkd=r2(PM_OVERCHARGE[1] - PM_RATES[PM_OVERCHARGE[0]][2]),
+                    contract_ref=dict(
+                        doc="docs/contracts/S03_property_management_agreement_2026.pdf",
+                        clause="Schedule 1",
+                    ),
                 ),
             ),
         ],
-        clean_invoices=[f"docs/invoices/inbox/{i['file']}" for i in (s02_call, s03_in, s05_in)],
+        clean_invoices=[f"docs/invoices/inbox/{i['file']}" for i in (s02_call, s02_fee, s05_in)],
         register_seed_rows=len(regs),
         tasks=[
             dict(
@@ -3187,11 +3140,10 @@ def main():
                 expected=dict(
                     rows=[
                         reg_row(s02_call, "Entered"),
-                        reg_row(s03_in, "Entered"),
+                        reg_row(s02_fee, "Entered"),
                         reg_row(s05_in, "Entered"),
-                        reg_row(s01_in, "HELD", ["BANK-001", "DOMAIN-001"]),
-                        reg_row(s02_fee, "HELD", ["PRICE-001"]),
-                        reg_row(dup_in, "HELD", ["DUP-001"]),
+                        reg_row(s01_in, "Payment blocked", ["BANK-001"]),
+                        reg_row(s03_in, "HELD", ["PRICE-001"]),
                     ]
                 ),
             ),

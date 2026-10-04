@@ -40,7 +40,78 @@ def accept(cs_id: str, user: str) -> str:
     """Accept a clean (proposed) change set as is."""
     cs = changes.get(cs_id)
     cs.status, cs.decided_by = "accepted", user
-    return changes.apply(cs, user, row_status="Entered")
+    return changes.apply(
+        cs, user, row_status="Payment blocked" if cs.payment_blocked else "Entered"
+    )
+
+
+def clear_flag(cs_id: str, reason: str, user: str) -> tuple[Decision, str]:
+    """Bank flag cleared after a call-back: register status 'Payment blocked' -> 'Entered'."""
+    from app.core import versioning
+    from app.data import sheets, workspace
+
+    cs = changes.get(cs_id)
+    if not cs.payment_blocked or cs.status != "accepted":
+        raise PolicyError("Nothing to clear: this document is not entered with a payment block.")
+    if not CALLBACK_RE.search(reason):
+        raise PolicyError(
+            "Bank details can only be cleared after a call-back to a known number "
+            "(company policy: email or document alone is never enough). Mention the call-back."
+        )
+    d = Decision(
+        id=changes.next_id("D", [x.id for x in all_decisions()]),
+        at=datetime.now(),
+        by=user,
+        changeset_id=cs.id,
+        answer="approve_once",
+        reason=reason.strip(),
+        findings=[f.control for f in cs.findings if f.severity == "flag"],
+    )
+    store.append_jsonl(FILE, d)
+    row = next(
+        r["_row"]
+        for r in sheets.register()
+        if r["invoice_no"] == cs.invoice.invoice_no and r["source_file"] == cs.trigger
+    )
+    col = "ABCDEFGHIJKL"[sheets.header("sheets/invoice_register.xlsx", "Register").index("status")]
+    sheets.write_cells(
+        "sheets/invoice_register.xlsx",
+        "Register",
+        {f"{col}{row}": "Entered"},
+        f"Trace: bank account confirmed by call-back — {d.id}",
+    )
+    versioning.add_sources(
+        [
+            dict(
+                file="sheets/invoice_register.xlsx",
+                sheet="Register",
+                cell=f"{col}{row}",
+                value="Entered",
+                old="Payment blocked",
+                sources=[{"decision": d.id}],
+                reason=f"Payment block lifted: {d.reason}",
+                decision=d.id,
+                commit=None,
+            )
+        ]
+    )
+    cs.payment_blocked = False
+    changes.save(cs)
+    h = workspace.commit(
+        [
+            "sheets/invoice_register.xlsx",
+            ".trace/sources.json",
+            ".trace/decisions.jsonl",
+            f".trace/changesets/{cs.id}.json",
+        ],
+        f"Lift payment block on {cs.invoice.invoice_no} [{d.id}]",
+        f"Bank account confirmed by call-back.\n\nDecision {d.id} ({user}): {d.reason}",
+        user,
+    )
+    versioning.set_commit(h)
+    d.commit = h
+    _rewrite([d if x.id == d.id else x for x in all_decisions()])
+    return d, h
 
 
 def reject_clean(cs_id: str, user: str) -> None:

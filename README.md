@@ -27,10 +27,11 @@ No credentials yet? `LLM_PROVIDER=fake uv run streamlit run streamlit_app.py`.
 
 1. `cp .env.example .env`, then set `OPENROUTER_API_KEY` and `LLM_MODEL_VISION=google/gemini-2.5-flash` (needed to read the scanned PDFs).
 2. `uv run streamlit run streamlit_app.py`, then click **Reset demo** in the sidebar.
-3. Working as Jason Yip: **Inbox › Process 7 new documents** → **Accept all** → open the red Pearl River capital call (try *Approve & remember*: it's locked, bank changes need a call-back) → **Reject** with a reason → reject the Harbourview fee notice (2.00% vs 1.50%) and the duplicate → switch to Grace Lam → **Update forecast & remember** on the lease → **Ask the brain** "Why is 2027 rental income for Flat 12A 98,800?". Full script: [`spec/06-demo-and-eval.md`](spec/06-demo-and-eval.md).
+3. Working as Jason Yip: **Inbox** › drop the PDFs from `workspace/docs/invoices/inbox/` on **Upload documents** (or click **Process 6 new documents**) → **Accept all (3)** → the orange **Pearl River capital call**: the bank account doesn't match our records, so **Enter, block payment**, then **Clear flag** with a call-back note → the red **Peak Estates invoice**: Flat 12A management billed HK$9,680 vs HK$8,800 in Schedule 1 → **Reject** with a reason → switch to Grace Lam → **Update forecast & remember** on the lease → **Ask the brain** "Why is 2027 rental income for Flat 12A 98,800?". Full script: [`spec/06-demo-and-eval.md`](spec/06-demo-and-eval.md).
 
 - The app works on a copy in `runtime/workspace`. `workspace/` is never written; **Reset demo** restores everything in seconds.
-- Set `LLM_CACHE=on` for rehearsals: after one run, every LLM call replays from disk (free, instant, no wifi).
+- The demo documents are pre-computed in `demo_cache/` (OCR, extracted fields, Trace's questions, by file hash): processing them takes seconds and makes no LLM call. Any other uploaded file goes to the models live. After regenerating the workspace run `uv run python scripts/warm_demo_cache.py`.
+- Set `LLM_CACHE=on` for rehearsals so *Ask the brain* replays too (free, instant, no wifi).
 - Don't run `scripts/generate_workspace.py`: it rebuilds `workspace/` with new commit hashes.
 - Checks: `uv run pytest -q` (offline) and `uv run python scripts/eval.py` (real models, scores the pipeline vs `workspace/ground_truth/expected.json`).
 

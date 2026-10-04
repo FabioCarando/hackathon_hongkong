@@ -143,7 +143,7 @@ class Expectation(BaseModel):
 
 class Finding(BaseModel):
     control: str  # "PRICE-001", ...
-    severity: Literal["hold", "approval", "info"]
+    severity: Literal["hold", "flag", "approval", "info"]  # flag = enter, but block payment
     title: str  # plain language
     detail: str
     expected: str | float | None = None
@@ -198,6 +198,7 @@ class ChangeSet(BaseModel):
     decision: str | None = None
     commit: str | None = None
     invoice: InvoiceData | None = None
+    payment_blocked: bool = False  # entered with a flag until a call-back clears it
     lease: LeaseTerms | None = None
     email: EmailData | None = None
     memory_updates: list[Expectation] = []  # applied on approve_and_remember

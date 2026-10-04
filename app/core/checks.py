@@ -123,11 +123,11 @@ def check_bank(inv: InvoiceData) -> list[Finding]:
     return [
         Finding(
             control="BANK-001",
-            severity="hold",
-            title="Bank account changed",
+            severity="flag",
+            title="Bank account doesn't match our records",
             detail=(
                 f"Invoice asks for payment to …{_digits(inv.bank_account)[-4:]} "
-                f"({inv.bank_account}); the counterparty master has …{_digits(str(e.value))[-4:]}.{history}"
+                f"({inv.bank_account}); the counterparty master has …{_digits(str(e.value))[-4:]}.{history} Entered, but payment is blocked until a call-back to a known number confirms the account."
             ),
             expected=str(e.value),
             actual=inv.bank_account,

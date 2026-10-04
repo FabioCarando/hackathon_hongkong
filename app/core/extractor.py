@@ -11,7 +11,7 @@ from pydantic import BaseModel
 
 from app.core import reader
 from app.core.models import EmailData, InvoiceData, InvoiceLine, LeaseTerms, ReadResult, SourceRef
-from app.data import company, sheets, workspace
+from app.data import company, sheets, store, workspace
 from app.llm import get_llm
 
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
@@ -119,6 +119,15 @@ def linked_emails(invoice_no: str, filename: str) -> list[tuple[str, SourceRef]]
 
 
 def extract_invoice(rel: str) -> InvoiceData:
+    key = f"{reader.sha256(rel)}.extract_invoice.json"
+    if (hit := store.cache_get(key)) is not None:
+        return InvoiceData.model_validate(hit)
+    out = _extract_invoice(rel)
+    store.cache_put(key, out)
+    return out
+
+
+def _extract_invoice(rel: str) -> InvoiceData:
     rr = reader.read(rel)
     raw, _ = get_llm().extract(
         _pages_prompt(rr), _InvoiceLLM, system=INVOICE_SYSTEM, label="extract_invoice"
@@ -197,6 +206,15 @@ def extract_invoice(rel: str) -> InvoiceData:
 
 
 def extract_lease(rel: str) -> LeaseTerms:
+    key = f"{reader.sha256(rel)}.extract_lease.json"
+    if (hit := store.cache_get(key)) is not None:
+        return LeaseTerms.model_validate(hit)
+    out = _extract_lease(rel)
+    store.cache_put(key, out)
+    return out
+
+
+def _extract_lease(rel: str) -> LeaseTerms:
     rr = reader.read(rel)
     raw, _ = get_llm().extract(
         _pages_prompt(rr),
@@ -243,6 +261,15 @@ EMAIL_SYSTEM = (
 
 
 def extract_email(rel: str) -> EmailData:
+    key = f"{reader.sha256(rel)}.extract_email.json"
+    if (hit := store.cache_get(key)) is not None:
+        return EmailData.model_validate(hit)
+    out = _extract_email(rel)
+    store.cache_put(key, out)
+    return out
+
+
+def _extract_email(rel: str) -> EmailData:
     import email as email_lib
     from email import policy
     from email.utils import parseaddr, parsedate_to_datetime

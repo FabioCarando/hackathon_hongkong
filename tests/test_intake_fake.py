@@ -19,10 +19,10 @@ SCAN_1002 = """珠江成长基金二期 PEARL RIVER GROWTH FUND II LP
 DD-018 | 第18次缴款 Drawdown No. 18 | 1 | 3,500,000.00
 本次应缴金额 合计 人民币（RMB） 3,500,000.00
 收款银行：南海联合银行深圳宝安支行  银行账号：6230 5821 4407 7731
-如有疑问，请联系 accounts@prg-fund.co"""
+如有疑问，请联系 accounts@prgfund.com"""
 SCAN_0930 = """PEAK ESTATES PROPERTY MANAGEMENT LTD  accounts@peakestates.com.hk
 INVOICE  INV-PM-2318  Date 30 Sep 2026  Due date 30 Oct 2026
-TOTAL HKD 18,500.00"""
+TOTAL HKD 19,380.00"""
 
 
 def line(code, desc, amount, qty=1, price=None):
@@ -65,12 +65,12 @@ RAW = {
         invoice_date="2026-10-01",
         due_date="2026-10-31",
         currency="USD",
-        subtotal=50000,
+        subtotal=37500,
         tax=0,
-        total=50000,
+        total=37500,
         bank_account="8841-2207-5530",
-        fee_rate_pct=2.0,
-        lines=[line("MGMT-FEE", "Management fee Q4 2026", 50000)],
+        fee_rate_pct=1.5,
+        lines=[line("MGMT-FEE", "Management fee Q4 2026", 37500)],
     ),
     "scan_0930_2.pdf": dict(
         supplier_name="Peak Estates Property Management Ltd",
@@ -78,28 +78,16 @@ RAW = {
         invoice_date="2026-09-30",
         due_date="2026-10-30",
         currency="HKD",
-        subtotal=18500,
+        subtotal=19380,
         tax=0,
-        total=18500,
+        total=19380,
         bank_account="088-221-55190-3",
         lines=[
-            line("PM-RB12", "Flat 12A", 8800),
+            line("PM-RB12", "Flat 12A", 9680),
             line("PM-CR21", "Flat 21B", 7600),
             line("KEY-HLD", "Key holding", 900, qty=2, price=450),
             line("LS-INSP", "Inspection", 1200),
         ],
-    ),
-    "Invoice (3).pdf": dict(
-        supplier_name="Peak Estates Property Management Ltd",
-        invoice_no="INV-PM-2291-R",
-        invoice_date="2026-09-25",
-        due_date="2026-10-25",
-        currency="HKD",
-        subtotal=23200,
-        tax=0,
-        total=23200,
-        lines=[],
-        bank_account="088-221-55190-3",
     ),
     "Invoice_MAI-10044.pdf": dict(
         supplier_name="Meridian Fine Art Insurance Ltd",
@@ -175,33 +163,35 @@ def test_full_demo_flow(ws, monkeypatch):
     monkeypatch.setattr(reader, "read", tracking_read)
     css = intake.process_inbox("Jason Yip", print)
     by_doc = {cs.trigger: cs for cs in css}
-    assert len(css) == 7  # 6 inbox documents + lease
+    assert len(css) == 6  # 5 inbox documents + lease
 
-    # planted problems fire, clean invoices are not held
+    # planted problems fire (bank = flag, price = hold), clean invoices are not held or flagged
     fired = {(p["invoice_file"], p["control"]) for p in ws["planted_problems"]}
-    got = {(cs.trigger, f.control) for cs in css for f in cs.findings if f.severity == "hold"}
+    got = {
+        (cs.trigger, f.control) for cs in css for f in cs.findings if f.severity in ("hold", "flag")
+    }
     assert got == fired
     for doc in ws["clean_invoices"]:
-        assert by_doc[doc].status == "proposed"
+        assert by_doc[doc].status == "proposed" and not by_doc[doc].payment_blocked
     approvals = {cs.trigger for cs in css for f in cs.findings if f.control == "APPROVAL-001"}
     expected_rows = ws["tasks"][1]["expected"]["rows"]
     assert approvals == {r["source_file"] for r in expected_rows if r["needs_principal_approval"]}
 
-    # policy guard
+    # bank mismatch: entered with a flag, never held or rejected
     s01 = by_doc["docs/invoices/inbox/scan_1002.pdf"]
-    with pytest.raises(decisions.PolicyError):
-        decisions.decide(s01.id, "approve_and_remember", "looks fine", "Jason Yip")
+    assert s01.status == "proposed" and s01.payment_blocked and s01.question is None
 
-    # scripted demo: accept clean, reject both held, approve lease
+    # scripted demo: accept clean, enter the flagged call, reject the overcharge, approve lease
     for doc in ws["clean_invoices"]:
         decisions.accept(by_doc[doc].id, "Jason Yip")
+    decisions.accept(s01.id, "Jason Yip")
+    with pytest.raises(decisions.PolicyError):  # the flag only clears after a call-back
+        decisions.clear_flag(s01.id, "looks fine", "Jason Yip")
+    pm = by_doc["docs/invoices/inbox/scan_0930_2.pdf"]
+    assert pm.status == "held"
     decisions.decide(
-        s01.id, "reject", "Not expected, calling the GP on the number on file", "Jason Yip"
+        pm.id, "reject", "Schedule 1 says 8,800; asked Peak Estates to reissue", "Jason Yip"
     )
-    fee = by_doc["docs/invoices/inbox/HCP3_Q4_2026_Management_Fee.pdf"]
-    decisions.decide(fee.id, "reject", "Side letter says 1.50%; asked GP to reissue", "Jason Yip")
-    dup = by_doc["docs/invoices/inbox/Invoice (3).pdf"]
-    decisions.decide(dup.id, "reject", "Duplicate of INV-PM-2291", "Jason Yip")
     lease = by_doc["docs/contracts/S04_lease_2027_signed.pdf"]
     d, h = decisions.decide(
         lease.id, "approve_and_remember", "Renewal signed by Victoria", "Grace Lam"
@@ -251,7 +241,14 @@ def test_full_demo_flow(ws, monkeypatch):
 
     # every Trace commit's changed cells have sources with the commit filled in
     assert all(cs.commit for cs in changes.all_changesets() if cs.status != "proposed")
-    assert len(workspace.log()) == 10 + 7
+    assert len(workspace.log()) == 10 + 6
+
+    # clearing the flag after a call-back lifts the payment block
+    d2, _ = decisions.clear_flag(
+        s01.id, "Called the GP on the number on file: …2049 confirmed", "Jason Yip"
+    )
+    row = next(r for r in sheets.register() if r["invoice_no"] == "PRG2-DN-018")
+    assert row["status"] == "Entered" and not changes.get(s01.id).payment_blocked
 
 
 def test_fraud_email_teaches_the_brain(ws, monkeypatch):

@@ -29,7 +29,7 @@ def can_read(rel: str) -> bool:
 
 
 def cached(rel: str) -> ReadResult | None:
-    data = store.read_json(f"extracted/{sha256(rel)}.read.json")
+    data = store.cache_get(f"{sha256(rel)}.read.json")
     return ReadResult.model_validate(data) if data else None
 
 

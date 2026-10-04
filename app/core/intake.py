@@ -41,7 +41,35 @@ def pending_docs() -> list[str]:
     return docs
 
 
-def process_inbox(user: str, on_step: Callable[[str], None] = lambda s: None) -> list[ChangeSet]:
+def receive(name: str, data: bytes) -> str:
+    """Save an uploaded document into the inbox. A file that is already there (same name and
+    content, e.g. the demo documents) is just acknowledged."""
+    import hashlib
+    from pathlib import Path
+
+    folder = "docs/emails/inbox" if name.lower().endswith(".eml") else "docs/invoices/inbox"
+    rel = f"{folder}/{Path(name).name}"
+    p = workspace.path(rel)
+    if p.exists() and hashlib.sha256(p.read_bytes()).digest() == hashlib.sha256(data).digest():
+        return rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_bytes(data)
+    return rel
+
+
+def process_inbox(
+    user: str, on_step: Callable[[str], None] = lambda s: None, pace: float = 0.0
+) -> list[ChangeSet]:
+    """`pace` adds a short pause per step so a cached run still reads as a sequence on screen."""
+    import time
+
+    if pace:
+        inner = on_step
+
+        def on_step(s: str) -> None:
+            inner(s)
+            time.sleep(pace)
+
     out = []
     for rel in pending_docs():
         scanned = reader.needs_ocr(rel)
@@ -76,6 +104,7 @@ def recheck_open(on_step: Callable[[str], None] = lambda s: None) -> list[Change
         cs.findings = findings
         held = any(f.severity == "hold" for f in findings)
         cs.status = "held" if held else "proposed"
+        cs.payment_blocked = any(f.severity == "flag" for f in findings)
         cs.memory_updates = _invoice_memory(cs.invoice, findings)
         cs.question = _question(cs) if held else None
         changes.save(cs)
@@ -202,6 +231,7 @@ def _invoice_changeset(rel: str, user: str, on_step) -> ChangeSet:
         SourceRef(doc="sheets/fx_rates.xlsx", quote=f"{inv.invoice_date:%Y-%m} {inv.currency} {fx}")
     )
     held = any(f.severity == "hold" for f in findings)
+    flagged = any(f.severity == "flag" for f in findings)
     approval = next((f for f in findings if f.control == "APPROVAL-001"), None)
     name = master["name_en"] if master else inv.supplier_name
     doc_name = DOC_NAMES[inv.kind]
@@ -210,6 +240,8 @@ def _invoice_changeset(rel: str, user: str, on_step) -> ChangeSet:
     )
     if approval:
         reason += f" {approval.detail} {approval.title} before payment."
+    if flagged:
+        reason += " Payment blocked: the bank account on the document doesn't match our records."
     row = NewRow(
         file=REGISTER,
         sheet="Register",
@@ -223,7 +255,7 @@ def _invoice_changeset(rel: str, user: str, on_step) -> ChangeSet:
             "fx_rate": fx,
             "account_code": str(acct.value) if acct else None,
             "due_date": inv.due_date,
-            "status": "HELD" if held else "Entered",
+            "status": "HELD" if held else "Payment blocked" if flagged else "Entered",
             "source_file": rel,
         },
         sources=sources,
@@ -241,6 +273,7 @@ def _invoice_changeset(rel: str, user: str, on_step) -> ChangeSet:
         created_by=user,
         created_at=datetime.now(),
         invoice=inv,
+        payment_blocked=flagged,
         memory_updates=_invoice_memory(inv, findings),
     )
     if held:
@@ -507,8 +540,17 @@ def _llm_question(cs: ChangeSet) -> str | None:
         "finance clerk: say plainly what doesn't fit, with the numbers, and ask whether this was "
         "expected and why. No greeting, no markdown, no advice beyond the question."
     )
+    import hashlib
+
+    from app.data import store
+
+    key = f"q-{hashlib.sha256(prompt.encode()).hexdigest()[:24]}.json"
+    if hit := store.cache_get(key):
+        return hit["text"]
     try:
         text = get_llm().complete(prompt, fast=True, max_tokens=400, label="question").text.strip()
+        if text:
+            store.cache_put(key, {"text": text})
     except Exception:
         return None
     return text or None

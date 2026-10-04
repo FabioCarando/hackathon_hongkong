@@ -1,0 +1,11 @@
+{
+  "path": "docs/invoices/inbox/scan_0930_2.pdf",
+  "sha256": "769f24ad2a0c34be36f9f3c576ac309342362af995e8888ca5104b0b9e4cb5d4",
+  "pages": [
+    {
+      "page": 1,
+      "text": "PEAK ESTATES PROPERTY MANAGEMENT LTD\nPE | 峰譽物業管理有限公司 • Unit 1608, Wanchai Commercial Centre, 194 Johnston Road, Wan Chai, Hong Kong\nTel +852 2418 6630 | accounts@peakestates.com.hk\nBR No. 50993312\nINVOICE\nBill to | Lantau Peak Family Office Ltd | Invoice no. | INV-PM-2318\nSuite 3802, 38/F, Harbour Crest Tower, | Date | 30 Sep 2026\n1 Harbour View Street, Central, Hong Kong | Due date | 30 Oct 2026\n| | Client | LPFO-0042\nCode | Description | Qty | Unit | Rate HKD | Amount HKD\nPM-RB12 | Property management - Flat 12A, Seaview Court, Repulse Bay | 1 | month | 9,680.00 | 9,680.00\nPM-CR21 | Property management - Flat 21B, Pinecrest Tower, Mid-Levels | 1 | month | 7,600.00 | 7,600.00\nKEY-HLD | Key holding & contractor access (per flat) | 2 | month | 450.00 | 900.00\nLS-INSP | Tenancy inspection with photo report | 1 | visit | 1,200.00 | 1,200.00\n| | | | Subtotal | 19,380.00\n| | | | TOTAL HKD | 19,380.00\nPayment within 30 days to Victoria Harbour Bank Limited, account 088-221-55190-3 (Peak Estates Property Management\nLtd).\nRates per property management agreement 2026, schedule 1. E. & O. E.",
+      "method": "vision_ocr"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "supplier_name": "PEAK ESTATES PROPERTY MANAGEMENT LTD",
+  "supplier_id": "S03",
+  "kind": "invoice",
+  "invoice_no": "INV-PM-2318",
+  "invoice_date": "2026-09-30",
+  "due_date": "2026-10-30",
+  "currency": "HKD",
+  "lines": [
+    {
+      "item_code": "PM-RB12",
+      "description": "Property management - Flat 12A, Seaview Court, Repulse Bay",
+      "qty": 1.0,
+      "unit_price": 9680.0,
+      "amount": 9680.0
+    },
+    {
+      "item_code": "PM-CR21",
+      "description": "Property management - Flat 21B, Pinecrest Tower, Mid-Levels",
+      "qty": 1.0,
+      "unit_price": 7600.0,
+      "amount": 7600.0
+    },
+    {
+      "item_code": "KEY-HLD",
+      "description": "Key holding & contractor access (per flat)",
+      "qty": 2.0,
+      "unit_price": 450.0,
+      "amount": 900.0
+    },
+    {
+      "item_code": "LS-INSP",
+      "description": "Tenancy inspection with photo report",
+      "qty": 1.0,
+      "unit_price": 1200.0,
+      "amount": 1200.0
+    }
+  ],
+  "subtotal": 19380.0,
+  "tax": 0.0,
+  "total": 19380.0,
+  "bank_account": "088-221-55190-3",
+  "fee_rate_pct": null,
+  "sender_emails": [
+    "accounts@peakestates.com.hk"
+  ],
+  "evidence": {
+    "invoice_no": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "Bill to | Lantau Peak Family Office Ltd | Invoice no. | INV-PM-2318",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "total": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "| | | | Subtotal | 19,380.00",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "supplier": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "PE | 峰譽物業管理有限公司 • Unit 1608, Wanchai Commercial Centre, 194 Johnston Road, Wan Chai, Hong Kong",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "bank_account": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "Payment within 30 days to Victoria Harbour Bank Limited, account 088-221-55190-3 (Peak Estates Property Management",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "invoice_date": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "Suite 3802, 38/F, Harbour Crest Tower, | Date | 30 Sep 2026",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "line:PM-RB12": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "PM-RB12 | Property management - Flat 12A, Seaview Court, Repulse Bay | 1 | month | 9,680.00 | 9,680.00",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "line:PM-CR21": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "PM-CR21 | Property management - Flat 21B, Pinecrest Tower, Mid-Levels | 1 | month | 7,600.00 | 7,600.00",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "line:KEY-HLD": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "KEY-HLD | Key holding & contractor access (per flat) | 2 | month | 450.00 | 900.00",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "line:LS-INSP": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "LS-INSP | Tenancy inspection with photo report | 1 | visit | 1,200.00 | 1,200.00",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    },
+    "email:accounts@peakestates.com.hk": {
+      "doc": "docs/invoices/inbox/scan_0930_2.pdf",
+      "page": 1,
+      "quote": "Tel +852 2418 6630 | accounts@peakestates.com.hk",
+      "clause": null,
+      "commit": null,
+      "decision": null
+    }
+  },
+  "problems": []
+}

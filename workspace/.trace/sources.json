@@ -22,7 +22,7 @@
       }
     ],
     "reason": "Repulse Bay rent held flat at the current lease rate until the lease expiring 31 Dec 2026 is renewed.",
-    "commit": "17b9fd46e3acb1efe5b99a12b7c1a315ba4f5193"
+    "commit": "2072f0cdac1673cf6d4f8ac99dfdb55044c1921b"
   },
   {
     "file": "sheets/invoice_register.xlsx",
@@ -37,7 +37,7 @@
       }
     ],
     "reason": "Entered Peak Estates INV-PM-2291 (September management fees, inspections and cleaning).",
-    "commit": "54e67fb4cc2d415b2e953273b90931ccb7b9f4ea"
+    "commit": "f96bb970aace935a286597a245a42a2499c6e490"
   },
   {
     "file": "sheets/invoice_register.xlsx",
@@ -58,7 +58,7 @@
       }
     ],
     "reason": "Entered Harbourview Q3 2026 management fee; rate matches side letter clause 3.1.",
-    "commit": "094a6657b90fb2856821ad3042eb84b26244bd06"
+    "commit": "cdc29b3aeff6acbd6fc2395987033a1117182627"
   },
   {
     "file": "sheets/supplier_master.xlsx",
@@ -73,7 +73,7 @@
       }
     ],
     "reason": "Fund bank account per signed subscription agreement clause 5.2.",
-    "commit": "be6661bf20b829f8e6fa4dda0bcdff6622f864c7"
+    "commit": "03dc4adc57d45f555487d45b5c71c66a6fb67b1d"
   },
   {
     "file": "sheets/budget_vs_actual_2026.xlsx",
@@ -88,6 +88,6 @@
       }
     ],
     "reason": "Budget 2026 rental income = Flat 12A lease HK$95,000 + Flat 21B HK$62,000.",
-    "commit": "e56523ea4eb19b3ddcb73a1fdf190626e361e8c9"
+    "commit": "f1741e145c4fb9861d62584963349cf11fb9cff0"
   }
 ]

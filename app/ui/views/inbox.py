@@ -7,7 +7,6 @@ import pandas as pd
 import streamlit as st
 
 from app.core import changes, decisions, indexer, intake, reader
-from app.core import expectations as ex
 from app.core.models import ChangeSet
 from app.data import sheets
 from app.ui.components import llm_errors
@@ -116,22 +115,40 @@ st.markdown(
 # ============ MAIN ============
 st.markdown('<div class="hero-title">Ready to Trace</div>', unsafe_allow_html=True)
 
+uploaded = st.file_uploader(
+    "Upload documents",
+    type=["pdf", "eml"],
+    accept_multiple_files=True,
+    key=f"upload-{st.session_state.get('upload_round', 0)}",
+    help="Capital calls, fee notices, invoices, contracts or emails.",
+)
+if uploaded:
+    for f in uploaded:
+        intake.receive(f.name, f.getvalue())
+    st.session_state["upload_round"] = st.session_state.get("upload_round", 0) + 1
+    st.session_state["auto_process"] = True
+    st.rerun()
+
 pending = intake.pending_docs()
 c1, c2 = st.columns([3, 1])
 
 with c1:
-    if st.button(
-        f"Process {len(pending)} new document{'s' * (len(pending) != 1)}",
-        type="primary",
-        key="process_btn",
-        disabled=not pending,
+    auto = st.session_state.pop("auto_process", False) and bool(pending)
+    if (
+        st.button(
+            f"Process {len(pending)} new document{'s' * (len(pending) != 1)}",
+            type="primary",
+            key="process_btn",
+            disabled=not pending,
+        )
+        or auto
     ):
         with llm_errors():
             progress_bar = st.progress(0)
             status_text = st.empty()
 
             status_text.write("Reading documents...")
-            css = intake.process_inbox(user(), on_step=st.write)
+            css = intake.process_inbox(user(), on_step=st.write, pace=0.35)
             progress_bar.progress(60)
 
             status_text.write("Checking against expectations...")
@@ -148,7 +165,9 @@ with c1:
 mail_watch()
 
 all_cs = changes.all_changesets()
-clean = [cs for cs in all_cs if cs.status == "proposed" and cs.kind != "email"]
+clean = [
+    cs for cs in all_cs if cs.status == "proposed" and cs.kind != "email" and not cs.payment_blocked
+]
 
 with c2:
     if st.button(
@@ -261,6 +280,32 @@ def question(cs: ChangeSet) -> None:
             st.rerun()
 
 
+def payment_flag(cs: ChangeSet) -> None:
+    for f in cs.findings:
+        if f.severity == "flag":
+            st.error(f"**{f.title}** — {f.detail}  \n{chips(f.evidence)}", icon="🚩")
+    if cs.status != "accepted":
+        return
+    with st.container(border=True):
+        st.markdown(
+            "**Payment blocked.** Call the counterparty on the number on file, then clear the flag."
+        )
+        reason = st.text_input(
+            "Call-back note (required)",
+            key=f"cb-{cs.id}",
+            placeholder="e.g. Called Lily Zhang on +86 755 … (number on file): account …2049 confirmed",
+        )
+        if st.button("Clear flag", key=f"clr-{cs.id}", width="stretch"):
+            try:
+                d, h = decisions.clear_flag(cs.id, reason, user())
+            except decisions.PolicyError as e:
+                st.error(str(e))
+            else:
+                indexer.build()
+                st.toast(f"Payment block lifted · {d.id} · {h[:7]}", icon="✅")
+                st.rerun()
+
+
 def card(cs: ChangeSet) -> None:
     color, label = STATUS[cs.status]
     approval = next((f for f in cs.findings if f.control == "APPROVAL-001"), None)
@@ -270,7 +315,9 @@ def card(cs: ChangeSet) -> None:
     decided = cs.status in ("accepted", "rejected")
 
     # Status indicator
-    if color == "red":
+    if cs.payment_blocked:
+        status_badge = ":orange[**PAYMENT BLOCKED**]"
+    elif color == "red":
         status_badge = ":red[**HELD**]"
     elif color == "green":
         status_badge = ":green[**READY**]"
@@ -305,8 +352,21 @@ def card(cs: ChangeSet) -> None:
                 st.info(f"**{approval.title}** — {approval.detail}")
             if cs.status == "held":
                 question(cs)
+            if cs.payment_blocked:
+                payment_flag(cs)
             diff_table(cs)
-            if cs.status == "proposed":
+            if cs.status == "proposed" and cs.payment_blocked:
+                if st.button(
+                    "Enter, block payment",
+                    key=f"blk-{cs.id}",
+                    type="primary",
+                    width="stretch",
+                ):
+                    h = decisions.accept(cs.id, user())
+                    indexer.build()
+                    st.toast(f"Entered with payment blocked · {h[:7]}", icon="🚩")
+                    st.rerun()
+            elif cs.status == "proposed":
                 a, b = st.columns(2)
                 if a.button(
                     "Accept",
@@ -388,6 +448,6 @@ if all_cs:
         st.subheader("Recent Changes")
 
     order = {"held": 0, "proposed": 1, "accepted": 2, "rejected": 2}
-    for cs in sorted(all_cs, key=lambda c: (order[c.status], c.id)):
+    for cs in sorted(all_cs, key=lambda c: (order[c.status], not c.payment_blocked, c.id)):
         if cs.kind != "lease":
             card(cs)

@@ -1,0 +1,16 @@
+{
+  "supplier_id": "S04",
+  "reference": "LPFO/L/2027/12A",
+  "signed": "2026-09-29",
+  "rent_monthly": 98800.0,
+  "rent_from": "2027-01-01",
+  "escalation_pct": 3.0,
+  "evidence": {
+    "doc": "docs/contracts/S04_lease_2027_signed.pdf",
+    "page": 3,
+    "quote": "98,800.00",
+    "clause": "4",
+    "commit": null,
+    "decision": null
+  }
+}
