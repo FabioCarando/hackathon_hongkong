@@ -66,8 +66,8 @@ workspace/
     budget_vs_actual_2026.xlsx # Jan–Sep actual vs budget by account, variance + % columns (formulas); Facilities and Freight noticeably over budget
     fx_rates.xlsx
   ledger/
-    chart_of_accounts.csv     # ~25 accounts, Xero-style codes (200 Sales, 310 COGS, 469 Rent, 425 Freight, 485 Software, ...)
-    gl_export_2026.csv        # Jan–Sep journal lines (~400–600 rows), Xero export columns; debits = credits per journal; totals agree with budget_vs_actual actuals
+    chart_of_accounts.csv     # ~25 accounts, standard codes (200 Sales, 310 COGS, 469 Rent, 425 Freight, 485 Software, ...)
+    gl_export_2026.csv        # Jan–Sep journal lines (~400–600 rows), standard GL columns; debits = credits per journal; totals agree with budget_vs_actual actuals
     payments_history.csv      # past payments: date, supplier_id, amount, currency, bank_account_paid → S01's last 6 all to …2049
   ground_truth/
     expected.json             # see below

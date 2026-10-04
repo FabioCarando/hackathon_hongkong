@@ -2,7 +2,7 @@
 
 > Working name. Replace it freely. Alternatives: Ledger Code, Second Brain for Finance, Tally.
 
-**One line:** Claude Code for finance teams. An AI agent that works inside the company's finance workspace (documents, spreadsheets, ledger), does the work you ask in plain language, shows every change as a reviewable diff, and remembers what changed, when, and why.
+**One line:** Claude Code for finance teams. An AI agent that works inside the company's finance workspace (documents, spreadsheets, ledger), does the work you ask in plain language, produces the financial reports (P&L, cash flow, budget vs actual), shows every change as a reviewable diff, and remembers what changed, when, and why.
 
 ## 30-second script
 
@@ -14,7 +14,7 @@
 
 ## Problem
 
-- **Manual work:** invoices, statements and contracts are keyed into spreadsheets and accounting systems by hand. Charts and reports are rebuilt by hand every month. *(verify hours-per-week figure)*
+- **Manual work:** invoices, statements and contracts are keyed into spreadsheets by hand. Charts and reports are rebuilt by hand every month. *(verify hours-per-week figure)*
 - **Scattered knowledge:** the answer to "what's our rent next year?" sits in clause 4 of a PDF in someone's folder. Finding one figure means searching email, drives and spreadsheets.
 - **No history of why:** spreadsheets show *what* a number is, never *why*. When the analyst who built the budget leaves, or the auditor asks "show me the support for this number", the team loses days reconstructing it.
 - **Mistakes slip through while busy:** overcharges against contract prices, duplicate invoices and fake "our bank details changed" emails get missed because nobody cross-checks while doing routine entry.
@@ -32,8 +32,8 @@
 
 ## Solution: how it works
 
-1. **A finance workspace:** the company's documents, spreadsheets and ledger exports in one place, like a code repository. A company memory file holds the context: budget assumptions, policies, how accounts are named.
-2. **Ask for a task in plain language:** "enter these invoices", "update the forecast for the new lease", "build a chart of Q3 costs by supplier", "prepare support for the revenue number". The agent plans, reads the documents, opens the spreadsheets, and every step is visible.
+1. **A finance workspace:** the company's documents, spreadsheets and ledger in one place, like a code repository. A company memory file holds the context: budget assumptions, policies, how accounts are named.
+2. **Ask for a task in plain language:** "enter these invoices", "update the forecast for the new lease", "prepare September's cash flow report", "build a chart of Q3 costs by supplier", "prepare support for the revenue number". The agent plans, reads the documents, opens the spreadsheets, and every step is visible.
 3. **Review the diff:** proposed changes show as a spreadsheet diff, old → new, with the source document and quote behind each cell. Accept or reject. Nothing changes without approval.
 4. **Every change is remembered:** each accepted change is recorded with who, when, why and from which document, like a git commit. Anyone can click a cell and ask "why is this number like this?"
 5. **It notices problems while working:** like Claude Code spotting a bug near the line it's fixing. While entering invoices it checks them against contracts and payment history: "This invoice is 8% above contract and the bank account changed. I've held it."
@@ -51,13 +51,14 @@
 - **Diffs and history built in:** every change is reviewable before it happens and traceable after. The audit trail is a by-product of working, not extra work.
 - **Memory of intent:** it keeps the *why*, not just the numbers.
 - **Built for HK:** Chinese and English documents, HKD/RMB/USD, mainland supplier invoices.
-- **Works with what they have:** reads and writes the Excel files and folders finance already uses, alongside Xero or QuickBooks. It doesn't replace the accounting system.
+- **Reports come out of the work:** P&L, cash flow and budget vs actual are built by Trace straight from the workspace, so every figure clicks back to its source document. No separate reporting system to set up.
+- **Works with what they have:** reads and writes the Excel files and folders finance already uses.
 
 ## Business model
 
 - SaaS per seat, plus usage tiers for document volume.
 - Accounting-firm plan: one firm, many client workspaces.
-- Land with routine entry and forecast updates (time saved in week one), expand into audit support and reporting.
+- Land with routine entry and forecast updates (time saved in week one), expand into reporting and audit support.
 
 ## Ask (Final)
 

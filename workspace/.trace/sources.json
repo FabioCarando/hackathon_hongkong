@@ -22,7 +22,7 @@
       }
     ],
     "reason": "Rent held flat at current lease rate until the lease expiring 31 Dec 2026 is renewed.",
-    "commit": "d8380d4e434311ac4feafad9553058d13bf4b65d"
+    "commit": "cbcb6ffbc58a36682d5b7eb00c22e4aa289e9e3b"
   },
   {
     "file": "sheets/invoice_register.xlsx",
@@ -37,7 +37,7 @@
       }
     ],
     "reason": "Entered Pacific Freight INV-2291 (August/September trucking).",
-    "commit": "602924c6c205940c4c9ff6cb8b2a156801b15215"
+    "commit": "5a1e9aa927a77f0871160c4653695cd038e177e8"
   },
   {
     "file": "sheets/invoice_register.xlsx",
@@ -57,7 +57,7 @@
       }
     ],
     "reason": "Entered Shenzhen Parts July invoice; unit prices match contract §4.2.",
-    "commit": "8eccf2d92921245483b41bfa72109217745390aa"
+    "commit": "e760fc371a566e646a9a481d67f6b6834063f8ac"
   },
   {
     "file": "sheets/supplier_master.xlsx",
@@ -72,7 +72,7 @@
       }
     ],
     "reason": "Supplier bank account per signed 2026 supply agreement clause 5.2.",
-    "commit": "0a269b1ad8824b6bee8806a123291c7122dae011"
+    "commit": "b3a741980f74b1f79c3a8f5075dcfb6b8dd1dfcc"
   },
   {
     "file": "sheets/budget_vs_actual_2026.xlsx",
@@ -87,6 +87,6 @@
       }
     ],
     "reason": "Budget 2026 rent = current lease rent.",
-    "commit": "ff600553f268e44a0a55b1f976ca00aedbb2f221"
+    "commit": "70c279fdd4f34238aeac2d9f106432f62144515e"
   }
 ]

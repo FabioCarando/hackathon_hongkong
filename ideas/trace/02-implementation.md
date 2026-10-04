@@ -140,7 +140,7 @@ This is the part that makes it feel like Claude Code. It must look good.
 | Validator: rejects any answer sentence without a valid source reference | P1 |
 | Download the updated xlsx with a cell comment per changed value ("source: lease_2027.pdf p.3") | P2 |
 | Multi-user permissions, roles, approval chains | P3 |
-| Live mailbox, Xero/QuickBooks connectors | P3 |
+| Live mailbox connector | P3 |
 
 ---
 

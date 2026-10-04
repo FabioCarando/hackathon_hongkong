@@ -11,7 +11,7 @@ Bank: Victoria Harbour Bank Limited a/c 088-412-09375-1.
 - Ken Lau - Accounts Clerk. Invoice entry, payments run.
 
 ## Conventions
-- Xero-style account codes (ledger/chart_of_accounts.csv): 200 Sales, 310 COGS (all stock purchases), 425 Freight,
+- Account codes (ledger/chart_of_accounts.csv): 200 Sales, 310 COGS (all stock purchases), 425 Freight,
   469 Rent, 471 Building mgmt, 473 R&M, 445 Electricity, 485 Software. Facilities = 445 + 469 + 471 + 473.
 - Invoice register: sheets/invoice_register.xlsx, one row per supplier invoice, amount_hkd = amount x month fx rate.
 - Invoice PDFs filed under docs/invoices/YYYY-MM/; new ones arrive in docs/invoices/inbox/.

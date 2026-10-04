@@ -45,7 +45,7 @@ How the idea fits the competition criteria. See `COMPETITION_CRITERIA.md` for th
 | "Isn't this Copilot in Excel?" | Copilot helps inside one file. Trace works across the whole finance workspace (PDFs, contracts, sheets, ledger), shows a reviewable diff, and remembers why every number changed. |
 | "Can an LLM be trusted with financial numbers?" | It never writes directly: every change is a diff a human approves, every cell cites its source, and money checks are plain code, not the LLM. |
 | "What if it gets a number wrong?" | You see it in the diff before it lands, with the source quote next to it. If it slips through, history shows exactly when and from where, and it's one revert. |
-| "Why not just use Xero / our ERP?" | We sit beside it. Xero records transactions; it doesn't read the lease and update your forecast, or tell you why a number changed. |
+| "Where do the reports come from? Do I need an accounting system?" | Trace builds them itself: P&L, cash flow and budget vs actual come straight from the documents and ledger in the workspace, and every figure links back to its source. Nothing extra to integrate. |
 | "Where does the 'why' come from? People don't write reasons down." | Every change made through Trace records its reason and source automatically. For older numbers it uses the evidence people already leave: emails, notes, comments. When nothing exists, it asks once, like a commit message. |
 | "Why not AWS?" | Model-agnostic on purpose: customers choose the provider or private deployment they trust with financial data. |
 | "What about data privacy?" | The workspace stays with the customer; only the pages needed for a task go to the model, and the provider is the customer's choice. |
