@@ -96,6 +96,7 @@ The agent is a standard tool-calling loop: model gets the task, COMPANY.md and t
 | `propose_edits` | Stage cell changes `{sheet, cell, old, new, sources[], reason}`; never writes directly | **P0** |
 | `history` | Commits that touched a cell or file, with messages and sources (the "blame" tool) | **P0** |
 | `run_checks` | Runs the controls on an invoice; also triggered automatically as a hook | **P0** |
+| `build_report` | Builds a financial report (first: monthly cash flow) from the ledger; totals computed in code, every line traced to its GL rows | **P0** |
 | `make_chart` | Builds a Plotly chart from a sheet range; saves it into the workspace | P1 |
 | `ask_user` | Ask one question mid-task ("No reason found for this change. Why?") | P1 |
 | `write_memory` | Propose an edit to COMPANY.md (also goes through the diff) | P1 |
@@ -142,6 +143,20 @@ This is the part that makes it feel like Claude Code. It must look good.
 | Multi-user permissions, roles, approval chains | P3 |
 | Live mailbox connector | P3 |
 
+## 4. Financial reports
+
+Trace produces the reports itself; there is no separate accounting or reporting system. Same rule as the controls: **the LLM picks and explains, code does the arithmetic.**
+
+| Component | Label |
+|---|---|
+| **Monthly cash flow report** ("Prepare September's cash flow report"): opening cash → receipts and payments grouped by category (customers, suppliers, rent and facilities, payroll, freight, software, other) → closing cash. Built from the bank account lines (090) in `ledger/gl_export_2026.csv` | **P0** |
+| Reconciles to `docs/bank/statement_2026-09.pdf`: opening and closing balance must match the statement, or the report says by how much and why | **P0** |
+| Saved as a new sheet (`sheets/cash_flow_2026-09.xlsx`) through the normal diff → accept → commit flow; each line cites its GL rows and bank statement lines | **P0** |
+| Short commentary from the agent ("Half of September's HK$1.26m outflow was two supplier TTs, to Shenzhen Parts and Dongguan Precision; payroll was the biggest single item"), every figure from the report, none typed by the LLM | P1 |
+| Cash flow chart (bar of inflows/outflows by category) via `make_chart` | P1 |
+| P&L and budget vs actual for a chosen month | P2 |
+| Balance sheet, cash flow forecast from the forecast sheet | P3 |
+
 ---
 
 ## Demo script (3 min + 2 min Q&A)
@@ -151,8 +166,9 @@ Fake company: **a HK trading company importing electronic parts from Shenzhen.**
 1. **(0:00)** "Claude Code changed how developers work. Finance teams never got that." One painful number.
 2. **(0:20)** Type: *"We signed the new warehouse lease. Update the forecast."* → steps stream: reads the lease PDF, finds the 3% escalation clause, opens the forecast → **diff appears**: 12 rent cells, old → new, each citing "lease p.3, clause 4". Accept → committed. ← first wow
 3. **(1:10)** Type: *"Enter this week's supplier invoices."* → reads 5 PDFs, one in Chinese → proposes entries. One row is red: **"8% above contract and the bank account changed. I've held it."** ← second wow
-4. **(1:50)** Switch user. Click the rent cell: *"Why did rent go up?"* → "Changed on 4 Oct by Anna, from lease_2027.pdf clause 4 (+3%/yr). Previously flat per COMPANY.md assumption." Every part clickable.
-5. **(2:30)** Metrics slide (from `03-evaluation.md`), business model, ask.
+4. **(1:45)** Type: *"Prepare September's cash flow report."* → cash flow sheet appears in the diff, opening and closing cash matching the bank statement, each line clickable to its ledger rows. Accept → committed.
+5. **(2:10)** Switch user. Click the rent cell: *"Why did rent go up?"* → "Changed on 4 Oct by Anna, from lease_2027.pdf clause 4 (+3%/yr). Previously flat per COMPANY.md assumption." Every part clickable.
+6. **(2:35)** Metrics slide (from `03-evaluation.md`), business model, ask.
 
 ## Timeline on 4 Oct
 
@@ -160,7 +176,7 @@ Fake company: **a HK trading company importing electronic parts from Shenzhen.**
 |---|---|
 | 09:30–10:30 | Kickoff, confirm rules and criteria, freeze scope, pick OpenRouter models + Chinese reading test |
 | 10:30–14:00 | In parallel: fake workspace (business teammate) · agent loop + tools · diff/commit engine · Streamlit layout |
-| 14:00–17:00 | Wire it together; **demo steps 2 and 3 working end to end by 17:00** |
+| 14:00–17:00 | Wire it together; **demo steps 2, 3 and 4 working end to end by 17:00** |
 | 17:00–19:00 | P1 items ("why?" from history, document highlights, charts), UI polish, **record the backup video** |
 | 19:00–21:00 | Pitch rehearsal ×3, submission |
 
@@ -175,4 +191,4 @@ Fake company: **a HK trading company importing electronic parts from Shenzhen.**
 | Agent edits the wrong cells | Diff review is the safety net; constrain `propose_edits` to named ranges in the demo |
 | Diff view looks clunky in Streamlit | Spend real time on it: it's the hero screen. Colour-coded dataframe, one row per change |
 | Venue wifi fails | Backup video; cached results so the UI still runs offline |
-| Scope creep | Anything not P0 waits until demo steps 2 and 3 work |
+| Scope creep | Anything not P0 waits until demo steps 2, 3 and 4 work |
