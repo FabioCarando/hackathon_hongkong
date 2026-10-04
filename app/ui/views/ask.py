@@ -3,7 +3,7 @@
 import streamlit as st
 
 from app.core import ask
-from app.ui.components import header, llm_errors, render_step, stats_row
+from app.ui.components import header, llm_errors, render_step
 from app.ui.trace import setup, sidebar
 
 setup()
@@ -11,10 +11,10 @@ sidebar()
 header("Ask the brain", "Every answer cites the documents, commits and decisions behind it.")
 
 SUGGESTED = [
-    "Why is 2027 rental income for Flat 12A 98,800?",
-    "Why was the Pearl River capital call held?",
-    "How much do we still owe Harbourview Capital Partners III?",
     "Which contracts need action in the next 30 days?",
+    "How will the new Flat 12A lease affect our 2027 budget?",
+    "How much do we still owe Harbourview Capital Partners III?",
+    "Who approved the 2027 rent change, and why?",
 ]
 
 
@@ -58,7 +58,6 @@ if question:
             result = ask.ask(question, on_step=render_step)
             status.update(label=f"Checked {len(result.steps)} steps", state="complete")
         render_answer(result.text)
-        stats_row(result)
         st.session_state.setdefault("ask_history", []).extend(
             [{"role": "user", "text": question}, {"role": "assistant", "text": result.text}]
         )

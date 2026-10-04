@@ -291,12 +291,12 @@ def test_openrouter_request_translation():
     assert req["tool_choice"] == {"type": "function", "function": {"name": "respond"}}
     assert req["extra_body"] == {
         "reasoning": {"effort": "low"},
-        "provider": {"require_parameters": True},
+        "provider": {"require_parameters": True, "sort": "throughput"},
     }
     any_choice = {**params["toolConfig"], "toolChoice": {"any": {}}}
     assert openrouter.request({**params, "toolConfig": any_choice})["tool_choice"] == "required"
     plain = openrouter.request({**params, "toolConfig": None, "additionalModelRequestFields": {}})
-    assert "tools" not in plain and "extra_body" not in plain
+    assert "tools" not in plain and plain["extra_body"] == {"provider": {"sort": "throughput"}}
 
 
 @pytest.mark.parametrize(
@@ -343,7 +343,7 @@ def test_openrouter_extract_roundtrip(tmp_path):
     assert obj.name == "Ann"
     first, retry = server.bodies
     assert first["tool_choice"] == {"type": "function", "function": {"name": "respond"}}
-    assert first["provider"] == {"require_parameters": True}
+    assert first["provider"] == {"require_parameters": True, "sort": "throughput"}
     assert first["messages"][0] == {"role": "system", "content": "Be exact."}
     assert [m["role"] for m in retry["messages"]] == ["system", "user", "assistant", "tool"]
     assert retry["messages"][-1]["tool_call_id"] == "c1"

@@ -359,6 +359,10 @@ class LLM:
                 tool_results.append(
                     {"toolResult": {"toolUseId": call["toolUseId"], "content": [{"text": content}]}}
                 )
+            if turn == max_turns - 2:  # last call coming: make the model answer, not keep digging
+                tool_results.append(
+                    {"text": "Last turn: answer now from what you found, with sources. No more tools."}
+                )
             params["messages"] = [*params["messages"], {"role": "user", "content": tool_results}]
 
         out.text = "(stopped: max_turns reached)"
