@@ -28,30 +28,51 @@ def setup() -> None:
 def sidebar() -> None:
     with st.sidebar:
         st.selectbox("Working as", list(workspace.USERS), key="trace_user", index=1)
+
+        # BRAIN STATUS
+        st.divider()
+        st.subheader("Brain Status")
+
         files = indexer.load()
         css = changes.all_changesets()
-        c1, c2 = st.columns(2)
-        c1.metric("Files", len(files))
-        c2.metric("New", sum(f.status == "new" for f in files))
-        c1.metric("Open questions", sum(cs.status == "held" for cs in css))
-        c2.metric("Decisions", len(decisions.all_decisions()))
-        last = workspace.git("log", "-1", "--format=%h · %an", check=False).strip()
-        st.caption(f"Last commit: `{last}`")
+        all_decisions = decisions.all_decisions()
+
+        held = sum(cs.status == "held" for cs in css)
+        ready = sum(cs.status == "proposed" for cs in css)
+        entered = sum(cs.status == "accepted" for cs in css)
+        new_files = sum(f.status == "new" for f in files)
+
+        col1, col2 = st.columns(2)
+        col1.metric("Files", len(files), f"{new_files} new")
+        col2.metric("Open", held, f"{ready} ready")
+
+        col1, col2 = st.columns(2)
+        col1.metric("Entered", entered, None)
+        col2.metric("Decisions", len(all_decisions), None)
+
+        # Last commit
+        last = workspace.git("log", "-1", "--format=%h|%an|%ad", "--date=short", check=False).strip()
+        if last:
+            parts = last.split("|")
+            st.caption(f"Commit {parts[0]} by {parts[1]}")
+
+        st.divider()
+
+        # ACTIONS
         if st.button("Reset demo", icon=":material/restart_alt:", width="stretch"):
             t = time.perf_counter()
             workspace.reset()
-            st.toast(f"Workspace reset in {time.perf_counter() - t:.1f}s")
+            st.success(f"Workspace reset in {time.perf_counter() - t:.1f}s")
             st.rerun()
-        st.divider()
 
 
 def chip(ref: SourceRef | dict) -> str:
     r = SourceRef.model_validate(ref) if isinstance(ref, dict) else ref
     if r.decision:
-        return f":violet-badge[:material/psychology: {r.decision}]"
+        return f":violet-badge[D: {r.decision}]"
     if r.commit and not r.doc:
-        return f":orange-badge[:material/commit: {r.commit[:7]}]"
-    return f":blue-badge[:material/description: {r.label()}]"
+        return f":orange-badge[{r.commit[:7]}]"
+    return f":blue-badge[{r.label()}]"
 
 
 def chips(refs) -> str:

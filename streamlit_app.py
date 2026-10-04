@@ -16,12 +16,6 @@ nav = st.navigation(
             st.Page(f"{VIEWS}/history.py", title="History", icon=":material/history:"),
             st.Page(f"{VIEWS}/ask.py", title="Ask the brain", icon=":material/forum:"),
         ],
-        "Dev tools": [
-            st.Page(f"{VIEWS}/home.py", title="Connection check", icon=":material/dashboard:"),
-            st.Page(f"{VIEWS}/playground.py", title="LLM playground", icon=":material/chat:"),
-            st.Page(f"{VIEWS}/agent.py", title="Agent demo", icon=":material/smart_toy:"),
-            st.Page(f"{VIEWS}/calls.py", title="Call log", icon=":material/receipt_long:"),
-        ],
     }
 )
 nav.run()
