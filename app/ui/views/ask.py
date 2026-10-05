@@ -1,5 +1,7 @@
 """Ask the brain: plain-language questions, answers with sources."""
 
+import re
+
 import streamlit as st
 
 from app.core import ask
@@ -18,16 +20,14 @@ SUGGESTED = [
 ]
 
 
+NO_PAGE = re.compile(r"\s*p\.\s*(null|none|[-–—])?\s*$", re.I)  # "p.null", "p. –", "p."
+EXTRA_RE = re.compile(r"\[(calc|cell):\s*([^\]]+)\]")  # refs the model adds on its own
+
+
 def render_answer(text: str) -> None:
     def chip(m):
         kind = m.group(1)
-        value = (
-            m.group(2)
-            .strip()
-            .replace("\u2011", "-")
-            .removesuffix(" p.null")
-            .removesuffix(" p.None")
-        )
+        value = NO_PAGE.sub("", m.group(2).strip().replace("\u2011", "-"))
         ok = ask.validate_ref(kind, value)
         icon = {"doc": "description", "commit": "commit", "decision": "psychology"}[kind]
         color = {"doc": "blue", "commit": "orange", "decision": "violet"}[kind] if ok else "red"
@@ -36,7 +36,12 @@ def render_answer(text: str) -> None:
         )
         return f" :{color}-badge[:material/{icon}: {label}{'' if ok else ' ⚠ not found'}]"
 
-    st.markdown(ask.REF_RE.sub(chip, text))
+    def extra(m):
+        icon = "calculate" if m.group(1) == "calc" else "table"
+        return f" :gray-badge[:material/{icon}: {m.group(2).strip().rsplit('/', 1)[-1]}]"
+
+    text = text.replace("$", "\\$")  # "HK$98,800 ... HK$95,000" is not LaTeX
+    st.markdown(EXTRA_RE.sub(extra, ask.REF_RE.sub(chip, text)))
 
 
 cols = st.columns(len(SUGGESTED))
